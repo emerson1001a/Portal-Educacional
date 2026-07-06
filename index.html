@@ -91,7 +91,8 @@
 
     .hero {
       position: relative;
-      min-height: 88vh;
+      min-height: 760px;
+      min-height: min(760px, 100svh);
       display: grid;
       align-items: center;
       overflow: hidden;
@@ -119,7 +120,7 @@
       z-index: 2;
       width: min(1120px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 104px 0 86px;
+      padding: 82px 0 54px;
     }
 
     .eyebrow {
@@ -143,14 +144,14 @@
     h1 {
       margin: 0;
       max-width: 760px;
-      font-size: clamp(42px, 8vw, 82px);
+      font-size: clamp(38px, 7vw, 72px);
       line-height: .98;
       letter-spacing: 0;
     }
 
     .hero-copy {
       max-width: 650px;
-      margin: 22px 0 0;
+      margin: 18px 0 0;
       color: rgba(255,255,255,.9);
       font-size: clamp(17px, 2vw, 21px);
     }
@@ -159,15 +160,15 @@
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 30px;
+      margin-top: 24px;
     }
 
     .button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 48px;
-      padding: 13px 18px;
+      min-height: 44px;
+      padding: 11px 16px;
       border-radius: 8px;
       font-weight: 800;
       border: 1px solid transparent;
@@ -365,8 +366,12 @@
     @media (max-width: 820px) {
       .nav { min-height: 58px; }
       .navlinks { display: none; }
-      .hero { min-height: 82vh; background-position: 62% center; }
-      .hero-inner { padding: 92px 0 72px; }
+      .hero { min-height: 100svh; background-position: 62% center; }
+      .hero-inner { padding: 78px 0 34px; }
+      .eyebrow { margin-bottom: 12px; }
+      h1 { font-size: clamp(34px, 11vw, 48px); }
+      .hero-copy { margin-top: 14px; font-size: 16px; }
+      .actions { margin-top: 18px; gap: 10px; }
       .section { padding: 54px 0; }
       .section-head, .services, .proof-grid, .cta {
         grid-template-columns: 1fr;
