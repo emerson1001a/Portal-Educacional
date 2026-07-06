@@ -1,0 +1,12 @@
+{
+  "name": "portal-educacional",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "echo \"Projeto estatico com funcoes Vercel\""
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.52.1"
+  }
+}
