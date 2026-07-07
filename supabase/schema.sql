@@ -23,6 +23,9 @@ create table if not exists public.children (
   updated_at timestamptz not null default now()
 );
 
+alter table public.children
+add column if not exists created_by uuid references public.profiles(id) on delete set null;
+
 create table if not exists public.child_guardians (
   child_id uuid not null references public.children(id) on delete cascade,
   guardian_id uuid not null references public.profiles(id) on delete cascade,
