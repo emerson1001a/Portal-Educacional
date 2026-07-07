@@ -11,33 +11,21 @@ C:\Users\Emerson\Documents\Codex\PortalEducacional
 O Git local ja esta inicializado, com branch `main` e remoto configurado para:
 
 ```text
-https://github.com/emerson1001a/PortalEducacional.git
+https://github.com/emerson1001a/Portal-Educacional.git
 ```
 
-O push ainda nao foi feito porque o repositorio remoto ainda nao existe no GitHub.
+O push da base limpa ja foi feito preservando o historico anterior do repositorio.
 
-## Criar repositorio GitHub
-
-Crie um repositorio novo no GitHub:
-
-```text
-Nome: PortalEducacional
-Visibilidade: Public ou Private, conforme preferir
-README: nao marcar
-.gitignore: nao marcar
-License: nao marcar
-```
-
-Depois rode:
+Para atualizar novamente:
 
 ```cmd
 cd /d "C:\Users\Emerson\Documents\Codex\PortalEducacional"
-git push -u origin main
+git push
 ```
 
 ## Criar projeto Vercel
 
-Crie um projeto novo na Vercel conectado ao repositorio `PortalEducacional`.
+Use o projeto Vercel conectado ao repositorio `Portal-Educacional`.
 
 Configuracao:
 
