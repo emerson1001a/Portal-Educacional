@@ -84,9 +84,11 @@
       color: white;
       background: var(--teal);
       font-weight: 850;
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
     }
 
     .button:hover { box-shadow: 0 10px 24px rgba(16,32,51,.16); }
+    .button:active { transform: translateY(1px) scale(.99); box-shadow: none; }
     .button.secondary { color: var(--ink); background: #e8eef5; }
     .button.blue { background: var(--blue); }
     .button.coral { background: var(--coral); }
@@ -379,6 +381,8 @@
       </aside>
 
       <div class="workspace">
+        <div class="notice hidden" id="appMessage" role="status"></div>
+
         <section class="card">
           <div class="row between">
             <div>
@@ -508,6 +512,7 @@
       newPasswordForm: document.querySelector("#newPasswordForm"),
       newPasswordInput: document.querySelector("#newPasswordInput"),
       authMessage: document.querySelector("#authMessage"),
+      appMessage: document.querySelector("#appMessage"),
       childForm: document.querySelector("#childForm"),
       childNameInput: document.querySelector("#childNameInput"),
       birthYearInput: document.querySelector("#birthYearInput"),
@@ -530,15 +535,32 @@
     };
 
     function message(text, isError = false) {
-      els.authMessage.textContent = text;
-      els.authMessage.classList.toggle("error", isError);
-      els.authMessage.classList.remove("hidden");
+      const target = state.session?.user ? els.appMessage : els.authMessage;
+      target.textContent = text;
+      target.classList.toggle("error", isError);
+      target.classList.remove("hidden");
     }
 
     function clearMessage() {
       els.authMessage.textContent = "";
       els.authMessage.classList.add("hidden");
       els.authMessage.classList.remove("error");
+      els.appMessage.textContent = "";
+      els.appMessage.classList.add("hidden");
+      els.appMessage.classList.remove("error");
+    }
+
+    function setButtonBusy(button, isBusy, busyText = "Salvando...") {
+      if (!button) return;
+      if (isBusy) {
+        button.dataset.originalText = button.textContent;
+        button.textContent = busyText;
+        button.disabled = true;
+        return;
+      }
+      button.textContent = button.dataset.originalText || button.textContent;
+      button.disabled = false;
+      delete button.dataset.originalText;
     }
 
     function setMode(mode) {
@@ -920,49 +942,63 @@
 
     els.childForm.addEventListener("submit", async (event) => {
       event.preventDefault();
+      clearMessage();
       const name = els.childNameInput.value.trim();
       if (!name) return;
+      const submitButton = els.childForm.querySelector('button[type="submit"]');
+      setButtonBusy(submitButton, true);
       const year = Number(els.birthYearInput.value);
       const birthDate = Number.isFinite(year) && year > 1900 ? `${year}-01-01` : null;
-      const { data: child, error } = await state.supabase.rpc("create_child_for_current_user", {
-        child_full_name: name,
-        child_birth_date: birthDate,
-        child_grade: els.gradeInput.value.trim() || null,
-        child_notes: null
-      });
-      if (error) {
-        message(error.message, true);
-        return;
+      try {
+        const { data: child, error } = await state.supabase.rpc("create_child_for_current_user", {
+          child_full_name: name,
+          child_birth_date: birthDate,
+          child_grade: els.gradeInput.value.trim() || null,
+          child_notes: null
+        });
+        if (error) {
+          message(error.message, true);
+          return;
+        }
+        els.childForm.reset();
+        state.activeChildId = child.id;
+        localStorage.setItem("portal.activeChildId", child.id);
+        message(`${child.full_name} foi cadastrada e selecionada.`);
+        await refreshAll();
+      } finally {
+        setButtonBusy(submitButton, false);
       }
-      els.childForm.reset();
-      state.activeChildId = child.id;
-      localStorage.setItem("portal.activeChildId", child.id);
-      message("Crianca cadastrada e selecionada.");
-      await refreshAll();
     });
 
     els.goalForm.addEventListener("submit", async (event) => {
       event.preventDefault();
+      clearMessage();
       const child = activeChild();
       if (!child) {
         message("Cadastre ou selecione uma crianca antes de salvar uma meta.", true);
         return;
       }
-      const { error } = await state.supabase.from("learning_goals").insert({
-        child_id: child.id,
-        owner_id: state.session.user.id,
-        area: els.goalAreaInput.value,
-        title: els.goalTitleInput.value.trim(),
-        description: els.goalDescriptionInput.value.trim() || null
-      });
-      if (error) {
-        message(error.message, true);
-        return;
+      const submitButton = els.goalForm.querySelector('button[type="submit"]');
+      setButtonBusy(submitButton, true);
+      try {
+        const { error } = await state.supabase.from("learning_goals").insert({
+          child_id: child.id,
+          owner_id: state.session.user.id,
+          area: els.goalAreaInput.value,
+          title: els.goalTitleInput.value.trim(),
+          description: els.goalDescriptionInput.value.trim() || null
+        });
+        if (error) {
+          message(error.message, true);
+          return;
+        }
+        els.goalForm.reset();
+        message("Meta pedagogica salva e vinculada ao aluno selecionado.");
+        await loadGoals();
+        render();
+      } finally {
+        setButtonBusy(submitButton, false);
       }
-      els.goalForm.reset();
-      message("Meta pedagogica salva.");
-      await loadGoals();
-      render();
     });
 
     setMode("login");
