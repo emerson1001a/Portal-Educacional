@@ -4,6 +4,9 @@ import { createClient } from "@supabase/supabase-js";
 const allowedServices = new Set(["redacao", "interpretacao", "tabuada"]);
 
 function json(res, status, body) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Portal-Activity-Token");
   return res.status(status).json(body);
 }
 
@@ -43,6 +46,13 @@ function normalizeFeedback(feedback) {
 }
 
 export default async function handler(req, res) {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Portal-Activity-Token");
+    return res.status(204).end();
+  }
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return json(res, 405, { ok: false, message: "Método não permitido." });

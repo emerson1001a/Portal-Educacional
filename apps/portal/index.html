@@ -701,6 +701,21 @@
       return module?.short_name || module?.name || service || "Atividade";
     }
 
+    function eventAdultSummary(event) {
+      const feedback = event?.feedback && typeof event.feedback === "object" ? event.feedback : {};
+      const adult = feedback.adult && typeof feedback.adult === "object" ? feedback.adult : {};
+      return adult.summary || (Array.isArray(adult.recipe) ? adult.recipe[0] : "") || "";
+    }
+
+    function escapeHtml(text) {
+      return String(text || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function renderChildren() {
       const child = activeChild();
       els.childrenList.innerHTML = "";
@@ -920,15 +935,41 @@
       state.events.slice(0, 12).forEach((event) => {
         const item = document.createElement("article");
         item.className = "event";
+        const adultSummary = eventAdultSummary(event);
         item.innerHTML = `
           <div>
-            <strong>${event.title || serviceName(event.service)}</strong>
-            <div class="muted small">${serviceName(event.service)} - ${event.activity_type || "atividade"}</div>
+            <strong>${escapeHtml(event.title || serviceName(event.service))}</strong>
+            <div class="muted small">${escapeHtml(serviceName(event.service))} - ${escapeHtml(event.activity_type || "atividade")}</div>
+            ${adultSummary ? `<p class="muted small">${escapeHtml(adultSummary)}</p>` : ""}
           </div>
           <span class="pill">${formatDate(event.occurred_at || event.created_at)}</span>
         `;
         els.timeline.appendChild(item);
       });
+    }
+
+    async function consumePortalReturn() {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("portal_status");
+      const service = params.get("service");
+      const childId = params.get("child_id");
+      if (!status) return;
+
+      if (childId && state.children.some((child) => child.id === childId)) {
+        state.activeChildId = childId;
+        localStorage.setItem("portal.activeChildId", childId);
+        await loadChildData();
+      }
+
+      if (status === "activity_saved") {
+        message(`${serviceName(service)} concluída. O resultado já entrou no histórico central.`);
+      } else {
+        message(`${serviceName(service)} concluída, mas confira se o registro apareceu no histórico.`, true);
+      }
+
+      const cleanUrl = `${window.location.origin}${window.location.pathname}`;
+      window.history.replaceState({}, "", cleanUrl);
+      render();
     }
 
     function render() {
@@ -1058,6 +1099,7 @@
         }
       });
       if (state.session) await refreshAll();
+      if (state.session) await consumePortalReturn();
       render();
     }
 
