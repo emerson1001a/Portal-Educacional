@@ -2,19 +2,19 @@
 
 ## Estado atual
 
-A base limpa ja existe localmente em:
+A base limpa já existe localmente em:
 
 ```text
 C:\Users\Emerson\Documents\Codex\PortalEducacional
 ```
 
-O Git local ja esta inicializado, com branch `main` e remoto configurado para:
+O Git local já está inicializado, com branch `main` e remoto configurado para:
 
 ```text
 https://github.com/emerson1001a/Portal-Educacional.git
 ```
 
-O push da base limpa ja foi feito preservando o historico anterior do repositorio.
+O push da base limpa já foi feito preservando o histórico anterior do repositório.
 
 Para atualizar novamente:
 
@@ -25,9 +25,9 @@ git push
 
 ## Criar projeto Vercel
 
-Use o projeto Vercel conectado ao repositorio `Portal-Educacional`.
+Use o projeto Vercel conectado ao repositório `Portal-Educacional`.
 
-Configuracao:
+Configuração:
 
 ```text
 Root Directory: apps/portal
@@ -36,7 +36,7 @@ Build Command: npm run check
 Output Directory: .
 ```
 
-Variaveis:
+Variáveis:
 
 ```text
 SUPABASE_URL
@@ -48,9 +48,9 @@ PORTAL_MODULES_JSON
 
 ## Supabase
 
-Decisao recomendada:
+Decisão recomendada:
 
-- se quiser comecar totalmente limpo, crie um novo projeto Supabase;
+- se quiser começar totalmente limpo, crie um novo projeto Supabase;
 - se quiser ganhar tempo, use o projeto `portal-educacional` atual e rode `supabase/schema.sql`.
 
 Em qualquer caso, rode:

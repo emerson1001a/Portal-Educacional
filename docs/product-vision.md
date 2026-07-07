@@ -1,54 +1,54 @@
-# Visao do Produto
+# Visão do Produto
 
-O Portal Educacional existe para apoiar pais e professores que querem reforcar a aprendizagem sem transformar dificuldade em sofrimento.
+O Portal Educacional existe para apoiar pais e professores que querem reforçar a aprendizagem sem transformar dificuldade em sofrimento.
 
-## Usuario principal
+## Usuário principal
 
-O usuario principal e o adulto:
+O usuário principal é o adulto:
 
-- pai, mae ou responsavel;
+- pai, mãe ou responsável;
 - professor;
 - tutor ou acompanhante pedagogico.
 
-Ele informa o que percebe na crianca, escolhe uma meta e abre atividades adequadas.
+Ele informa o que percebe na criança, escolhe uma meta e abre atividades adequadas.
 
-## Usuario atendido
+## Usuário atendido
 
-A crianca ou adolescente usa os modulos de aprendizagem. A experiencia precisa preservar autoestima e autoria.
+A criança ou adolescente usa os módulos de aprendizagem. A experiência precisa preservar autoestima e autoria.
 
 ## Promessa
 
-Transformar observacoes soltas em acompanhamento pedagogico simples:
+Transformar observações soltas em acompanhamento pedagógico simples:
 
 1. O adulto registra uma necessidade.
-2. O portal sugere ou organiza modulos.
-3. A crianca pratica.
-4. O sistema registra evidencias.
+2. O portal sugere ou organiza módulos.
+3. A criança pratica.
+4. O sistema registra evidências.
 5. O adulto recebe leitura clara e receita do que fazer depois.
 
 ## Feedback
 
-Para a crianca:
+Para a criança:
 
-- reconhecer esforco ou acerto;
-- mostrar uma proxima tentativa pequena;
-- evitar comparacoes.
+- reconhecer esforço ou acerto;
+- mostrar uma próxima tentativa pequena;
+- evitar comparações.
 
 Para o adulto:
 
 - resumir o que apareceu;
-- separar forcas e pontos de atencao;
-- indicar uma receita de intervencao;
-- explicar o que observar na proxima atividade.
+- separar forças e pontos de atenção;
+- indicar uma receita de intervenção;
+- explicar o que observar na próxima atividade.
 
 ## Feedback geral
 
-Quando a crianca usa mais de um modulo, o portal deve oferecer uma sintese geral para o adulto.
+Quando a criança usa mais de um módulo, o portal deve oferecer uma síntese geral para o adulto.
 
-Essa sintese precisa ser cuidadosa:
+Essa síntese precisa ser cuidadosa:
 
-- separar leitura, escrita, matematica e organizacao;
-- indicar se ainda ha pouca evidencia;
+- separar leitura, escrita, matemática e organização;
+- indicar se ainda há pouca evidência;
 - manter o feedback pontual de cada atividade;
-- transformar a sintese em uma receita pequena para casa ou sala;
-- evitar diagnosticos amplos sem base suficiente.
+- transformar a síntese em uma receita pequena para casa ou sala;
+- evitar diagnósticos amplos sem base suficiente.

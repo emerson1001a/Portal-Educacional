@@ -1,17 +1,17 @@
-# Contrato de Modulo
+# Contrato de Módulo
 
-Um modulo e qualquer experiencia de aprendizagem plugada ao Portal Educacional.
+Um módulo é qualquer experiência de aprendizagem plugada ao Portal Educacional.
 
-## Cadastro do modulo
+## Cadastro do módulo
 
-Cada modulo deve ter:
+Cada módulo deve ter:
 
 ```json
 {
   "id": "interpretacao",
-  "name": "Interpretacao de Texto",
+  "name": "Interpretação de Texto",
   "area": "leitura",
-  "description": "Leitura, perguntas e feedback para compreensao.",
+  "description": "Leitura, perguntas e feedback para compreensão.",
   "url": "https://interpretacao-de-texto.vercel.app",
   "status": "available"
 }
@@ -19,7 +19,7 @@ Cada modulo deve ter:
 
 ## Abertura a partir do portal
 
-O portal pode abrir o modulo com parametros:
+O portal pode abrir o módulo com parâmetros:
 
 ```text
 ?child_id=<uuid>
@@ -30,7 +30,7 @@ O portal pode abrir o modulo com parametros:
 
 ## Registro de resultado
 
-O modulo deve enviar evidencias para:
+O módulo deve enviar evidências para:
 
 ```text
 POST /api/activity-events
@@ -38,14 +38,14 @@ POST /api/activity-events
 
 ## Feedback pontual e feedback geral
 
-Cada modulo deve produzir feedback pontual da atividade. O portal usa varios feedbacks pontuais para montar um feedback geral da crianca.
+Cada módulo deve produzir feedback pontual da atividade. O portal usa vários feedbacks pontuais para montar um feedback geral da criança.
 
 Regra importante:
 
-- o modulo fala sobre aquela atividade;
-- o portal fala sobre evolucao ao longo do tempo;
-- o portal nao deve concluir algo amplo quando ha pouca evidencia;
-- feedback geral precisa citar evidencias por area.
+- o módulo fala sobre aquela atividade;
+- o portal fala sobre evolução ao longo do tempo;
+- o portal não deve concluir algo amplo quando há pouca evidência;
+- feedback geral precisa citar evidências por área.
 
 Com o token no corpo:
 
@@ -53,24 +53,24 @@ Com o token no corpo:
 {
   "portal_event_token": "token",
   "activity_type": "analise_final",
-  "title": "Redacao sobre aventura",
+  "title": "Redação sobre aventura",
   "metrics": {},
   "feedback": {
     "child": {
       "tone": "positive",
-      "message": "Voce organizou bem a ideia principal.",
+      "message": "Você organizou bem a ideia principal.",
       "next_step": "Agora vamos melhorar uma parte do meio do texto."
     },
     "adult": {
-      "summary": "A crianca tem boa ideia central e precisa fortalecer encadeamento.",
+      "summary": "A criança tem boa ideia central e precisa fortalecer encadeamento.",
       "strengths": ["ideia principal clara"],
-      "attention_points": ["ligacao entre acontecimentos"],
+      "attention_points": ["ligação entre acontecimentos"],
       "recipe": [
-        "Peca para contar a historia oralmente em tres partes.",
-        "Anote começo, meio e fim em cartoes.",
+        "Peça para contar a história oralmente em três partes.",
+        "Anote começo, meio e fim em cartões.",
         "Depois peça para reescrever apenas o meio."
       ],
-      "avoid_saying": ["Seu texto esta confuso."]
+      "avoid_saying": ["Seu texto está confuso."]
     }
   },
   "artifacts": {}

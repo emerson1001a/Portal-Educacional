@@ -45,7 +45,7 @@ function normalizeFeedback(feedback) {
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
-    return json(res, 405, { ok: false, message: "Metodo nao permitido." });
+    return json(res, 405, { ok: false, message: "Método não permitido." });
   }
 
   const url = process.env.SUPABASE_URL;
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   const tokenSecret = process.env.PORTAL_ACTIVITY_TOKEN_SECRET || serviceRoleKey;
 
   if (!url || !anonKey || !serviceRoleKey || !tokenSecret) {
-    return json(res, 500, { ok: false, message: "Variaveis do Supabase nao configuradas." });
+    return json(res, 500, { ok: false, message: "Variáveis do Supabase não configuradas." });
   }
 
   const body = req.body || {};
@@ -67,23 +67,23 @@ export default async function handler(req, res) {
 
   if (portalToken) {
     const tokenData = verifyActivityToken(portalToken, tokenSecret);
-    if (!tokenData) return json(res, 401, { ok: false, message: "Token de atividade invalido." });
+    if (!tokenData) return json(res, 401, { ok: false, message: "Token de atividade inválido." });
     childId = tokenData.child_id;
     service = tokenData.service;
     ownerId = tokenData.owner_id;
   } else {
-    if (!bearer) return json(res, 401, { ok: false, message: "Sessao nao informada." });
+    if (!bearer) return json(res, 401, { ok: false, message: "Sessão não informada." });
     const userClient = createClient(url, anonKey, {
       global: { headers: { Authorization: `Bearer ${bearer}` } },
       auth: { persistSession: false }
     });
     const { data: userData, error: userError } = await userClient.auth.getUser(bearer);
-    if (userError || !userData?.user) return json(res, 401, { ok: false, message: "Sessao invalida." });
+    if (userError || !userData?.user) return json(res, 401, { ok: false, message: "Sessão inválida." });
     ownerId = userData.user.id;
   }
 
   if (!childId || !allowedServices.has(service)) {
-    return json(res, 400, { ok: false, message: "Informe child_id e service valido." });
+    return json(res, 400, { ok: false, message: "Informe child_id e service válido." });
   }
 
   const admin = createClient(url, serviceRoleKey, { auth: { persistSession: false } });
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
     .maybeSingle();
 
   if (linkError) return json(res, 500, { ok: false, message: linkError.message });
-  if (!link) return json(res, 403, { ok: false, message: "Crianca nao vinculada a esta conta." });
+  if (!link) return json(res, 403, { ok: false, message: "Criança não vinculada a esta conta." });
 
   const event = {
     child_id: childId,

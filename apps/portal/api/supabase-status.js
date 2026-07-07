@@ -7,7 +7,7 @@ export default async function handler(_req, res) {
   if (!url || !serviceRoleKey) {
     return res.status(500).json({
       ok: false,
-      message: "SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY nao configurada."
+      message: "SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY não configurada."
     });
   }
 
@@ -22,7 +22,7 @@ export default async function handler(_req, res) {
       return res.status(200).json({
         ok: false,
         connected: true,
-        message: "Conectou ao Supabase, mas as tabelas ainda nao parecem criadas.",
+        message: "Conectou ao Supabase, mas as tabelas ainda não parecem criadas.",
         details: error.message
       });
     }
@@ -30,7 +30,7 @@ export default async function handler(_req, res) {
     return res.status(200).json({
       ok: true,
       connected: true,
-      message: "Supabase configurado e tabela profiles acessivel."
+      message: "Supabase configurado e tabela profiles acessível."
     });
   } catch (error) {
     return res.status(500).json({

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portal Educacional | Evolucao da Aprendizagem</title>
-  <meta name="description" content="Portal para pais e professores acompanharem metas pedagogicas, atividades e evolucao dos estudantes.">
+  <title>Portal Educacional | Evolução da Aprendizagem</title>
+  <meta name="description" content="Portal para pais e professores acompanharem metas pedagógicas, atividades e evolução dos estudantes.">
   <style>
     :root {
       --ink: #102033;
@@ -301,7 +301,7 @@
 </head>
 <body>
   <header class="topbar">
-    <nav class="nav" aria-label="Navegacao principal">
+    <nav class="nav" aria-label="Navegação principal">
       <a class="brand" href="#">
         <span class="mark">E</span>
         <span>Portal Educacional</span>
@@ -317,13 +317,13 @@
     <section class="hero" id="publicView">
       <div class="hero-copy">
         <span class="pill">pais e professores</span>
-        <h1>Reforco escolar com metas, atividades e evolucao visivel.</h1>
-        <p class="lead">O adulto informa o que precisa ser reforcado, a crianca pratica nos modulos e o portal organiza evidencias para mostrar progresso com clareza.</p>
+        <h1>Reforço escolar com metas, atividades e evolução visível.</h1>
+        <p class="lead">O adulto informa o que precisa ser reforçado, a criança pratica nos módulos e o portal organiza evidências para mostrar progresso com clareza.</p>
       </div>
 
       <aside class="panel">
         <h2>Entrar no portal</h2>
-        <p class="muted">Crie uma conta para cadastrar criancas, registrar metas pedagogicas e acompanhar a evolucao.</p>
+        <p class="muted">Crie uma conta para cadastrar crianças, registrar metas pedagógicas e acompanhar a evolução.</p>
         <div class="tabs">
           <button class="tab active" id="loginTab" type="button">Entrar</button>
           <button class="tab" id="signupTab" type="button">Criar conta</button>
@@ -339,7 +339,7 @@
           </label>
           <label>
             Senha
-            <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Minimo de 6 caracteres" required>
+            <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Mínimo de 6 caracteres" required>
           </label>
           <button class="button" id="authSubmit" type="submit">Entrar</button>
           <button class="button ghost" id="resetButton" type="button">Esqueci minha senha</button>
@@ -358,12 +358,12 @@
     <section class="app hidden" id="appView">
       <aside class="sidebar">
         <strong>Aluno ativo</strong>
-        <p class="muted small">Escolha a crianca antes de abrir uma atividade ou registrar uma meta.</p>
+        <p class="muted small">Escolha a criança antes de abrir uma atividade ou registrar uma meta.</p>
         <div class="child-list" id="childrenList"></div>
         <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
         <form class="stack" id="childForm">
           <label>
-            Nome da crianca
+            Nome da criança
             <input id="childNameInput" placeholder="Ex.: Miguel" required>
           </label>
           <div class="row">
@@ -372,11 +372,11 @@
               <input id="birthYearInput" type="number" min="2008" max="2030" placeholder="2015">
             </label>
             <label style="flex:1 1 120px">
-              Serie
+              Série
               <input id="gradeInput" placeholder="5o ano">
             </label>
           </div>
-          <button class="button" type="submit">Adicionar crianca</button>
+          <button class="button" type="submit">Adicionar criança</button>
         </form>
       </aside>
 
@@ -387,7 +387,7 @@
           <div class="row between">
             <div>
               <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
-              <p class="muted" id="welcomeCopy">Cadastre ou selecione uma crianca para iniciar o acompanhamento.</p>
+              <p class="muted" id="welcomeCopy">Cadastre ou selecione uma criança para iniciar o acompanhamento.</p>
             </div>
             <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
           </div>
@@ -395,12 +395,12 @@
 
         <section class="card">
           <h2>Resumo do desenvolvimento</h2>
-          <p class="muted">Aqui o adulto ve o que foi praticado, em quais areas ha evidencias e o que fazer em seguida.</p>
+          <p class="muted">Aqui o adulto vê o que foi praticado, em quais áreas há evidências e o que fazer em seguida.</p>
           <div class="metrics">
             <div class="metric">
               <span class="muted small">Atividades salvas</span>
               <strong id="metricActivities">0</strong>
-              <span class="small">evidencias no historico</span>
+              <span class="small">evidências no histórico</span>
             </div>
             <div class="metric">
               <span class="muted small">Metas ativas</span>
@@ -408,7 +408,7 @@
               <span class="small">necessidades registradas</span>
             </div>
             <div class="metric">
-              <span class="muted small">Ultima pratica</span>
+              <span class="muted small">Última prática</span>
               <strong id="metricLast">-</strong>
               <span class="small">registro mais recente</span>
             </div>
@@ -416,66 +416,66 @@
         </section>
 
         <section class="card">
-          <h2>Evolucao por area</h2>
-          <p class="muted">O portal cruza metas e atividades para mostrar onde ja existe pratica e onde ainda falta evidencia.</p>
+          <h2>Evolução por área</h2>
+          <p class="muted">O portal cruza metas e atividades para mostrar onde já existe prática e onde ainda falta evidência.</p>
           <div class="evolution-grid" id="evolutionGrid"></div>
         </section>
 
         <section class="card">
-          <h2>O que precisa reforcar?</h2>
+          <h2>O que precisa reforçar?</h2>
           <p class="muted">Registre o que o pai ou professor percebeu. O portal transforma isso em acompanhamento.</p>
           <form class="stack" id="goalForm">
             <div class="row">
               <label style="flex:1 1 170px">
-                Area
+                Área
                 <select id="goalAreaInput">
                   <option value="leitura">Leitura</option>
                   <option value="escrita">Escrita</option>
-                  <option value="matematica">Matematica</option>
-                  <option value="organizacao">Organizacao</option>
+                  <option value="matematica">Matemática</option>
+                  <option value="organizacao">Organização</option>
                   <option value="outro">Outro</option>
                 </select>
               </label>
               <label style="flex:2 1 260px">
                 Necessidade
-                <input id="goalTitleInput" placeholder="Ex.: melhorar inferencia em textos" required>
+                <input id="goalTitleInput" placeholder="Ex.: melhorar inferência em textos" required>
               </label>
             </div>
             <label>
-              Observacao
-              <textarea id="goalDescriptionInput" placeholder="O que voce percebeu? Em que situacoes aparece?"></textarea>
+              Observação
+              <textarea id="goalDescriptionInput" placeholder="O que você percebeu? Em que situações aparece?"></textarea>
             </label>
-            <button class="button blue" type="submit">Salvar meta pedagogica</button>
+            <button class="button blue" type="submit">Salvar meta pedagógica</button>
           </form>
           <div class="goal-list" id="goalsList"></div>
         </section>
 
         <section class="card">
           <h2>Guia para o adulto</h2>
-          <p class="muted">Feedback bom nao machuca nem assusta. Ele mostra um caminho pequeno e repetivel.</p>
+          <p class="muted">Feedback bom não machuca nem assusta. Ele mostra um caminho pequeno e repetível.</p>
           <div class="goal-list">
             <article class="goal-card">
-              <span class="pill">crianca</span>
-              <strong>Curto, positivo e acionavel</strong>
-              <p class="muted">Mostre uma conquista real e proponha uma unica proxima tentativa.</p>
+              <span class="pill">criança</span>
+              <strong>Curto, positivo e acionável</strong>
+              <p class="muted">Mostre uma conquista real e proponha uma única próxima tentativa.</p>
             </article>
             <article class="goal-card">
               <span class="pill">adulto</span>
               <strong>Completo, mas com receita</strong>
-              <p class="muted">Explique o que apareceu, onde reforcar e o que fazer nos proximos dias.</p>
+              <p class="muted">Explique o que apareceu, onde reforçar e o que fazer nos próximos dias.</p>
             </article>
           </div>
         </section>
 
         <section class="card">
-          <h2>Modulos de aprendizagem</h2>
-          <p class="muted">Novos modulos podem ser plugados ao catalogo e usar o mesmo historico central.</p>
+          <h2>Módulos de aprendizagem</h2>
+          <p class="muted">Novos módulos podem ser plugados ao catálogo e usar o mesmo histórico central.</p>
           <div class="services" id="modulesGrid"></div>
         </section>
 
         <section class="card">
-          <h2>Historico unificado</h2>
-          <p class="muted">As evidencias dos modulos aparecem aqui por ordem de data.</p>
+          <h2>Histórico unificado</h2>
+          <p class="muted">As evidências dos módulos aparecem aqui por ordem de data.</p>
           <div class="timeline" id="timeline"></div>
         </section>
       </div>
@@ -584,14 +584,14 @@
     }
 
     function areaLabel(area) {
-      return { leitura: "Leitura", escrita: "Escrita", matematica: "Matematica", organizacao: "Organizacao", outro: "Outro" }[area] || area;
+      return { leitura: "Leitura", escrita: "Escrita", matematica: "Matemática", organizacao: "Organização", outro: "Outro" }[area] || area;
     }
 
     function recipeForArea(area) {
       return {
-        leitura: "Leia um trecho curto, peca para apontar a pista no texto e so depois responder.",
-        escrita: "Escolha um foco por vez: ideia, comeco/meio/fim, detalhe ou pontuacao.",
-        matematica: "Treine 5 minutos, pare antes do cansaco e repita em outro momento.",
+        leitura: "Leia um trecho curto, peça para apontar a pista no texto e só depois responder.",
+        escrita: "Escolha um foco por vez: ideia, começo/meio/fim, detalhe ou pontuação.",
+        matematica: "Treine 5 minutos, pare antes do cansaço e repita em outro momento.",
         organizacao: "Use passos visuais: primeiro, depois, por fim.",
         outro: "Defina uma tarefa pequena, observe a tentativa e registre o que melhorou."
       }[area] || "Defina uma tarefa pequena, observe a tentativa e registre o que melhorou.";
@@ -606,14 +606,14 @@
       const child = activeChild();
       els.childrenList.innerHTML = "";
       if (!state.children.length) {
-        els.childrenList.innerHTML = '<div class="notice">Cadastre a primeira crianca para ativar o acompanhamento.</div>';
+        els.childrenList.innerHTML = '<div class="notice">Cadastre a primeira criança para ativar o acompanhamento.</div>';
         return;
       }
       state.children.forEach((item) => {
         const button = document.createElement("button");
         button.type = "button";
         button.className = `child-button${item.id === child?.id ? " active" : ""}`;
-        button.innerHTML = `<span>${item.full_name}</span><span class="pill">${item.grade || "sem serie"}</span>`;
+        button.innerHTML = `<span>${item.full_name}</span><span class="pill">${item.grade || "sem série"}</span>`;
         button.addEventListener("click", async () => {
           state.activeChildId = item.id;
           localStorage.setItem("portal.activeChildId", item.id);
@@ -627,7 +627,7 @@
     function renderDashboard() {
       const child = activeChild();
       els.welcomeTitle.textContent = child ? `Acompanhamento de ${child.full_name}` : "Bem-vindo ao Portal Educacional";
-      els.welcomeCopy.textContent = child ? "Registre metas, abra modulos e acompanhe evidencias de evolucao." : "Cadastre ou selecione uma crianca para iniciar.";
+      els.welcomeCopy.textContent = child ? "Registre metas, abra módulos e acompanhe evidências de evolução." : "Cadastre ou selecione uma criança para iniciar.";
       els.metricActivities.textContent = state.events.length;
       els.metricGoals.textContent = state.goals.length;
       els.metricLast.textContent = state.events[0] ? formatDate(state.events[0].occurred_at || state.events[0].created_at) : "-";
@@ -637,7 +637,7 @@
       const child = activeChild();
       els.evolutionGrid.innerHTML = "";
       if (!child) {
-        els.evolutionGrid.innerHTML = '<div class="notice">Selecione uma crianca para ver evolucao.</div>';
+        els.evolutionGrid.innerHTML = '<div class="notice">Selecione uma criança para ver evolução.</div>';
         return;
       }
       const map = { leitura: ["interpretacao"], escrita: ["redacao"], matematica: ["tabuada"] };
@@ -648,9 +648,9 @@
         card.className = "evolution-card";
         card.innerHTML = `
           <span class="pill">${areaLabel(area)}</span>
-          <strong>${evidences.length ? `${evidences.length} evidencia${evidences.length === 1 ? "" : "s"}` : "sem evidencia ainda"}</strong>
-          <p class="muted">${goals.length ? `${goals.length} meta${goals.length === 1 ? "" : "s"} ativa${goals.length === 1 ? "" : "s"}.` : "Sem meta ativa nesta area."}</p>
-          <p class="small">${evidences[0] ? `Ultima pratica: ${formatDate(evidences[0].occurred_at || evidences[0].created_at)}` : recipeForArea(area)}</p>
+          <strong>${evidences.length ? `${evidences.length} evidência${evidences.length === 1 ? "" : "s"}` : "sem evidência ainda"}</strong>
+          <p class="muted">${goals.length ? `${goals.length} meta${goals.length === 1 ? "" : "s"} ativa${goals.length === 1 ? "" : "s"}.` : "Sem meta ativa nesta área."}</p>
+          <p class="small">${evidences[0] ? `Última prática: ${formatDate(evidences[0].occurred_at || evidences[0].created_at)}` : recipeForArea(area)}</p>
         `;
         els.evolutionGrid.appendChild(card);
       });
@@ -660,11 +660,11 @@
       const child = activeChild();
       els.goalsList.innerHTML = "";
       if (!child) {
-        els.goalsList.innerHTML = '<div class="notice">Selecione uma crianca para definir metas.</div>';
+        els.goalsList.innerHTML = '<div class="notice">Selecione uma criança para definir metas.</div>';
         return;
       }
       if (!state.goals.length) {
-        els.goalsList.innerHTML = '<div class="notice">Ainda nao ha metas. Registre a primeira necessidade que voce quer reforcar.</div>';
+        els.goalsList.innerHTML = '<div class="notice">Ainda não há metas. Registre a primeira necessidade que você quer reforçar.</div>';
         return;
       }
       state.goals.forEach((goal) => {
@@ -677,11 +677,11 @@
         card.innerHTML = `
           <span class="pill">${areaLabel(goal.area)}</span>
           <strong>${goal.title}</strong>
-          <p class="muted">${goal.description || "Sem observacao adicional."}</p>
+          <p class="muted">${goal.description || "Sem observação adicional."}</p>
           <p class="small"><strong>Receita inicial:</strong> ${recipeForArea(goal.area)}</p>
           <div class="row between">
-            <span class="small">${evidences.length} evidencia${evidences.length === 1 ? "" : "s"} relacionada${evidences.length === 1 ? "" : "s"}</span>
-            <span class="pill">${goal.status === "done" ? "concluida" : "ativa"}</span>
+            <span class="small">${evidences.length} evidência${evidences.length === 1 ? "" : "s"} relacionada${evidences.length === 1 ? "" : "s"}</span>
+            <span class="pill">${goal.status === "done" ? "concluída" : "ativa"}</span>
           </div>
         `;
         els.goalsList.appendChild(card);
@@ -719,7 +719,7 @@
     function renderModules() {
       els.modulesGrid.innerHTML = "";
       if (!state.modules.length) {
-        els.modulesGrid.innerHTML = '<div class="notice">Catalogo de modulos ainda nao carregado.</div>';
+        els.modulesGrid.innerHTML = '<div class="notice">Catálogo de módulos ainda não carregado.</div>';
         return;
       }
       state.modules.forEach((module) => {
@@ -734,13 +734,13 @@
             <p class="muted">${module.description || ""}</p>
           </div>
           <button class="button ${module.id === "redacao" ? "coral" : module.id === "tabuada" ? "secondary" : ""}" type="button" ${available ? "" : "disabled"}>
-            ${available ? `Abrir ${module.short_name || module.name}` : "Publicacao pendente"}
+            ${available ? `Abrir ${module.short_name || module.name}` : "Publicação pendente"}
           </button>
         `;
         const button = card.querySelector("button");
         button.addEventListener("click", async () => {
           if (!activeChild()) {
-            message("Cadastre ou selecione uma crianca antes de abrir uma atividade.", true);
+            message("Cadastre ou selecione uma criança antes de abrir uma atividade.", true);
             return;
           }
           button.disabled = true;
@@ -755,11 +755,11 @@
       const child = activeChild();
       els.timeline.innerHTML = "";
       if (!child) {
-        els.timeline.innerHTML = '<div class="notice">Selecione uma crianca para carregar o historico.</div>';
+        els.timeline.innerHTML = '<div class="notice">Selecione uma criança para carregar o histórico.</div>';
         return;
       }
       if (!state.events.length) {
-        els.timeline.innerHTML = '<div class="notice">Ainda nao ha registros. Ao conectar os modulos, as evidencias aparecerao aqui.</div>';
+        els.timeline.innerHTML = '<div class="notice">Ainda não há registros. Ao conectar os módulos, as evidências aparecerão aqui.</div>';
         return;
       }
       state.events.slice(0, 12).forEach((event) => {
@@ -817,7 +817,7 @@
         .order("created_at", { ascending: true });
       if (error) {
         state.children = [];
-        message(`Erro ao carregar criancas: ${error.message}`, true);
+        message(`Erro ao carregar crianças: ${error.message}`, true);
       } else {
         state.children = (data || []).map((row) => row.children).filter(Boolean);
         if (!state.children.some((child) => child.id === state.activeChildId)) {
@@ -840,7 +840,7 @@
         .order("occurred_at", { ascending: false })
         .limit(30);
       state.events = error ? [] : data || [];
-      if (error) message(`Historico ainda nao disponivel: ${error.message}`, true);
+      if (error) message(`Histórico ainda não disponível: ${error.message}`, true);
     }
 
     async function loadGoals() {
@@ -857,7 +857,7 @@
         .order("created_at", { ascending: false })
         .limit(20);
       state.goals = error ? [] : data || [];
-      if (error) message(`Metas ainda nao disponiveis: ${error.message}`, true);
+      if (error) message(`Metas ainda não disponíveis: ${error.message}`, true);
     }
 
     async function loadChildData() {
@@ -889,7 +889,7 @@
         state.session = session;
         if (event === "PASSWORD_RECOVERY") {
           els.newPasswordForm.classList.remove("hidden");
-          message("Digite a nova senha para concluir a recuperacao.");
+          message("Digite a nova senha para concluir a recuperação.");
         }
         if (session) {
           clearMessage();
@@ -920,17 +920,17 @@
         ? await state.supabase.auth.signUp({ email, password, options: { data: { full_name: fullName || email }, emailRedirectTo: window.location.origin } })
         : await state.supabase.auth.signInWithPassword({ email, password });
       if (result.error) message(result.error.message, true);
-      else message(state.mode === "signup" && !result.data.session ? "Conta criada. Veja seu e-mail se houver confirmacao." : "Conta conectada.");
+      else message(state.mode === "signup" && !result.data.session ? "Conta criada. Veja seu e-mail se houver confirmação." : "Conta conectada.");
     });
 
     els.resetButton.addEventListener("click", async () => {
       const email = els.emailInput.value.trim();
       if (!email) {
-        message("Digite seu e-mail para receber o link de redefinicao.", true);
+        message("Digite seu e-mail para receber o link de redefinição.", true);
         return;
       }
       const { error } = await state.supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-      message(error ? error.message : "Enviamos o link de redefinicao para seu e-mail.", Boolean(error));
+      message(error ? error.message : "Enviamos o link de redefinição para seu e-mail.", Boolean(error));
     });
 
     els.newPasswordForm.addEventListener("submit", async (event) => {
@@ -975,7 +975,7 @@
       clearMessage();
       const child = activeChild();
       if (!child) {
-        message("Cadastre ou selecione uma crianca antes de salvar uma meta.", true);
+        message("Cadastre ou selecione uma criança antes de salvar uma meta.", true);
         return;
       }
       const submitButton = els.goalForm.querySelector('button[type="submit"]');
@@ -993,7 +993,7 @@
           return;
         }
         els.goalForm.reset();
-        message("Meta pedagogica salva e vinculada ao aluno selecionado.");
+        message("Meta pedagógica salva e vinculada ao aluno selecionado.");
         await loadGoals();
         render();
       } finally {

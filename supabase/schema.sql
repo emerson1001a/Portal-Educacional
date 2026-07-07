@@ -137,15 +137,15 @@ declare
   created_child public.children;
 begin
   if auth.uid() is null then
-    raise exception 'Usuario nao autenticado.';
+    raise exception 'Usuário não autenticado.';
   end if;
 
   if nullif(trim(child_full_name), '') is null then
-    raise exception 'Nome da crianca e obrigatorio.';
+    raise exception 'Nome da criança é obrigatório.';
   end if;
 
   insert into public.profiles (id, full_name)
-  values (auth.uid(), coalesce(auth.jwt()->>'email', 'Responsavel'))
+  values (auth.uid(), coalesce(auth.jwt()->>'email', 'Responsável'))
   on conflict (id) do nothing;
 
   insert into public.children (created_by, full_name, birth_date, grade, notes)

@@ -5,7 +5,7 @@ export default function handler(_req, res) {
   if (!supabaseUrl || !supabaseAnonKey) {
     return res.status(500).json({
       ok: false,
-      message: "SUPABASE_URL ou SUPABASE_ANON_KEY nao configurada."
+      message: "SUPABASE_URL ou SUPABASE_ANON_KEY não configurada."
     });
   }
 
