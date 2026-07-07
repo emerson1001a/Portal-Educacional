@@ -284,10 +284,83 @@
       align-items: center;
     }
 
+    .child-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      overflow: auto;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top left, rgba(11,143,134,.16), transparent 34%),
+        linear-gradient(135deg, #f7fbff, #fff8eb);
+    }
+
+    .child-shell {
+      width: min(1080px, 100%);
+      min-height: calc(100svh - 48px);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 18px;
+      margin: 0 auto;
+    }
+
+    .child-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.9);
+      box-shadow: var(--shadow);
+    }
+
+    .child-title {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1;
+    }
+
+    .child-stage {
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: clamp(18px, 4vw, 34px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.82);
+      box-shadow: var(--shadow);
+    }
+
+    .child-modules {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .child-module-card {
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px;
+      border: 2px solid rgba(16,32,51,.08);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .child-module-card h3 {
+      margin-bottom: 6px;
+      font-size: 24px;
+    }
+
     @media (max-width: 980px) {
-      .hero, .app, .metrics, .evolution-grid, .services { grid-template-columns: 1fr; }
+      .hero, .app, .metrics, .evolution-grid, .services, .child-modules { grid-template-columns: 1fr; }
       .hero-copy { min-height: 440px; }
       .sidebar { position: static; }
+      .child-hero { align-items: stretch; flex-direction: column; }
     }
 
     @media (max-width: 640px) {
@@ -389,7 +462,10 @@
               <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
               <p class="muted" id="welcomeCopy">Cadastre ou selecione uma criança para iniciar o acompanhamento.</p>
             </div>
-            <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
+            <div class="row">
+              <button class="button" id="openChildModeButton" type="button">Abrir área da criança</button>
+              <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
+            </div>
           </div>
         </section>
 
@@ -482,6 +558,23 @@
     </section>
   </main>
 
+  <section class="child-overlay hidden" id="childOverlay" aria-label="Área da criança">
+    <div class="child-shell">
+      <header class="child-hero">
+        <div>
+          <span class="pill">área da criança</span>
+          <h2 class="child-title" id="childModeTitle">Escolha uma atividade</h2>
+          <p class="muted" id="childModeCopy">Aqui aparecem apenas as atividades liberadas pelo adulto.</p>
+        </div>
+        <button class="button ghost" id="closeChildModeButton" type="button">Voltar para o adulto</button>
+      </header>
+
+      <div class="child-stage">
+        <div class="child-modules" id="childModulesGrid"></div>
+      </div>
+    </div>
+  </section>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const state = {
@@ -520,6 +613,7 @@
       childrenList: document.querySelector("#childrenList"),
       welcomeTitle: document.querySelector("#welcomeTitle"),
       welcomeCopy: document.querySelector("#welcomeCopy"),
+      openChildModeButton: document.querySelector("#openChildModeButton"),
       refreshButton: document.querySelector("#refreshButton"),
       metricActivities: document.querySelector("#metricActivities"),
       metricGoals: document.querySelector("#metricGoals"),
@@ -531,7 +625,12 @@
       goalDescriptionInput: document.querySelector("#goalDescriptionInput"),
       goalsList: document.querySelector("#goalsList"),
       modulesGrid: document.querySelector("#modulesGrid"),
-      timeline: document.querySelector("#timeline")
+      timeline: document.querySelector("#timeline"),
+      childOverlay: document.querySelector("#childOverlay"),
+      closeChildModeButton: document.querySelector("#closeChildModeButton"),
+      childModeTitle: document.querySelector("#childModeTitle"),
+      childModeCopy: document.querySelector("#childModeCopy"),
+      childModulesGrid: document.querySelector("#childModulesGrid")
     };
 
     function message(text, isError = false) {
@@ -751,6 +850,62 @@
       });
     }
 
+    function renderChildModules() {
+      const child = activeChild();
+      els.childModeTitle.textContent = child ? `Olá, ${child.full_name}!` : "Escolha uma atividade";
+      els.childModeCopy.textContent = child
+        ? "Escolha uma atividade para praticar. O adulto acompanha depois, com calma."
+        : "Peça para um adulto escolher seu nome antes de começar.";
+      els.childModulesGrid.innerHTML = "";
+
+      if (!child) {
+        els.childModulesGrid.innerHTML = '<div class="notice">Nenhuma criança selecionada ainda.</div>';
+        return;
+      }
+
+      const availableModules = state.modules.filter((module) => module.status === "available" && module.url);
+      if (!availableModules.length) {
+        els.childModulesGrid.innerHTML = '<div class="notice">As atividades ainda não estão disponíveis.</div>';
+        return;
+      }
+
+      availableModules.forEach((module) => {
+        const card = document.createElement("article");
+        card.className = "child-module-card";
+        card.innerHTML = `
+          <div>
+            <div class="service-icon ${module.accent || "reading"}">${module.icon || "M"}</div>
+            <span class="pill">${areaLabel(module.area)}</span>
+            <h3>${module.short_name || module.name}</h3>
+            <p class="muted">${module.description || "Atividade liberada pelo adulto."}</p>
+          </div>
+          <button class="button ${module.id === "redacao" ? "coral" : ""}" type="button">Começar</button>
+        `;
+        const button = card.querySelector("button");
+        button.addEventListener("click", async () => {
+          button.disabled = true;
+          button.textContent = "Abrindo...";
+          window.location.href = moduleUrl(module, await activityToken(module));
+        });
+        els.childModulesGrid.appendChild(card);
+      });
+    }
+
+    function openChildMode() {
+      if (!activeChild()) {
+        message("Selecione uma criança antes de abrir a área da criança.", true);
+        return;
+      }
+      renderChildModules();
+      els.childOverlay.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeChildMode() {
+      els.childOverlay.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+
     function renderTimeline() {
       const child = activeChild();
       els.timeline.innerHTML = "";
@@ -787,6 +942,7 @@
       renderEvolution();
       renderGoals();
       renderModules();
+      renderChildModules();
       renderTimeline();
     }
 
@@ -908,6 +1064,8 @@
     els.loginTab.addEventListener("click", () => setMode("login"));
     els.signupTab.addEventListener("click", () => setMode("signup"));
     els.refreshButton.addEventListener("click", refreshAll);
+    els.openChildModeButton.addEventListener("click", openChildMode);
+    els.closeChildModeButton.addEventListener("click", closeChildMode);
     els.logoutButton.addEventListener("click", async () => state.supabase.auth.signOut());
 
     els.authForm.addEventListener("submit", async (event) => {

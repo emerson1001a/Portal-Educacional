@@ -16,6 +16,12 @@ Ele informa o que percebe na criança, escolhe uma meta e abre atividades adequa
 
 A criança ou adolescente usa os módulos de aprendizagem. A experiência precisa preservar autoestima e autoria.
 
+## Separação de ambientes
+
+A criança não deve entrar diretamente no mesmo painel dos pais ou professores. O painel adulto contém histórico, metas, sínteses e orientações pedagógicas; a área da criança deve mostrar apenas atividades liberadas, com linguagem simples e positiva.
+
+No primeiro estágio, o adulto entra no portal, seleciona a criança e abre uma área infantil limpa. Em uma etapa futura, essa área pode evoluir para PIN, convite, turma ou conta infantil, sem expor relatórios sensíveis.
+
 ## Promessa
 
 Transformar observações soltas em acompanhamento pedagógico simples:
