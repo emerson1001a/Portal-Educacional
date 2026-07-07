@@ -66,12 +66,39 @@ create table if not exists public.development_notes (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.activity_events (
+  id uuid primary key default gen_random_uuid(),
+  child_id uuid not null references public.children(id) on delete cascade,
+  owner_id uuid not null references public.profiles(id) on delete cascade,
+  service text not null check (service in ('redacao', 'interpretacao', 'tabuada')),
+  activity_type text,
+  title text,
+  occurred_at timestamptz not null default now(),
+  duration_ms integer,
+  metrics jsonb not null default '{}'::jsonb,
+  feedback jsonb not null default '{}'::jsonb,
+  artifacts jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.progress_snapshots (
+  id uuid primary key default gen_random_uuid(),
+  child_id uuid not null references public.children(id) on delete cascade,
+  owner_id uuid not null references public.profiles(id) on delete cascade,
+  period_start date not null,
+  period_end date not null,
+  summary jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.children enable row level security;
 alter table public.child_guardians enable row level security;
 alter table public.interpretation_sessions enable row level security;
 alter table public.writing_sessions enable row level security;
 alter table public.development_notes enable row level security;
+alter table public.activity_events enable row level security;
+alter table public.progress_snapshots enable row level security;
 
 create or replace function public.is_admin()
 returns boolean
@@ -111,15 +138,37 @@ on public.profiles for update
 using (id = auth.uid())
 with check (id = auth.uid());
 
+drop policy if exists "profiles_insert_own" on public.profiles;
+create policy "profiles_insert_own"
+on public.profiles for insert
+with check (id = auth.uid());
+
 drop policy if exists "children_select_linked" on public.children;
 create policy "children_select_linked"
 on public.children for select
 using (public.can_access_child(id));
 
+drop policy if exists "children_insert_authenticated" on public.children;
+create policy "children_insert_authenticated"
+on public.children for insert
+to authenticated
+with check (true);
+
+drop policy if exists "children_update_linked" on public.children;
+create policy "children_update_linked"
+on public.children for update
+using (public.can_access_child(id))
+with check (public.can_access_child(id));
+
 drop policy if exists "child_guardians_select_linked" on public.child_guardians;
 create policy "child_guardians_select_linked"
 on public.child_guardians for select
 using (guardian_id = auth.uid() or public.can_access_child(child_id));
+
+drop policy if exists "child_guardians_insert_own" on public.child_guardians;
+create policy "child_guardians_insert_own"
+on public.child_guardians for insert
+with check (guardian_id = auth.uid());
 
 drop policy if exists "interpretation_select_linked" on public.interpretation_sessions;
 create policy "interpretation_select_linked"
@@ -135,6 +184,32 @@ drop policy if exists "notes_select_linked" on public.development_notes;
 create policy "notes_select_linked"
 on public.development_notes for select
 using (public.can_access_child(child_id));
+
+drop policy if exists "events_select_linked" on public.activity_events;
+create policy "events_select_linked"
+on public.activity_events for select
+using (owner_id = auth.uid() and public.can_access_child(child_id));
+
+drop policy if exists "events_insert_own" on public.activity_events;
+create policy "events_insert_own"
+on public.activity_events for insert
+with check (owner_id = auth.uid() and public.can_access_child(child_id));
+
+drop policy if exists "events_update_own" on public.activity_events;
+create policy "events_update_own"
+on public.activity_events for update
+using (owner_id = auth.uid() and public.can_access_child(child_id))
+with check (owner_id = auth.uid() and public.can_access_child(child_id));
+
+drop policy if exists "snapshots_select_linked" on public.progress_snapshots;
+create policy "snapshots_select_linked"
+on public.progress_snapshots for select
+using (owner_id = auth.uid() and public.can_access_child(child_id));
+
+drop policy if exists "snapshots_insert_own" on public.progress_snapshots;
+create policy "snapshots_insert_own"
+on public.progress_snapshots for insert
+with check (owner_id = auth.uid() and public.can_access_child(child_id));
 
 create or replace function public.handle_new_user()
 returns trigger

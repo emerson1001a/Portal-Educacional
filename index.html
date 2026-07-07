@@ -3,21 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portal Educacional | Leitura e Escrita</title>
-  <meta name="description" content="Portal educacional com atividades de interpretacao de texto e pratica de redacao.">
+  <title>Portal Educacional | Leitura, Escrita e Tabuada</title>
+  <meta name="description" content="Portal educacional para organizar leitura, escrita, tabuada e acompanhamento do desenvolvimento do estudante.">
   <style>
     :root {
       --ink: #102033;
-      --muted: #5a6878;
-      --line: #d9e2ec;
+      --muted: #66758a;
+      --line: #d9e3ef;
       --paper: #ffffff;
-      --soft: #f5f8fb;
-      --navy: #102033;
-      --teal: #0c8f8f;
-      --coral: #db5b46;
-      --gold: #d49b20;
-      --green: #31785d;
-      --shadow: 0 18px 48px rgba(20, 42, 65, .14);
+      --soft: #f4f8fb;
+      --wash: #e9f8f6;
+      --teal: #0b8f86;
+      --blue: #2563eb;
+      --coral: #dd5b46;
+      --gold: #d69a1d;
+      --green: #2f7a59;
+      --danger: #b42318;
+      --shadow: 0 18px 46px rgba(16, 32, 51, .12);
     }
 
     * { box-sizing: border-box; }
@@ -25,112 +27,97 @@
     body {
       margin: 0;
       color: var(--ink);
-      background: var(--paper);
+      background: var(--soft);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
 
     .topbar {
-      position: fixed;
-      z-index: 20;
+      position: sticky;
       top: 0;
-      left: 0;
-      right: 0;
-      border-bottom: 1px solid rgba(255,255,255,.22);
-      background: rgba(16, 32, 51, .78);
-      color: white;
+      z-index: 20;
+      border-bottom: 1px solid rgba(16, 32, 51, .08);
+      background: rgba(255, 255, 255, .9);
       backdrop-filter: blur(14px);
     }
 
     .nav {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       min-height: 64px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
+      gap: 16px;
     }
 
     .brand {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      font-weight: 800;
-      letter-spacing: 0;
+      font-weight: 850;
     }
 
     .mark {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       display: grid;
       place-items: center;
       border-radius: 8px;
-      background: linear-gradient(135deg, var(--teal), var(--gold));
       color: white;
-      font-weight: 900;
-      box-shadow: 0 8px 24px rgba(12, 143, 143, .34);
+      background: linear-gradient(135deg, var(--teal), var(--gold));
+      box-shadow: 0 10px 26px rgba(11, 143, 134, .26);
     }
 
-    .navlinks {
+    .nav-actions {
       display: flex;
       align-items: center;
       gap: 10px;
+      color: var(--muted);
       font-size: 14px;
-      color: rgba(255,255,255,.88);
     }
 
-    .navlinks a {
-      padding: 9px 11px;
-      border-radius: 8px;
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 30px 0 46px;
     }
-
-    .navlinks a:hover { background: rgba(255,255,255,.12); }
 
     .hero {
-      position: relative;
-      min-height: 760px;
-      min-height: min(760px, 100svh);
+      min-height: calc(100svh - 64px);
       display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(340px, .78fr);
+      gap: 28px;
       align-items: center;
-      overflow: hidden;
-      background-image:
-        linear-gradient(90deg, rgba(7, 18, 31, .82) 0%, rgba(7, 18, 31, .62) 42%, rgba(7, 18, 31, .18) 78%),
-        url("assets/hero-educacao.png");
-      background-size: cover;
-      background-position: center;
+      padding: 22px 0 34px;
+    }
+
+    .hero-copy {
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 8px;
+      padding: clamp(28px, 5vw, 54px);
       color: white;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 140px;
-      background: linear-gradient(180deg, rgba(255,255,255,0), var(--soft));
-      pointer-events: none;
-    }
-
-    .hero-inner {
-      position: relative;
-      z-index: 2;
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 82px 0 54px;
+      background:
+        linear-gradient(90deg, rgba(7, 18, 31, .88), rgba(7, 18, 31, .44)),
+        url("assets/hero-educacao.png") center / cover;
+      box-shadow: var(--shadow);
     }
 
     .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin: 0 0 18px;
-      color: rgba(255,255,255,.88);
+      margin: 0 0 14px;
       font-size: 14px;
-      font-weight: 750;
+      font-weight: 800;
+      color: rgba(255, 255, 255, .86);
     }
 
     .dot {
@@ -138,29 +125,108 @@
       height: 9px;
       border-radius: 50%;
       background: var(--gold);
-      box-shadow: 0 0 0 6px rgba(212,155,32,.18);
+      box-shadow: 0 0 0 6px rgba(214, 154, 29, .18);
     }
 
+    h1, h2, h3, p { margin-top: 0; }
+
     h1 {
-      margin: 0;
-      max-width: 760px;
-      font-size: clamp(38px, 7vw, 72px);
+      max-width: 780px;
+      margin-bottom: 18px;
+      font-size: clamp(38px, 6vw, 68px);
       line-height: .98;
       letter-spacing: 0;
     }
 
-    .hero-copy {
-      max-width: 650px;
-      margin: 18px 0 0;
-      color: rgba(255,255,255,.9);
+    .lead {
+      max-width: 680px;
+      margin-bottom: 0;
+      color: rgba(255, 255, 255, .88);
       font-size: clamp(17px, 2vw, 21px);
     }
 
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      padding: 22px 22px 0;
+    }
+
+    .panel-body {
+      padding: 22px;
+    }
+
+    .panel h2 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 18px 0;
+      padding: 4px;
+      border-radius: 8px;
+      background: #edf3f8;
+    }
+
+    .tab {
+      min-height: 40px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .tab.active {
+      color: var(--ink);
+      background: white;
+      box-shadow: 0 6px 18px rgba(16, 32, 51, .08);
+    }
+
+    .form-grid {
+      display: grid;
       gap: 12px;
-      margin-top: 24px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 82px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(11, 143, 134, .14);
     }
 
     .button {
@@ -168,218 +234,252 @@
       align-items: center;
       justify-content: center;
       min-height: 44px;
-      padding: 11px 16px;
-      border-radius: 8px;
-      font-weight: 800;
+      padding: 10px 15px;
       border: 1px solid transparent;
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      border-radius: 8px;
+      color: white;
+      background: var(--teal);
+      font-weight: 850;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
     }
 
     .button:hover {
       transform: translateY(-1px);
-      box-shadow: 0 12px 28px rgba(0,0,0,.18);
+      box-shadow: 0 12px 24px rgba(16, 32, 51, .16);
     }
 
-    .primary { background: var(--coral); color: white; }
-    .secondary { background: rgba(255,255,255,.94); color: var(--navy); }
-
-    main { background: var(--soft); }
-
-    .section {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 74px 0;
+    .button.secondary {
+      color: var(--ink);
+      background: #e8eef5;
     }
 
-    .section-head {
+    .button.coral { background: var(--coral); }
+    .button.blue { background: var(--blue); }
+    .button.ghost {
+      color: var(--ink);
+      border-color: var(--line);
+      background: white;
+    }
+
+    .button:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row.between { justify-content: space-between; }
+    .stack { display: grid; gap: 14px; }
+    .hidden { display: none !important; }
+
+    .notice {
+      padding: 12px 14px;
+      border: 1px solid #bde7df;
+      border-radius: 8px;
+      background: var(--wash);
+      color: #095b55;
+      font-weight: 700;
+    }
+
+    .notice.error {
+      border-color: #ffd0ca;
+      background: #fff2f0;
+      color: var(--danger);
+    }
+
+    .app {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
-      gap: 28px;
-      align-items: end;
-      margin-bottom: 28px;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      padding-top: 24px;
     }
 
-    h2 {
-      margin: 0;
-      max-width: 680px;
-      font-size: clamp(30px, 4vw, 48px);
-      line-height: 1.05;
-      letter-spacing: 0;
+    .sidebar, .workspace-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      box-shadow: var(--shadow);
     }
 
-    .lead {
-      margin: 0;
-      color: var(--muted);
-      font-size: 17px;
+    .sidebar {
+      position: sticky;
+      top: 86px;
+      padding: 18px;
+    }
+
+    .workspace {
+      display: grid;
+      gap: 18px;
+    }
+
+    .workspace-card {
+      padding: 22px;
+    }
+
+    .workspace-card h2 {
+      margin-bottom: 8px;
+      font-size: 26px;
+      line-height: 1.12;
+    }
+
+    .child-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .child-button {
+      width: 100%;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfd;
+      color: var(--ink);
+      text-align: left;
+      font-weight: 800;
+    }
+
+    .child-button.active {
+      border-color: rgba(11, 143, 134, .42);
+      background: var(--wash);
+      box-shadow: 0 0 0 3px rgba(11, 143, 134, .12);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #22556a;
+      background: #e9f2f7;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      min-height: 112px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfd;
+    }
+
+    .metric strong {
+      display: block;
+      margin: 6px 0 4px;
+      font-size: 30px;
+      line-height: 1;
     }
 
     .services {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
     }
 
     .service-card {
-      min-height: 360px;
+      min-height: 230px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 26px;
+      gap: 18px;
+      padding: 18px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: var(--paper);
-      box-shadow: var(--shadow);
+      background: #fff;
     }
 
-    .service-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 44px;
+    .service-card h3 {
+      margin-bottom: 8px;
+      font-size: 22px;
+      line-height: 1.12;
     }
 
     .service-icon {
-      width: 54px;
-      height: 54px;
+      width: 44px;
+      height: 44px;
       display: grid;
       place-items: center;
+      margin-bottom: 14px;
       border-radius: 8px;
       color: white;
-      font-size: 26px;
       font-weight: 900;
     }
 
     .reading { background: var(--teal); }
     .writing { background: var(--coral); }
+    .math { background: var(--gold); }
 
-    .tag {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .service-card h3 {
-      margin: 0 0 12px;
-      font-size: clamp(25px, 3vw, 34px);
-      line-height: 1.08;
-      letter-spacing: 0;
-    }
-
-    .service-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 16px;
-    }
-
-    .service-foot {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid var(--line);
-    }
-
-    .text-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--navy);
-      font-weight: 850;
-    }
-
-    .arrow {
-      width: 28px;
-      height: 28px;
+    .timeline {
       display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--navy);
-      color: white;
+      gap: 10px;
+      margin-top: 14px;
     }
 
-    .proof-band {
-      background: var(--navy);
-      color: white;
-    }
-
-    .proof-grid {
+    .event {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1px;
-      background: rgba(255,255,255,.16);
-      border: 1px solid rgba(255,255,255,.16);
-    }
-
-    .proof {
-      min-height: 190px;
-      padding: 24px;
-      background: var(--navy);
-    }
-
-    .proof strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 21px;
-      letter-spacing: 0;
-    }
-
-    .proof p {
-      margin: 0;
-      color: rgba(255,255,255,.76);
-    }
-
-    .cta {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px;
       align-items: center;
-      gap: 28px;
-      padding: 34px;
+      padding: 12px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: white;
-      box-shadow: var(--shadow);
+      background: #f8fbfd;
     }
 
-    .cta h2 { font-size: clamp(28px, 4vw, 42px); }
+    .event-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
 
-    footer {
-      padding: 26px 0;
-      background: white;
+    .footer {
+      padding: 24px 0;
       color: var(--muted);
-      border-top: 1px solid var(--line);
-    }
-
-    .footer-inner {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
       font-size: 14px;
+      text-align: center;
     }
 
-    @media (max-width: 820px) {
-      .nav { min-height: 58px; }
-      .navlinks { display: none; }
-      .hero { min-height: 100svh; background-position: 62% center; }
-      .hero-inner { padding: 78px 0 34px; }
-      .eyebrow { margin-bottom: 12px; }
-      h1 { font-size: clamp(34px, 11vw, 48px); }
-      .hero-copy { margin-top: 14px; font-size: 16px; }
-      .actions { margin-top: 18px; gap: 10px; }
-      .section { padding: 54px 0; }
-      .section-head, .services, .proof-grid, .cta {
+    @media (max-width: 980px) {
+      .hero, .app, .services, .metrics {
         grid-template-columns: 1fr;
       }
-      .service-card { min-height: auto; }
-      .cta { padding: 24px; }
-      .actions, .service-foot { align-items: stretch; }
-      .button { width: 100%; }
+
+      .hero-copy { min-height: 440px; }
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-actions span { display: none; }
+      .shell { width: min(100% - 22px, 1180px); padding-top: 18px; }
+      .hero { min-height: auto; }
+      .hero-copy { min-height: 420px; padding: 28px; }
+      h1 { font-size: 38px; }
+      .panel-body, .workspace-card, .sidebar { padding: 16px; }
+      .row .button { width: 100%; }
+      .event { grid-template-columns: auto minmax(0, 1fr); }
+      .event .pill { grid-column: 2; width: fit-content; }
     }
   </style>
 </head>
@@ -390,127 +490,545 @@
         <span class="mark">E</span>
         <span>Portal Educacional</span>
       </a>
-      <div class="navlinks">
-        <a href="#servicos">Servicos</a>
-        <a href="#proposta">Proposta</a>
-        <a href="#acessar">Acessar</a>
+      <div class="nav-actions">
+        <span id="sessionLabel">Ambiente educacional</span>
+        <button class="button ghost hidden" id="logoutButton" type="button">Sair</button>
       </div>
     </nav>
   </header>
 
-  <section class="hero" id="inicio">
-    <div class="hero-inner">
-      <p class="eyebrow"><span class="dot"></span> Leitura, escrita e acompanhamento pedagogico</p>
-      <h1>Um ponto de partida para aprender com mais clareza.</h1>
-      <p class="hero-copy">
-        Atividades digitais para desenvolver interpretacao de texto e producao escrita, com apoio inteligente,
-        feedback orientado e foco no progresso do estudante.
-      </p>
-      <div class="actions" aria-label="Acessos principais">
-        <a class="button primary" href="https://interpretacao-de-texto.vercel.app">Entrar em Interpretacao de Texto</a>
-        <a class="button secondary" href="https://missao-redacao.vercel.app/">Entrar em Missao Redacao</a>
-      </div>
-    </div>
-  </section>
-
-  <main>
-    <section class="section" id="servicos">
-      <div class="section-head">
-        <h2>Duas experiencias para fortalecer competencias essenciais.</h2>
+  <main class="shell">
+    <section class="hero" id="publicView">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="dot"></span> Leitura, escrita, tabuada e acompanhamento</p>
+        <h1>Um portal para acompanhar o desenvolvimento da criança.</h1>
         <p class="lead">
-          Cada servico foi pensado para uma parte do percurso: compreender melhor o que se le e escrever com mais estrutura.
+          Reuna as atividades de interpretacao, redacao e tabuada em um unico lugar, com historico,
+          progresso e uma rotina mais clara para familia e escola.
         </p>
       </div>
 
-      <div class="services">
-        <article class="service-card">
-          <div>
-            <div class="service-top">
-              <div class="service-icon reading" aria-hidden="true">L</div>
-              <span class="tag">Leitura</span>
-            </div>
-            <h3>Interpretacao de Texto</h3>
-            <p>
-              O estudante le, responde perguntas e recebe apoio para perceber informacoes explicitas,
-              inferencias e escolhas de vocabulario.
-            </p>
+      <aside class="panel" aria-label="Acesso ao portal">
+        <div class="panel-head">
+          <h2>Entrar no portal</h2>
+          <p class="muted">Use seu e-mail para guardar o historico das criancas e acompanhar a evolucao.</p>
+        </div>
+        <div class="panel-body">
+          <div class="tabs" role="tablist" aria-label="Modo de acesso">
+            <button class="tab active" id="loginTab" type="button">Entrar</button>
+            <button class="tab" id="signupTab" type="button">Criar conta</button>
           </div>
-          <div class="service-foot">
-            <span>Com perguntas e feedback</span>
-            <a class="text-link" href="https://interpretacao-de-texto.vercel.app" aria-label="Abrir Interpretacao de Texto">
-              Abrir <span class="arrow">›</span>
-            </a>
-          </div>
-        </article>
 
-        <article class="service-card">
-          <div>
-            <div class="service-top">
-              <div class="service-icon writing" aria-hidden="true">R</div>
-              <span class="tag">Escrita</span>
-            </div>
-            <h3>Missao Redacao</h3>
-            <p>
-              Uma experiencia guiada para planejar, desenvolver e revisar textos, com orientacoes por etapa
-              e retorno para melhorar a escrita.
-            </p>
-          </div>
-          <div class="service-foot">
-            <span>Com pratica orientada</span>
-            <a class="text-link" href="https://missao-redacao.vercel.app/" aria-label="Abrir Missao Redacao">
-              Abrir <span class="arrow">›</span>
-            </a>
-          </div>
-        </article>
-      </div>
+          <form class="form-grid" id="authForm">
+            <label class="hidden" id="nameField">
+              Nome do responsavel
+              <input id="fullNameInput" autocomplete="name" placeholder="Seu nome">
+            </label>
+            <label>
+              E-mail
+              <input id="emailInput" type="email" autocomplete="email" placeholder="voce@email.com" required>
+            </label>
+            <label>
+              Senha
+              <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Minimo de 6 caracteres" required>
+            </label>
+            <button class="button" id="authSubmit" type="submit">Entrar</button>
+            <button class="button ghost" id="resetButton" type="button">Esqueci minha senha</button>
+          </form>
+
+          <form class="form-grid hidden" id="newPasswordForm">
+            <label>
+              Nova senha
+              <input id="newPasswordInput" type="password" autocomplete="new-password" placeholder="Digite a nova senha">
+            </label>
+            <button class="button blue" type="submit">Atualizar senha</button>
+          </form>
+
+          <div class="notice hidden" id="authMessage" role="status"></div>
+        </div>
+      </aside>
     </section>
 
-    <section class="proof-band" id="proposta">
-      <div class="section">
-        <div class="section-head">
-          <h2>Uma proposta educacional simples de aplicar.</h2>
-          <p class="lead" style="color:rgba(255,255,255,.76)">
-            Os servicos ajudam o aluno a praticar, registrar respostas e receber devolutivas que favorecem autonomia.
-          </p>
-        </div>
-        <div class="proof-grid">
-          <div class="proof">
-            <strong>Clareza</strong>
-            <p>Atividades organizadas em etapas, com comandos diretos e foco no que o aluno precisa fazer.</p>
-          </div>
-          <div class="proof">
-            <strong>Feedback</strong>
-            <p>Retornos pensados para orientar a proxima tentativa, sem transformar o erro em bloqueio.</p>
-          </div>
-          <div class="proof">
-            <strong>Continuidade</strong>
-            <p>Do texto lido ao texto escrito, o percurso valoriza compreensao, repertorio e organizacao.</p>
+    <section class="app hidden" id="appView" aria-label="Painel do portal">
+      <aside class="sidebar">
+        <div class="row between">
+          <div>
+            <strong>Aluno ativo</strong>
+            <p class="muted small" style="margin-bottom:0">Escolha a crianca antes de iniciar uma atividade.</p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="section" id="acessar">
-      <div class="cta">
-        <div>
-          <h2>Escolha a atividade e comece agora.</h2>
-          <p class="lead">
-            Acesse um dos servicos educacionais e use a tecnologia como apoio para leitura, escrita e revisao.
-          </p>
-        </div>
-        <div class="actions" style="margin-top:0">
-          <a class="button primary" href="https://interpretacao-de-texto.vercel.app">Interpretacao</a>
-          <a class="button secondary" href="https://missao-redacao.vercel.app/">Redacao</a>
-        </div>
+        <div class="child-list" id="childrenList"></div>
+
+        <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+
+        <form class="form-grid" id="childForm">
+          <label>
+            Nome da crianca
+            <input id="childNameInput" placeholder="Ex.: Miguel" required>
+          </label>
+          <div class="row">
+            <label style="flex:1 1 130px">
+              Ano de nascimento
+              <input id="birthYearInput" type="number" min="2008" max="2030" placeholder="2015">
+            </label>
+            <label style="flex:1 1 130px">
+              Serie
+              <input id="gradeInput" placeholder="5o ano">
+            </label>
+          </div>
+          <button class="button" type="submit">Adicionar crianca</button>
+        </form>
+      </aside>
+
+      <div class="workspace">
+        <section class="workspace-card">
+          <div class="row between">
+            <div>
+              <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
+              <p class="muted" id="welcomeCopy">Cadastre ou selecione uma crianca para acompanhar as atividades.</p>
+            </div>
+            <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
+          </div>
+        </section>
+
+        <section class="workspace-card">
+          <h2>Resumo do desenvolvimento</h2>
+          <p class="muted">Esta area ja esta preparada para receber registros da redacao, interpretacao e tabuada.</p>
+          <div class="metrics" style="margin-top:16px">
+            <div class="metric">
+              <span class="muted small">Atividades salvas</span>
+              <strong id="metricActivities">0</strong>
+              <span class="small">registros no historico</span>
+            </div>
+            <div class="metric">
+              <span class="muted small">Servicos usados</span>
+              <strong id="metricServices">0</strong>
+              <span class="small">areas de aprendizagem</span>
+            </div>
+            <div class="metric">
+              <span class="muted small">Ultimo registro</span>
+              <strong id="metricLast">-</strong>
+              <span class="small">data mais recente</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace-card">
+          <h2>Atividades</h2>
+          <div class="services" style="margin-top:16px">
+            <article class="service-card">
+              <div>
+                <div class="service-icon reading">L</div>
+                <h3>Interpretacao de Texto</h3>
+                <p class="muted">Leitura, perguntas e feedback para compreensao.</p>
+              </div>
+              <a class="button" id="interpretacaoLink" href="https://interpretacao-de-texto.vercel.app">Abrir interpretacao</a>
+            </article>
+
+            <article class="service-card">
+              <div>
+                <div class="service-icon writing">R</div>
+                <h3>Missao Redacao</h3>
+                <p class="muted">Planejamento, escrita e analise da redacao.</p>
+              </div>
+              <a class="button coral" id="redacaoLink" href="https://missao-redacao.vercel.app/">Abrir redacao</a>
+            </article>
+
+            <article class="service-card">
+              <div>
+                <div class="service-icon math">T</div>
+                <h3>Tabuada Inteligente</h3>
+                <p class="muted">Treino de multiplicacao com acompanhamento.</p>
+              </div>
+              <button class="button secondary" type="button" disabled>Publicacao pendente</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="workspace-card">
+          <div class="row between">
+            <div>
+              <h2>Historico unificado</h2>
+              <p class="muted">Quando os aplicativos enviarem registros, eles aparecerao aqui por ordem de data.</p>
+            </div>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </section>
       </div>
     </section>
   </main>
 
-  <footer>
-    <div class="footer-inner">
-      <span>Portal Educacional</span>
-      <span>Leitura e escrita com apoio digital</span>
-    </div>
-  </footer>
+  <footer class="footer">Portal Educacional - leitura, escrita e matematica com acompanhamento familiar.</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const state = {
+      supabase: null,
+      session: null,
+      mode: "login",
+      children: [],
+      activeChildId: localStorage.getItem("portal.activeChildId") || "",
+      events: []
+    };
+
+    const els = {
+      publicView: document.querySelector("#publicView"),
+      appView: document.querySelector("#appView"),
+      sessionLabel: document.querySelector("#sessionLabel"),
+      logoutButton: document.querySelector("#logoutButton"),
+      loginTab: document.querySelector("#loginTab"),
+      signupTab: document.querySelector("#signupTab"),
+      authForm: document.querySelector("#authForm"),
+      nameField: document.querySelector("#nameField"),
+      fullNameInput: document.querySelector("#fullNameInput"),
+      emailInput: document.querySelector("#emailInput"),
+      passwordInput: document.querySelector("#passwordInput"),
+      authSubmit: document.querySelector("#authSubmit"),
+      resetButton: document.querySelector("#resetButton"),
+      newPasswordForm: document.querySelector("#newPasswordForm"),
+      newPasswordInput: document.querySelector("#newPasswordInput"),
+      authMessage: document.querySelector("#authMessage"),
+      childForm: document.querySelector("#childForm"),
+      childNameInput: document.querySelector("#childNameInput"),
+      birthYearInput: document.querySelector("#birthYearInput"),
+      gradeInput: document.querySelector("#gradeInput"),
+      childrenList: document.querySelector("#childrenList"),
+      welcomeTitle: document.querySelector("#welcomeTitle"),
+      welcomeCopy: document.querySelector("#welcomeCopy"),
+      refreshButton: document.querySelector("#refreshButton"),
+      metricActivities: document.querySelector("#metricActivities"),
+      metricServices: document.querySelector("#metricServices"),
+      metricLast: document.querySelector("#metricLast"),
+      timeline: document.querySelector("#timeline"),
+      interpretacaoLink: document.querySelector("#interpretacaoLink"),
+      redacaoLink: document.querySelector("#redacaoLink")
+    };
+
+    function showMessage(message, isError = false) {
+      els.authMessage.textContent = message;
+      els.authMessage.classList.toggle("error", isError);
+      els.authMessage.classList.remove("hidden");
+    }
+
+    function clearMessage() {
+      els.authMessage.textContent = "";
+      els.authMessage.classList.add("hidden");
+      els.authMessage.classList.remove("error");
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      const isSignup = mode === "signup";
+      els.loginTab.classList.toggle("active", !isSignup);
+      els.signupTab.classList.toggle("active", isSignup);
+      els.nameField.classList.toggle("hidden", !isSignup);
+      els.authSubmit.textContent = isSignup ? "Criar conta" : "Entrar";
+      els.passwordInput.autocomplete = isSignup ? "new-password" : "current-password";
+      clearMessage();
+    }
+
+    function getActiveChild() {
+      return state.children.find((child) => child.id === state.activeChildId) || state.children[0] || null;
+    }
+
+    function serviceName(service) {
+      return {
+        redacao: "Missao Redacao",
+        interpretacao: "Interpretacao",
+        tabuada: "Tabuada"
+      }[service] || service || "Atividade";
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(new Date(value));
+    }
+
+    function updateServiceLinks() {
+      const child = getActiveChild();
+      const params = new URLSearchParams();
+      if (child) {
+        params.set("child_id", child.id);
+        params.set("child_name", child.full_name);
+      }
+      const suffix = params.toString() ? `?${params.toString()}` : "";
+      els.interpretacaoLink.href = `https://interpretacao-de-texto.vercel.app${suffix}`;
+      els.redacaoLink.href = `https://missao-redacao.vercel.app/${suffix}`;
+    }
+
+    function renderChildren() {
+      const activeChild = getActiveChild();
+      els.childrenList.innerHTML = "";
+
+      if (!state.children.length) {
+        els.childrenList.innerHTML = '<div class="notice">Cadastre a primeira crianca para ativar o acompanhamento.</div>';
+      }
+
+      state.children.forEach((child) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `child-button${child.id === activeChild?.id ? " active" : ""}`;
+        button.innerHTML = `<span>${child.full_name}</span><span class="pill">${child.grade || "sem serie"}</span>`;
+        button.addEventListener("click", () => {
+          state.activeChildId = child.id;
+          localStorage.setItem("portal.activeChildId", child.id);
+          render();
+          loadEvents();
+        });
+        els.childrenList.appendChild(button);
+      });
+    }
+
+    function renderDashboard() {
+      const child = getActiveChild();
+      if (child) {
+        els.welcomeTitle.textContent = `Acompanhamento de ${child.full_name}`;
+        els.welcomeCopy.textContent = "Use os atalhos para iniciar uma atividade e consulte aqui o historico do desenvolvimento.";
+      } else {
+        els.welcomeTitle.textContent = "Bem-vindo ao Portal Educacional";
+        els.welcomeCopy.textContent = "Cadastre ou selecione uma crianca para acompanhar as atividades.";
+      }
+
+      const services = new Set(state.events.map((event) => event.service).filter(Boolean));
+      els.metricActivities.textContent = state.events.length;
+      els.metricServices.textContent = services.size;
+      els.metricLast.textContent = state.events[0] ? formatDate(state.events[0].occurred_at || state.events[0].created_at) : "-";
+
+      els.timeline.innerHTML = "";
+      if (!child) {
+        els.timeline.innerHTML = '<div class="notice">Selecione uma crianca para carregar o historico.</div>';
+        return;
+      }
+      if (!state.events.length) {
+        els.timeline.innerHTML = '<div class="notice">Ainda nao ha registros para esta crianca. O proximo passo e conectar cada aplicativo a este historico.</div>';
+        return;
+      }
+
+      state.events.slice(0, 12).forEach((event) => {
+        const item = document.createElement("article");
+        item.className = "event";
+        item.innerHTML = `
+          <span class="event-dot"></span>
+          <div>
+            <strong>${event.title || serviceName(event.service)}</strong>
+            <div class="muted small">${serviceName(event.service)} - ${event.activity_type || "atividade"}</div>
+          </div>
+          <span class="pill">${formatDate(event.occurred_at || event.created_at)}</span>
+        `;
+        els.timeline.appendChild(item);
+      });
+    }
+
+    function render() {
+      const signedIn = Boolean(state.session?.user);
+      els.publicView.classList.toggle("hidden", signedIn);
+      els.appView.classList.toggle("hidden", !signedIn);
+      els.logoutButton.classList.toggle("hidden", !signedIn);
+      els.sessionLabel.textContent = signedIn ? (state.session.user.email || "Conta conectada") : "Ambiente educacional";
+      renderChildren();
+      renderDashboard();
+      updateServiceLinks();
+    }
+
+    async function ensureProfile() {
+      if (!state.session?.user) return;
+      const user = state.session.user;
+      await state.supabase
+        .from("profiles")
+        .upsert({
+          id: user.id,
+          full_name: user.user_metadata?.full_name || user.email
+        }, { onConflict: "id" });
+    }
+
+    async function loadChildren() {
+      if (!state.session?.user) return;
+      const { data, error } = await state.supabase
+        .from("child_guardians")
+        .select("children(id, full_name, birth_date, grade, notes, created_at)")
+        .eq("guardian_id", state.session.user.id)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        showMessage(`Erro ao carregar criancas: ${error.message}`, true);
+        state.children = [];
+      } else {
+        state.children = (data || []).map((row) => row.children).filter(Boolean);
+        if (!state.children.some((child) => child.id === state.activeChildId)) {
+          state.activeChildId = state.children[0]?.id || "";
+          if (state.activeChildId) localStorage.setItem("portal.activeChildId", state.activeChildId);
+        }
+      }
+      render();
+    }
+
+    async function loadEvents() {
+      const child = getActiveChild();
+      if (!child) {
+        state.events = [];
+        renderDashboard();
+        return;
+      }
+
+      const { data, error } = await state.supabase
+        .from("activity_events")
+        .select("*")
+        .eq("child_id", child.id)
+        .order("occurred_at", { ascending: false })
+        .limit(30);
+
+      if (error) {
+        state.events = [];
+        showMessage(`Historico ainda nao disponivel: ${error.message}`, true);
+      } else {
+        state.events = data || [];
+      }
+      renderDashboard();
+    }
+
+    async function refreshAll() {
+      await ensureProfile();
+      await loadChildren();
+      await loadEvents();
+    }
+
+    async function initSupabase() {
+      const response = await fetch("/api/public-config");
+      const config = await response.json();
+      if (!response.ok || !config.supabaseUrl || !config.supabaseAnonKey) {
+        showMessage("Configure SUPABASE_URL e SUPABASE_ANON_KEY na Vercel para ativar o login.", true);
+        return;
+      }
+
+      state.supabase = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+      const { data } = await state.supabase.auth.getSession();
+      state.session = data.session;
+
+      state.supabase.auth.onAuthStateChange(async (event, session) => {
+        state.session = session;
+        if (event === "PASSWORD_RECOVERY") {
+          els.newPasswordForm.classList.remove("hidden");
+          showMessage("Digite sua nova senha para concluir a recuperacao.");
+        }
+        if (session) {
+          clearMessage();
+          render();
+          await refreshAll();
+        } else {
+          state.children = [];
+          state.events = [];
+          render();
+        }
+      });
+
+      render();
+      if (state.session) await refreshAll();
+    }
+
+    els.loginTab.addEventListener("click", () => setMode("login"));
+    els.signupTab.addEventListener("click", () => setMode("signup"));
+    els.refreshButton.addEventListener("click", refreshAll);
+
+    els.authForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessage();
+      const email = els.emailInput.value.trim();
+      const password = els.passwordInput.value;
+      const fullName = els.fullNameInput.value.trim();
+
+      const result = state.mode === "signup"
+        ? await state.supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: { full_name: fullName || email },
+              emailRedirectTo: window.location.origin
+            }
+          })
+        : await state.supabase.auth.signInWithPassword({ email, password });
+
+      if (result.error) {
+        showMessage(result.error.message, true);
+      } else if (state.mode === "signup" && !result.data.session) {
+        showMessage("Conta criada. Se o Supabase pedir confirmacao, veja seu e-mail antes de entrar.");
+      } else {
+        showMessage("Conta conectada.");
+      }
+    });
+
+    els.resetButton.addEventListener("click", async () => {
+      clearMessage();
+      const email = els.emailInput.value.trim();
+      if (!email) {
+        showMessage("Digite seu e-mail para receber o link de redefinicao.", true);
+        return;
+      }
+      const { error } = await state.supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin
+      });
+      showMessage(error ? error.message : "Enviamos o link de redefinicao para seu e-mail.", Boolean(error));
+    });
+
+    els.newPasswordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const password = els.newPasswordInput.value;
+      const { error } = await state.supabase.auth.updateUser({ password });
+      showMessage(error ? error.message : "Senha atualizada com sucesso.", Boolean(error));
+      if (!error) els.newPasswordForm.classList.add("hidden");
+    });
+
+    els.logoutButton.addEventListener("click", async () => {
+      await state.supabase.auth.signOut();
+    });
+
+    els.childForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessage();
+      const name = els.childNameInput.value.trim();
+      if (!name) return;
+
+      const year = Number(els.birthYearInput.value);
+      const birthDate = Number.isFinite(year) && year > 1900 ? `${year}-01-01` : null;
+      const { data: child, error: childError } = await state.supabase
+        .from("children")
+        .insert({
+          full_name: name,
+          birth_date: birthDate,
+          grade: els.gradeInput.value.trim() || null
+        })
+        .select()
+        .single();
+
+      if (childError) {
+        showMessage(childError.message, true);
+        return;
+      }
+
+      const { error: linkError } = await state.supabase
+        .from("child_guardians")
+        .insert({
+          child_id: child.id,
+          guardian_id: state.session.user.id,
+          relationship: "responsavel"
+        });
+
+      if (linkError) {
+        showMessage(linkError.message, true);
+        return;
+      }
+
+      els.childForm.reset();
+      state.activeChildId = child.id;
+      localStorage.setItem("portal.activeChildId", child.id);
+      showMessage("Crianca cadastrada e selecionada.");
+      await refreshAll();
+    });
+
+    setMode("login");
+    initSupabase().catch((error) => {
+      showMessage(`Erro ao iniciar o portal: ${error.message}`, true);
+    });
+  </script>
 </body>
 </html>
