@@ -1,0 +1,972 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portal Educacional | Evolucao da Aprendizagem</title>
+  <meta name="description" content="Portal para pais e professores acompanharem metas pedagogicas, atividades e evolucao dos estudantes.">
+  <style>
+    :root {
+      --ink: #102033;
+      --muted: #5f6f84;
+      --line: #d8e2ec;
+      --paper: #fff;
+      --soft: #f4f8fb;
+      --teal: #0b8f86;
+      --blue: #2563eb;
+      --coral: #d95d49;
+      --gold: #d69a1d;
+      --green: #2f7a59;
+      --danger: #b42318;
+      --shadow: 0 16px 42px rgba(16, 32, 51, .12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--soft);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(16, 32, 51, .08);
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav, .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+    }
+
+    .mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: white;
+      background: linear-gradient(135deg, var(--teal), var(--gold));
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 15px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: white;
+      background: var(--teal);
+      font-weight: 850;
+    }
+
+    .button:hover { box-shadow: 0 10px 24px rgba(16,32,51,.16); }
+    .button.secondary { color: var(--ink); background: #e8eef5; }
+    .button.blue { background: var(--blue); }
+    .button.coral { background: var(--coral); }
+    .button.ghost { color: var(--ink); border-color: var(--line); background: white; }
+    .button:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+
+    .shell { padding: 28px 0 42px; }
+
+    .hero {
+      min-height: calc(100svh - 64px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(330px, .76fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(28px, 5vw, 54px);
+      border-radius: 8px;
+      color: white;
+      background:
+        linear-gradient(90deg, rgba(7,18,31,.88), rgba(7,18,31,.5)),
+        linear-gradient(135deg, #0b8f86, #102033);
+      box-shadow: var(--shadow);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 760px;
+      margin-bottom: 18px;
+      font-size: clamp(38px, 6vw, 66px);
+      line-height: .98;
+      letter-spacing: 0;
+    }
+    h2 { margin-bottom: 8px; font-size: 26px; line-height: 1.12; }
+    h3 { margin-bottom: 8px; font-size: 20px; line-height: 1.15; }
+    .lead { color: rgba(255,255,255,.88); font-size: clamp(17px, 2vw, 21px); }
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+    .hidden { display: none !important; }
+
+    .panel, .card, .sidebar {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .panel { padding: 22px; }
+    .card { padding: 22px; }
+    .stack { display: grid; gap: 14px; }
+    .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .between { justify-content: space-between; }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 18px 0;
+      padding: 4px;
+      border-radius: 8px;
+      background: #edf3f8;
+    }
+
+    .tab {
+      min-height: 40px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 850;
+    }
+    .tab.active { color: var(--ink); background: white; }
+
+    label { display: grid; gap: 6px; font-size: 14px; font-weight: 800; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+      outline: none;
+    }
+    textarea { min-height: 82px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(11,143,134,.14);
+    }
+
+    .notice {
+      padding: 12px 14px;
+      border: 1px solid #bde7df;
+      border-radius: 8px;
+      background: #e9f8f6;
+      color: #095b55;
+      font-weight: 750;
+    }
+    .notice.error { border-color: #ffd0ca; background: #fff2f0; color: var(--danger); }
+
+    .app {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 86px;
+      padding: 18px;
+    }
+
+    .workspace { display: grid; gap: 18px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 26px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #22556a;
+      background: #e9f2f7;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .child-list, .goal-list, .timeline { display: grid; gap: 10px; margin-top: 14px; }
+    .child-button {
+      width: 100%;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfd;
+      color: var(--ink);
+      text-align: left;
+      font-weight: 800;
+    }
+    .child-button.active { border-color: rgba(11,143,134,.42); background: #e9f8f6; }
+
+    .metrics, .evolution-grid, .services {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .metric, .evolution-card, .goal-card, .service-card, .event {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+    .metric strong { display: block; margin: 7px 0 4px; font-size: 30px; line-height: 1; }
+    .goal-card strong, .evolution-card strong { display: block; margin: 8px 0 5px; }
+
+    .service-card {
+      min-height: 235px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 900;
+    }
+    .reading { background: var(--teal); }
+    .writing { background: var(--coral); }
+    .math { background: var(--gold); }
+
+    .event {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero, .app, .metrics, .evolution-grid, .services { grid-template-columns: 1fr; }
+      .hero-copy { min-height: 440px; }
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 640px) {
+      .nav, .shell { width: min(100% - 22px, 1180px); }
+      .hero { min-height: auto; }
+      .hero-copy { min-height: 420px; padding: 28px; }
+      h1 { font-size: 38px; }
+      .row .button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="Navegacao principal">
+      <a class="brand" href="#">
+        <span class="mark">E</span>
+        <span>Portal Educacional</span>
+      </a>
+      <div class="row">
+        <span class="muted small" id="sessionLabel">Ambiente de acompanhamento</span>
+        <button class="button ghost hidden" id="logoutButton" type="button">Sair</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="shell">
+    <section class="hero" id="publicView">
+      <div class="hero-copy">
+        <span class="pill">pais e professores</span>
+        <h1>Reforco escolar com metas, atividades e evolucao visivel.</h1>
+        <p class="lead">O adulto informa o que precisa ser reforcado, a crianca pratica nos modulos e o portal organiza evidencias para mostrar progresso com clareza.</p>
+      </div>
+
+      <aside class="panel">
+        <h2>Entrar no portal</h2>
+        <p class="muted">Crie uma conta para cadastrar criancas, registrar metas pedagogicas e acompanhar a evolucao.</p>
+        <div class="tabs">
+          <button class="tab active" id="loginTab" type="button">Entrar</button>
+          <button class="tab" id="signupTab" type="button">Criar conta</button>
+        </div>
+        <form class="stack" id="authForm">
+          <label class="hidden" id="nameField">
+            Nome do adulto
+            <input id="fullNameInput" autocomplete="name" placeholder="Seu nome">
+          </label>
+          <label>
+            E-mail
+            <input id="emailInput" type="email" autocomplete="email" placeholder="voce@email.com" required>
+          </label>
+          <label>
+            Senha
+            <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Minimo de 6 caracteres" required>
+          </label>
+          <button class="button" id="authSubmit" type="submit">Entrar</button>
+          <button class="button ghost" id="resetButton" type="button">Esqueci minha senha</button>
+        </form>
+        <form class="stack hidden" id="newPasswordForm">
+          <label>
+            Nova senha
+            <input id="newPasswordInput" type="password" autocomplete="new-password">
+          </label>
+          <button class="button blue" type="submit">Atualizar senha</button>
+        </form>
+        <div class="notice hidden" id="authMessage" role="status"></div>
+      </aside>
+    </section>
+
+    <section class="app hidden" id="appView">
+      <aside class="sidebar">
+        <strong>Aluno ativo</strong>
+        <p class="muted small">Escolha a crianca antes de abrir uma atividade ou registrar uma meta.</p>
+        <div class="child-list" id="childrenList"></div>
+        <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+        <form class="stack" id="childForm">
+          <label>
+            Nome da crianca
+            <input id="childNameInput" placeholder="Ex.: Miguel" required>
+          </label>
+          <div class="row">
+            <label style="flex:1 1 120px">
+              Ano nasc.
+              <input id="birthYearInput" type="number" min="2008" max="2030" placeholder="2015">
+            </label>
+            <label style="flex:1 1 120px">
+              Serie
+              <input id="gradeInput" placeholder="5o ano">
+            </label>
+          </div>
+          <button class="button" type="submit">Adicionar crianca</button>
+        </form>
+      </aside>
+
+      <div class="workspace">
+        <section class="card">
+          <div class="row between">
+            <div>
+              <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
+              <p class="muted" id="welcomeCopy">Cadastre ou selecione uma crianca para iniciar o acompanhamento.</p>
+            </div>
+            <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Resumo do desenvolvimento</h2>
+          <p class="muted">Aqui o adulto ve o que foi praticado, em quais areas ha evidencias e o que fazer em seguida.</p>
+          <div class="metrics">
+            <div class="metric">
+              <span class="muted small">Atividades salvas</span>
+              <strong id="metricActivities">0</strong>
+              <span class="small">evidencias no historico</span>
+            </div>
+            <div class="metric">
+              <span class="muted small">Metas ativas</span>
+              <strong id="metricGoals">0</strong>
+              <span class="small">necessidades registradas</span>
+            </div>
+            <div class="metric">
+              <span class="muted small">Ultima pratica</span>
+              <strong id="metricLast">-</strong>
+              <span class="small">registro mais recente</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Evolucao por area</h2>
+          <p class="muted">O portal cruza metas e atividades para mostrar onde ja existe pratica e onde ainda falta evidencia.</p>
+          <div class="evolution-grid" id="evolutionGrid"></div>
+        </section>
+
+        <section class="card">
+          <h2>O que precisa reforcar?</h2>
+          <p class="muted">Registre o que o pai ou professor percebeu. O portal transforma isso em acompanhamento.</p>
+          <form class="stack" id="goalForm">
+            <div class="row">
+              <label style="flex:1 1 170px">
+                Area
+                <select id="goalAreaInput">
+                  <option value="leitura">Leitura</option>
+                  <option value="escrita">Escrita</option>
+                  <option value="matematica">Matematica</option>
+                  <option value="organizacao">Organizacao</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </label>
+              <label style="flex:2 1 260px">
+                Necessidade
+                <input id="goalTitleInput" placeholder="Ex.: melhorar inferencia em textos" required>
+              </label>
+            </div>
+            <label>
+              Observacao
+              <textarea id="goalDescriptionInput" placeholder="O que voce percebeu? Em que situacoes aparece?"></textarea>
+            </label>
+            <button class="button blue" type="submit">Salvar meta pedagogica</button>
+          </form>
+          <div class="goal-list" id="goalsList"></div>
+        </section>
+
+        <section class="card">
+          <h2>Guia para o adulto</h2>
+          <p class="muted">Feedback bom nao machuca nem assusta. Ele mostra um caminho pequeno e repetivel.</p>
+          <div class="goal-list">
+            <article class="goal-card">
+              <span class="pill">crianca</span>
+              <strong>Curto, positivo e acionavel</strong>
+              <p class="muted">Mostre uma conquista real e proponha uma unica proxima tentativa.</p>
+            </article>
+            <article class="goal-card">
+              <span class="pill">adulto</span>
+              <strong>Completo, mas com receita</strong>
+              <p class="muted">Explique o que apareceu, onde reforcar e o que fazer nos proximos dias.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Modulos de aprendizagem</h2>
+          <p class="muted">Novos modulos podem ser plugados ao catalogo e usar o mesmo historico central.</p>
+          <div class="services" id="modulesGrid"></div>
+        </section>
+
+        <section class="card">
+          <h2>Historico unificado</h2>
+          <p class="muted">As evidencias dos modulos aparecem aqui por ordem de data.</p>
+          <div class="timeline" id="timeline"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const state = {
+      supabase: null,
+      session: null,
+      mode: "login",
+      children: [],
+      goals: [],
+      modules: [],
+      events: [],
+      activeChildId: localStorage.getItem("portal.activeChildId") || ""
+    };
+
+    const els = {
+      publicView: document.querySelector("#publicView"),
+      appView: document.querySelector("#appView"),
+      sessionLabel: document.querySelector("#sessionLabel"),
+      logoutButton: document.querySelector("#logoutButton"),
+      loginTab: document.querySelector("#loginTab"),
+      signupTab: document.querySelector("#signupTab"),
+      authForm: document.querySelector("#authForm"),
+      nameField: document.querySelector("#nameField"),
+      fullNameInput: document.querySelector("#fullNameInput"),
+      emailInput: document.querySelector("#emailInput"),
+      passwordInput: document.querySelector("#passwordInput"),
+      authSubmit: document.querySelector("#authSubmit"),
+      resetButton: document.querySelector("#resetButton"),
+      newPasswordForm: document.querySelector("#newPasswordForm"),
+      newPasswordInput: document.querySelector("#newPasswordInput"),
+      authMessage: document.querySelector("#authMessage"),
+      childForm: document.querySelector("#childForm"),
+      childNameInput: document.querySelector("#childNameInput"),
+      birthYearInput: document.querySelector("#birthYearInput"),
+      gradeInput: document.querySelector("#gradeInput"),
+      childrenList: document.querySelector("#childrenList"),
+      welcomeTitle: document.querySelector("#welcomeTitle"),
+      welcomeCopy: document.querySelector("#welcomeCopy"),
+      refreshButton: document.querySelector("#refreshButton"),
+      metricActivities: document.querySelector("#metricActivities"),
+      metricGoals: document.querySelector("#metricGoals"),
+      metricLast: document.querySelector("#metricLast"),
+      evolutionGrid: document.querySelector("#evolutionGrid"),
+      goalForm: document.querySelector("#goalForm"),
+      goalAreaInput: document.querySelector("#goalAreaInput"),
+      goalTitleInput: document.querySelector("#goalTitleInput"),
+      goalDescriptionInput: document.querySelector("#goalDescriptionInput"),
+      goalsList: document.querySelector("#goalsList"),
+      modulesGrid: document.querySelector("#modulesGrid"),
+      timeline: document.querySelector("#timeline")
+    };
+
+    function message(text, isError = false) {
+      els.authMessage.textContent = text;
+      els.authMessage.classList.toggle("error", isError);
+      els.authMessage.classList.remove("hidden");
+    }
+
+    function clearMessage() {
+      els.authMessage.textContent = "";
+      els.authMessage.classList.add("hidden");
+      els.authMessage.classList.remove("error");
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      const signup = mode === "signup";
+      els.loginTab.classList.toggle("active", !signup);
+      els.signupTab.classList.toggle("active", signup);
+      els.nameField.classList.toggle("hidden", !signup);
+      els.authSubmit.textContent = signup ? "Criar conta" : "Entrar";
+      els.passwordInput.autocomplete = signup ? "new-password" : "current-password";
+      clearMessage();
+    }
+
+    function activeChild() {
+      return state.children.find((child) => child.id === state.activeChildId) || state.children[0] || null;
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(new Date(value));
+    }
+
+    function areaLabel(area) {
+      return { leitura: "Leitura", escrita: "Escrita", matematica: "Matematica", organizacao: "Organizacao", outro: "Outro" }[area] || area;
+    }
+
+    function recipeForArea(area) {
+      return {
+        leitura: "Leia um trecho curto, peca para apontar a pista no texto e so depois responder.",
+        escrita: "Escolha um foco por vez: ideia, comeco/meio/fim, detalhe ou pontuacao.",
+        matematica: "Treine 5 minutos, pare antes do cansaco e repita em outro momento.",
+        organizacao: "Use passos visuais: primeiro, depois, por fim.",
+        outro: "Defina uma tarefa pequena, observe a tentativa e registre o que melhorou."
+      }[area] || "Defina uma tarefa pequena, observe a tentativa e registre o que melhorou.";
+    }
+
+    function serviceName(service) {
+      const module = state.modules.find((item) => item.id === service);
+      return module?.short_name || module?.name || service || "Atividade";
+    }
+
+    function renderChildren() {
+      const child = activeChild();
+      els.childrenList.innerHTML = "";
+      if (!state.children.length) {
+        els.childrenList.innerHTML = '<div class="notice">Cadastre a primeira crianca para ativar o acompanhamento.</div>';
+        return;
+      }
+      state.children.forEach((item) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `child-button${item.id === child?.id ? " active" : ""}`;
+        button.innerHTML = `<span>${item.full_name}</span><span class="pill">${item.grade || "sem serie"}</span>`;
+        button.addEventListener("click", async () => {
+          state.activeChildId = item.id;
+          localStorage.setItem("portal.activeChildId", item.id);
+          await loadChildData();
+          render();
+        });
+        els.childrenList.appendChild(button);
+      });
+    }
+
+    function renderDashboard() {
+      const child = activeChild();
+      els.welcomeTitle.textContent = child ? `Acompanhamento de ${child.full_name}` : "Bem-vindo ao Portal Educacional";
+      els.welcomeCopy.textContent = child ? "Registre metas, abra modulos e acompanhe evidencias de evolucao." : "Cadastre ou selecione uma crianca para iniciar.";
+      els.metricActivities.textContent = state.events.length;
+      els.metricGoals.textContent = state.goals.length;
+      els.metricLast.textContent = state.events[0] ? formatDate(state.events[0].occurred_at || state.events[0].created_at) : "-";
+    }
+
+    function renderEvolution() {
+      const child = activeChild();
+      els.evolutionGrid.innerHTML = "";
+      if (!child) {
+        els.evolutionGrid.innerHTML = '<div class="notice">Selecione uma crianca para ver evolucao.</div>';
+        return;
+      }
+      const map = { leitura: ["interpretacao"], escrita: ["redacao"], matematica: ["tabuada"] };
+      Object.entries(map).forEach(([area, services]) => {
+        const goals = state.goals.filter((goal) => goal.area === area);
+        const evidences = state.events.filter((event) => services.includes(event.service));
+        const card = document.createElement("article");
+        card.className = "evolution-card";
+        card.innerHTML = `
+          <span class="pill">${areaLabel(area)}</span>
+          <strong>${evidences.length ? `${evidences.length} evidencia${evidences.length === 1 ? "" : "s"}` : "sem evidencia ainda"}</strong>
+          <p class="muted">${goals.length ? `${goals.length} meta${goals.length === 1 ? "" : "s"} ativa${goals.length === 1 ? "" : "s"}.` : "Sem meta ativa nesta area."}</p>
+          <p class="small">${evidences[0] ? `Ultima pratica: ${formatDate(evidences[0].occurred_at || evidences[0].created_at)}` : recipeForArea(area)}</p>
+        `;
+        els.evolutionGrid.appendChild(card);
+      });
+    }
+
+    function renderGoals() {
+      const child = activeChild();
+      els.goalsList.innerHTML = "";
+      if (!child) {
+        els.goalsList.innerHTML = '<div class="notice">Selecione uma crianca para definir metas.</div>';
+        return;
+      }
+      if (!state.goals.length) {
+        els.goalsList.innerHTML = '<div class="notice">Ainda nao ha metas. Registre a primeira necessidade que voce quer reforcar.</div>';
+        return;
+      }
+      state.goals.forEach((goal) => {
+        const evidences = state.events.filter((event) => {
+          const byArea = { leitura: ["interpretacao"], escrita: ["redacao"], matematica: ["tabuada"], organizacao: ["redacao", "interpretacao"], outro: ["redacao", "interpretacao", "tabuada"] };
+          return (byArea[goal.area] || []).includes(event.service);
+        });
+        const card = document.createElement("article");
+        card.className = "goal-card";
+        card.innerHTML = `
+          <span class="pill">${areaLabel(goal.area)}</span>
+          <strong>${goal.title}</strong>
+          <p class="muted">${goal.description || "Sem observacao adicional."}</p>
+          <p class="small"><strong>Receita inicial:</strong> ${recipeForArea(goal.area)}</p>
+          <div class="row between">
+            <span class="small">${evidences.length} evidencia${evidences.length === 1 ? "" : "s"} relacionada${evidences.length === 1 ? "" : "s"}</span>
+            <span class="pill">${goal.status === "done" ? "concluida" : "ativa"}</span>
+          </div>
+        `;
+        els.goalsList.appendChild(card);
+      });
+    }
+
+    async function activityToken(module) {
+      const child = activeChild();
+      if (!child || !state.session?.access_token) return "";
+      try {
+        const response = await fetch("/api/activity-token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${state.session.access_token}` },
+          body: JSON.stringify({ child_id: child.id, service: module.id })
+        });
+        const data = await response.json();
+        return response.ok && data.token ? data.token : "";
+      } catch {
+        return "";
+      }
+    }
+
+    function moduleUrl(module, token) {
+      const child = activeChild();
+      const params = new URLSearchParams();
+      if (child) {
+        params.set("child_id", child.id);
+        params.set("child_name", child.full_name);
+      }
+      params.set("portal_return_url", window.location.origin);
+      if (token) params.set("portal_event_token", token);
+      return `${module.url}?${params.toString()}`;
+    }
+
+    function renderModules() {
+      els.modulesGrid.innerHTML = "";
+      if (!state.modules.length) {
+        els.modulesGrid.innerHTML = '<div class="notice">Catalogo de modulos ainda nao carregado.</div>';
+        return;
+      }
+      state.modules.forEach((module) => {
+        const available = module.status === "available" && module.url;
+        const card = document.createElement("article");
+        card.className = "service-card";
+        card.innerHTML = `
+          <div>
+            <div class="service-icon ${module.accent || "reading"}">${module.icon || "M"}</div>
+            <span class="pill">${areaLabel(module.area)}</span>
+            <h3>${module.name}</h3>
+            <p class="muted">${module.description || ""}</p>
+          </div>
+          <button class="button ${module.id === "redacao" ? "coral" : module.id === "tabuada" ? "secondary" : ""}" type="button" ${available ? "" : "disabled"}>
+            ${available ? `Abrir ${module.short_name || module.name}` : "Publicacao pendente"}
+          </button>
+        `;
+        const button = card.querySelector("button");
+        button.addEventListener("click", async () => {
+          if (!activeChild()) {
+            message("Cadastre ou selecione uma crianca antes de abrir uma atividade.", true);
+            return;
+          }
+          button.disabled = true;
+          button.textContent = "Abrindo...";
+          window.location.href = moduleUrl(module, await activityToken(module));
+        });
+        els.modulesGrid.appendChild(card);
+      });
+    }
+
+    function renderTimeline() {
+      const child = activeChild();
+      els.timeline.innerHTML = "";
+      if (!child) {
+        els.timeline.innerHTML = '<div class="notice">Selecione uma crianca para carregar o historico.</div>';
+        return;
+      }
+      if (!state.events.length) {
+        els.timeline.innerHTML = '<div class="notice">Ainda nao ha registros. Ao conectar os modulos, as evidencias aparecerao aqui.</div>';
+        return;
+      }
+      state.events.slice(0, 12).forEach((event) => {
+        const item = document.createElement("article");
+        item.className = "event";
+        item.innerHTML = `
+          <div>
+            <strong>${event.title || serviceName(event.service)}</strong>
+            <div class="muted small">${serviceName(event.service)} - ${event.activity_type || "atividade"}</div>
+          </div>
+          <span class="pill">${formatDate(event.occurred_at || event.created_at)}</span>
+        `;
+        els.timeline.appendChild(item);
+      });
+    }
+
+    function render() {
+      const signedIn = Boolean(state.session?.user);
+      els.publicView.classList.toggle("hidden", signedIn);
+      els.appView.classList.toggle("hidden", !signedIn);
+      els.logoutButton.classList.toggle("hidden", !signedIn);
+      els.sessionLabel.textContent = signedIn ? state.session.user.email : "Ambiente de acompanhamento";
+      renderChildren();
+      renderDashboard();
+      renderEvolution();
+      renderGoals();
+      renderModules();
+      renderTimeline();
+    }
+
+    async function ensureProfile() {
+      if (!state.session?.user) return;
+      const user = state.session.user;
+      await state.supabase.from("profiles").upsert({
+        id: user.id,
+        full_name: user.user_metadata?.full_name || user.email
+      }, { onConflict: "id" });
+    }
+
+    async function loadModules() {
+      try {
+        const response = await fetch("/api/modules");
+        const data = await response.json();
+        state.modules = response.ok && Array.isArray(data.modules) ? data.modules : [];
+      } catch {
+        state.modules = [];
+      }
+    }
+
+    async function loadChildren() {
+      const { data, error } = await state.supabase
+        .from("child_guardians")
+        .select("children(id, full_name, birth_date, grade, notes, created_at)")
+        .eq("guardian_id", state.session.user.id)
+        .order("created_at", { ascending: true });
+      if (error) {
+        state.children = [];
+        message(`Erro ao carregar criancas: ${error.message}`, true);
+      } else {
+        state.children = (data || []).map((row) => row.children).filter(Boolean);
+        if (!state.children.some((child) => child.id === state.activeChildId)) {
+          state.activeChildId = state.children[0]?.id || "";
+          if (state.activeChildId) localStorage.setItem("portal.activeChildId", state.activeChildId);
+        }
+      }
+    }
+
+    async function loadEvents() {
+      const child = activeChild();
+      if (!child) {
+        state.events = [];
+        return;
+      }
+      const { data, error } = await state.supabase
+        .from("activity_events")
+        .select("*")
+        .eq("child_id", child.id)
+        .order("occurred_at", { ascending: false })
+        .limit(30);
+      state.events = error ? [] : data || [];
+      if (error) message(`Historico ainda nao disponivel: ${error.message}`, true);
+    }
+
+    async function loadGoals() {
+      const child = activeChild();
+      if (!child) {
+        state.goals = [];
+        return;
+      }
+      const { data, error } = await state.supabase
+        .from("learning_goals")
+        .select("*")
+        .eq("child_id", child.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(20);
+      state.goals = error ? [] : data || [];
+      if (error) message(`Metas ainda nao disponiveis: ${error.message}`, true);
+    }
+
+    async function loadChildData() {
+      await loadEvents();
+      await loadGoals();
+    }
+
+    async function refreshAll() {
+      await ensureProfile();
+      await loadModules();
+      await loadChildren();
+      await loadChildData();
+      render();
+    }
+
+    async function initSupabase() {
+      await loadModules();
+      const response = await fetch("/api/public-config");
+      const config = await response.json();
+      if (!response.ok || !config.supabaseUrl || !config.supabaseAnonKey) {
+        message("Configure SUPABASE_URL e SUPABASE_ANON_KEY na Vercel para ativar o login.", true);
+        renderModules();
+        return;
+      }
+      state.supabase = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+      const { data } = await state.supabase.auth.getSession();
+      state.session = data.session;
+      state.supabase.auth.onAuthStateChange(async (event, session) => {
+        state.session = session;
+        if (event === "PASSWORD_RECOVERY") {
+          els.newPasswordForm.classList.remove("hidden");
+          message("Digite a nova senha para concluir a recuperacao.");
+        }
+        if (session) {
+          clearMessage();
+          await refreshAll();
+        } else {
+          state.children = [];
+          state.goals = [];
+          state.events = [];
+          render();
+        }
+      });
+      if (state.session) await refreshAll();
+      render();
+    }
+
+    els.loginTab.addEventListener("click", () => setMode("login"));
+    els.signupTab.addEventListener("click", () => setMode("signup"));
+    els.refreshButton.addEventListener("click", refreshAll);
+    els.logoutButton.addEventListener("click", async () => state.supabase.auth.signOut());
+
+    els.authForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessage();
+      const email = els.emailInput.value.trim();
+      const password = els.passwordInput.value;
+      const fullName = els.fullNameInput.value.trim();
+      const result = state.mode === "signup"
+        ? await state.supabase.auth.signUp({ email, password, options: { data: { full_name: fullName || email }, emailRedirectTo: window.location.origin } })
+        : await state.supabase.auth.signInWithPassword({ email, password });
+      if (result.error) message(result.error.message, true);
+      else message(state.mode === "signup" && !result.data.session ? "Conta criada. Veja seu e-mail se houver confirmacao." : "Conta conectada.");
+    });
+
+    els.resetButton.addEventListener("click", async () => {
+      const email = els.emailInput.value.trim();
+      if (!email) {
+        message("Digite seu e-mail para receber o link de redefinicao.", true);
+        return;
+      }
+      const { error } = await state.supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+      message(error ? error.message : "Enviamos o link de redefinicao para seu e-mail.", Boolean(error));
+    });
+
+    els.newPasswordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const { error } = await state.supabase.auth.updateUser({ password: els.newPasswordInput.value });
+      message(error ? error.message : "Senha atualizada com sucesso.", Boolean(error));
+      if (!error) els.newPasswordForm.classList.add("hidden");
+    });
+
+    els.childForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const name = els.childNameInput.value.trim();
+      if (!name) return;
+      const year = Number(els.birthYearInput.value);
+      const birthDate = Number.isFinite(year) && year > 1900 ? `${year}-01-01` : null;
+      const { data: child, error } = await state.supabase.rpc("create_child_for_current_user", {
+        child_full_name: name,
+        child_birth_date: birthDate,
+        child_grade: els.gradeInput.value.trim() || null,
+        child_notes: null
+      });
+      if (error) {
+        message(error.message, true);
+        return;
+      }
+      els.childForm.reset();
+      state.activeChildId = child.id;
+      localStorage.setItem("portal.activeChildId", child.id);
+      message("Crianca cadastrada e selecionada.");
+      await refreshAll();
+    });
+
+    els.goalForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const child = activeChild();
+      if (!child) {
+        message("Cadastre ou selecione uma crianca antes de salvar uma meta.", true);
+        return;
+      }
+      const { error } = await state.supabase.from("learning_goals").insert({
+        child_id: child.id,
+        owner_id: state.session.user.id,
+        area: els.goalAreaInput.value,
+        title: els.goalTitleInput.value.trim(),
+        description: els.goalDescriptionInput.value.trim() || null
+      });
+      if (error) {
+        message(error.message, true);
+        return;
+      }
+      els.goalForm.reset();
+      message("Meta pedagogica salva.");
+      await loadGoals();
+      render();
+    });
+
+    setMode("login");
+    initSupabase().catch((error) => message(`Erro ao iniciar o portal: ${error.message}`, true));
+  </script>
+</body>
+</html>
