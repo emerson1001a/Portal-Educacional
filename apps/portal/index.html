@@ -222,7 +222,7 @@
       font-weight: 850;
     }
 
-    .child-list, .goal-list, .review-list, .timeline { display: grid; gap: 10px; margin-top: 14px; }
+    .child-list, .goal-list, .review-list, .snapshot-list, .timeline { display: grid; gap: 10px; margin-top: 14px; }
     .perception-tools {
       display: grid;
       gap: 10px;
@@ -698,6 +698,13 @@
             <button class="button secondary" id="saveReviewButton" type="button">Salvar leitura do momento</button>
           </div>
           <div class="review-list" id="reviewsList"></div>
+          <div class="row between" style="margin-top:18px">
+            <div>
+              <h3>Marcos numéricos</h3>
+              <p class="muted small">Números simples salvos junto das leituras para apoiar comparações futuras.</p>
+            </div>
+          </div>
+          <div class="snapshot-list" id="snapshotsList"></div>
         </section>
 
         <section class="card">
@@ -869,6 +876,7 @@
       goals: [],
       completedGoals: [],
       reviews: [],
+      snapshots: [],
       modules: [],
       events: [],
       activeChildId: localStorage.getItem("portal.activeChildId") || ""
@@ -908,6 +916,7 @@
       generalFeedback: document.querySelector("#generalFeedback"),
       saveReviewButton: document.querySelector("#saveReviewButton"),
       reviewsList: document.querySelector("#reviewsList"),
+      snapshotsList: document.querySelector("#snapshotsList"),
       practicePlan: document.querySelector("#practicePlan"),
       timeEvolutionGrid: document.querySelector("#timeEvolutionGrid"),
       areaBalance: document.querySelector("#areaBalance"),
@@ -1404,6 +1413,40 @@
       };
     }
 
+    function snapshotSummary(snapshot) {
+      return snapshot?.summary && typeof snapshot.summary === "object" ? snapshot.summary : {};
+    }
+
+    function buildSnapshotComparison() {
+      const child = activeChild();
+      if (!child) {
+        return ["Selecione uma criança para acompanhar marcos numéricos."];
+      }
+      if (!state.snapshots.length) {
+        return ["Ainda não há snapshot salvo. Salve uma leitura do momento para registrar o primeiro marco numérico."];
+      }
+
+      const latest = snapshotSummary(state.snapshots[0]);
+      if (state.snapshots.length < 2) {
+        return [
+          `Último marco: ${latest.total_events || 0} evidência${latest.total_events === 1 ? "" : "s"}, ${latest.active_goals || 0} meta${latest.active_goals === 1 ? "" : "s"} ativa${latest.active_goals === 1 ? "" : "s"} e ${latest.active_weeks_last_28_days || 0} semana${latest.active_weeks_last_28_days === 1 ? "" : "s"} com prática.`,
+          "Salve outra leitura depois de novas práticas para comparar evolução numérica."
+        ];
+      }
+
+      const previous = snapshotSummary(state.snapshots[1]);
+      const eventDelta = (latest.total_events || 0) - (previous.total_events || 0);
+      const weekDelta = (latest.active_weeks_last_28_days || 0) - (previous.active_weeks_last_28_days || 0);
+      const goalDelta = (latest.active_goals || 0) - (previous.active_goals || 0);
+
+      return [
+        `Evidências: ${latest.total_events || 0} agora (${eventDelta >= 0 ? "+" : ""}${eventDelta} desde o marco anterior).`,
+        `Continuidade: ${latest.active_weeks_last_28_days || 0} de 4 semanas com prática (${weekDelta >= 0 ? "+" : ""}${weekDelta}).`,
+        `Metas ativas: ${latest.active_goals || 0} (${goalDelta >= 0 ? "+" : ""}${goalDelta}).`,
+        `Confiança registrada: ${reviewConfidenceLabel(latest.confidence)}.`
+      ];
+    }
+
     function escapeHtml(text) {
       return String(text || "")
         .replaceAll("&", "&amp;")
@@ -1508,6 +1551,45 @@
           ${recipe.length ? `<p class="small"><strong>Receita:</strong> ${escapeHtml(recipe[0])}</p>` : ""}
         `;
         els.reviewsList.appendChild(card);
+      });
+    }
+
+    function renderSnapshots() {
+      const child = activeChild();
+      els.snapshotsList.innerHTML = "";
+      if (!child) {
+        els.snapshotsList.innerHTML = '<div class="notice">Selecione uma criança para ver marcos numéricos.</div>';
+        return;
+      }
+      if (!state.snapshots.length) {
+        els.snapshotsList.innerHTML = '<div class="notice">Ainda não há marcos numéricos salvos.</div>';
+        return;
+      }
+
+      const comparisonCard = document.createElement("article");
+      comparisonCard.className = "feedback-card milestone";
+      comparisonCard.innerHTML = `
+        <span class="pill">números do percurso</span>
+        <strong>Comparativo numérico</strong>
+        ${listItems(buildSnapshotComparison())}
+      `;
+      els.snapshotsList.appendChild(comparisonCard);
+
+      state.snapshots.slice(0, 4).forEach((snapshot) => {
+        const summary = snapshotSummary(snapshot);
+        const areas = summary.areas_last_28_days && typeof summary.areas_last_28_days === "object"
+          ? Object.entries(summary.areas_last_28_days).map(([area, count]) => `${areaLabel(area)}: ${count}`)
+          : [];
+        const card = document.createElement("article");
+        card.className = "feedback-card";
+        card.innerHTML = `
+          <span class="pill">${formatDate(snapshot.created_at)}</span>
+          <strong>${summary.total_events || 0} evidência${summary.total_events === 1 ? "" : "s"}</strong>
+          <p class="muted small">${summary.active_weeks_last_28_days || 0} de 4 semanas com prática. ${summary.active_goals || 0} meta${summary.active_goals === 1 ? "" : "s"} ativa${summary.active_goals === 1 ? "" : "s"}.</p>
+          ${areas.length ? `<p class="small"><strong>Áreas:</strong> ${escapeHtml(areas.join(" / "))}</p>` : ""}
+          ${summary.attention ? `<p class="small"><strong>Próximo foco:</strong> ${escapeHtml(summary.attention)}</p>` : ""}
+        `;
+        els.snapshotsList.appendChild(card);
       });
     }
 
@@ -2054,6 +2136,7 @@
       renderDashboard();
       renderGeneralFeedback();
       renderReviews();
+      renderSnapshots();
       renderPracticePlan();
       renderTimeEvolution();
       renderEvolution();
@@ -2160,10 +2243,27 @@
       if (error) message(`Leituras salvas ainda não disponíveis: ${error.message}`, true);
     }
 
+    async function loadSnapshots() {
+      const child = activeChild();
+      if (!child) {
+        state.snapshots = [];
+        return;
+      }
+      const { data, error } = await state.supabase
+        .from("progress_snapshots")
+        .select("*")
+        .eq("child_id", child.id)
+        .order("created_at", { ascending: false })
+        .limit(12);
+      state.snapshots = error ? [] : data || [];
+      if (error) message(`Marcos numéricos ainda não disponíveis: ${error.message}`, true);
+    }
+
     async function loadChildData() {
       await loadEvents();
       await loadGoals();
       await loadReviews();
+      await loadSnapshots();
     }
 
     async function refreshAll() {
@@ -2200,6 +2300,7 @@
           state.goals = [];
           state.completedGoals = [];
           state.reviews = [];
+          state.snapshots = [];
           state.events = [];
           render();
         }
@@ -2243,7 +2344,9 @@
           Boolean(snapshotError)
         );
         await loadReviews();
+        await loadSnapshots();
         renderReviews();
+        renderSnapshots();
       } finally {
         setButtonBusy(button, false);
       }
