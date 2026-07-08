@@ -1,0 +1,1251 @@
+﻿<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tabuada Inteligente</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;--paper:#fff;--ink:#132033;--muted:#637083;--line:#dde5ef;
+      --brand:#0f766e;--brand-2:#14b8a6;--sky:#0ea5e9;--sun:#f59e0b;--coral:#ef4444;--green:#16a34a;
+      --shadow:0 18px 42px rgba(24,39,75,.12);--radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 8% 0%,rgba(20,184,166,.14),transparent 28%),radial-gradient(circle at 92% 8%,rgba(245,158,11,.18),transparent 30%),linear-gradient(180deg,#f7fbff 0%,var(--bg) 60%,#eef5f2 100%);line-height:1.35}
+    .shell{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:20px 0 28px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0 18px}
+    .brand{display:flex;align-items:center;gap:12px}.mark{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--sky));color:#fff;font-weight:900;font-size:22px;box-shadow:0 12px 24px rgba(15,118,110,.24)}
+    h1{margin:0;font-size:clamp(24px,4vw,40px);letter-spacing:0;line-height:1.02}h2{margin:0 0 10px;font-size:16px}h3{margin:0 0 8px;font-size:14px}.muted{color:var(--muted);font-size:13px}
+    .hero{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(360px,1.15fr);gap:16px;align-items:stretch}.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}.setup{display:grid;gap:14px}
+    .field{display:grid;gap:6px}label{font-size:12px;font-weight:800;color:#334155}input,button,select{font:inherit;font-size:16px}input,select{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:14px;padding:12px 13px;outline:none;transition:border-color .16s ease,box-shadow .16s ease,background .16s ease}input:focus,select:focus{border-color:var(--brand-2);box-shadow:0 0 0 4px rgba(20,184,166,.18)}
+    button{border:0;border-radius:14px;padding:12px 14px;cursor:pointer;font-weight:850;color:#fff;background:var(--ink);transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}button:hover{transform:translateY(-1px);filter:brightness(1.02)}button:active{transform:translateY(0)}button.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 12px 24px rgba(15,118,110,.25)}button.secondary{background:#eaf0f7;color:var(--ink)}button.caution{background:#fff4dd;color:#8a4b00;border:1px solid #fed7aa}button.danger{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+    .rolebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.rolebar button{border-radius:999px;padding:9px 13px;background:#edf3f8;color:#344054;border:1px solid var(--line)}.rolebar .role-active{background:var(--ink);color:#fff;border-color:var(--ink)}.pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#f8fafc;color:#334155;font-size:12px;font-weight:800}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.tabs label{min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:14px;background:#f8fafc;cursor:pointer;user-select:none;font-size:15px}.tabs input{width:auto;accent-color:var(--brand)}
+    .practice{display:grid;grid-template-rows:auto minmax(180px,.58fr) auto;min-height:520px;overflow:hidden;position:relative;background:linear-gradient(135deg,rgba(15,118,110,.10),rgba(14,165,233,.12)),var(--paper)}.practice-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.problem{display:grid;place-items:start center;text-align:center;padding:8px 8px 0}.question-label{font-size:13px;font-weight:850;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.big{margin-top:0;font-size:clamp(58px,12vw,128px);line-height:.92;font-weight:950;letter-spacing:0;color:#0b1728}
+    .answerbar{display:grid;grid-template-columns:minmax(120px,1fr) auto;gap:10px;align-items:center;padding:12px 14px;border-radius:18px;background:#f8fbff;border:1px solid var(--line);margin-top:-56px}#answer{font-size:clamp(58px,12vw,128px);line-height:.92;font-weight:950;text-align:center;padding:12px 18px;letter-spacing:0;color:#0b1728}#answer::placeholder{font-size:clamp(32px,7vw,72px);color:#6b7280;opacity:.85}#sendBtn{min-width:132px;background:linear-gradient(135deg,var(--sun),#fb7185);box-shadow:0 12px 24px rgba(245,158,11,.26)}.statusline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}#feedback{min-height:34px;font-size:16px}.ok{color:var(--green);font-weight:900}.bad{color:#dc2626;font-weight:900}.warn{color:#b45309;font-weight:900}
+    .student-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.metric{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px}.metric strong{display:block;font-size:22px;margin-top:4px}.msg{border:1px solid #bae6fd;border-radius:16px;padding:12px;background:#f0f9ff}.msg strong{display:block;margin-bottom:4px;color:#075985}.teacher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}.teacher-wide{grid-column:span 2}.box{border:1px dashed #cbd5e1;border-radius:16px;padding:12px;background:#fbfdff}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #e5edf5;padding:8px 6px;text-align:left;font-size:13px;vertical-align:top}th{color:#475569;font-size:12px}ul{margin:8px 0 0 18px}.hidden{display:none!important}
+    @media(max-width:980px){.hero{grid-template-columns:1fr}.practice{min-height:auto}.student-panel,.teacher-grid{grid-template-columns:1fr}.teacher-wide{grid-column:auto}}
+    @media(max-width:680px){.shell{width:min(100% - 20px,1180px);padding-top:12px}.topbar{align-items:flex-start;flex-direction:column}.grid2,.grid3{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(2,1fr)}.answerbar{grid-template-columns:1fr}#sendBtn{width:100%}.big{font-size:60px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="mark">×</div><div><h1>Tabuada Inteligente</h1><div class="muted">Treino adaptativo para praticar tabuada com leveza e progresso visível.</div></div></div>
+      <div class="rolebar"><span class="pill">Modo</span><button id="roleStudent" class="role-active">Aluno</button><button id="roleTeacher">Professor</button><button id="returnPortalBtn" class="secondary" style="display:none;">Entregar para o adulto</button></div>
+    </header>
+    <div id="roleHint" class="muted" style="margin-bottom:12px;">Aluno: treino leve, com incentivo.</div>
+    <main class="hero">
+      <section class="card setup">
+        <div><h2>Preparar treino</h2><div class="muted">Escolha o aluno e as tabuadas. Depois é só começar.</div></div>
+        <div class="grid2"><div class="field"><label for="studentId">Aluno</label><input id="studentId" placeholder="ex.: miguel01" /></div><div class="field"><label for="mode">Modo de treino</label><select id="mode"><option value="adaptive" selected>Adaptativo</option><option value="random">Aleatório</option></select></div></div>
+        <div class="field"><label>Tabuadas</label><div class="tabs" id="tabsBox"></div><div class="grid2"><button id="allBtn" class="secondary">Marcar todas</button><button id="noneBtn" class="secondary">Desmarcar todas</button></div></div>
+        <div class="grid3"><button id="startBtn" class="primary">Começar</button><button id="pauseBtn" class="caution">Pausar</button><button id="resetBtn" class="danger" title="Apaga dados do aluno atual">Reset do aluno</button></div>
+        <div id="studentMini" class="student-panel"><div class="metric"><span class="muted">Últimas 20 tentativas</span><div id="studentMiniBox" style="margin-top:8px;">—</div></div><div class="metric"><span class="muted">Mais precisa treinar</span><strong id="studentMostErrors">—</strong></div><div class="msg" style="grid-column:1/-1;"><h3>Mensagem de incentivo</h3><div id="studentCoachMsg"><strong>—</strong><div class="muted">—</div></div><div class="muted" style="margin-top:8px;"><b>Últimas mensagens:</b></div><div id="studentCoachHistory" class="muted" style="margin-top:4px;">—</div></div></div>
+      </section>
+      <section class="card practice"><div class="practice-head"><div><div class="question-label">Pergunta atual</div><div class="muted">Digite a resposta e pressione Enter ou Responder.</div></div><div class="statusline"><span class="pill">Tempo <b id="timer">—</b></span><span class="pill">Sequência <b id="streak">0</b></span></div></div><div class="problem"><div id="question" class="big">—</div></div><div><div class="answerbar"><input id="answer" inputmode="numeric" placeholder="resposta" autocomplete="off" /><button id="sendBtn">Responder</button></div><div id="feedback" style="margin-top:12px;"></div></div></section>
+    </main>
+    <section id="teacherArea" class="teacher-grid">
+      <div class="card"><h2>Resumo global</h2><div class="muted">Todas as tentativas do aluno</div><div id="summaryGlobal" style="margin-top:8px;">—</div><div class="muted" style="margin-top:8px;">Mais erros: <b id="mostErrorsGlobal">—</b></div></div>
+      <div class="card"><h2>Progresso global</h2><div class="muted">Últimas 20 vs 20 anteriores</div><div id="progressGlobal" style="margin-top:8px;">—</div></div>
+      <div class="card"><h2>Progresso da seleção</h2><div class="muted">Somente tabuadas marcadas</div><div id="progressSelected" style="margin-top:8px;">—</div></div>
+      <div class="card"><h2>Erros por tabuada</h2><table style="margin-top:8px;"><thead><tr><th>Tabuada</th><th>Tent.</th><th>Erros</th><th>%Erro</th><th>Mediana</th></tr></thead><tbody id="errorsByTab"><tr><td colspan="5" class="muted">—</td></tr></tbody></table></div>
+      <div class="card"><h2>Top dificuldades</h2><div class="muted">Erro + tempo + recência</div><table style="margin-top:8px;"><thead><tr><th>Fato</th><th>Tent.</th><th>Erros</th><th>Mediana</th><th>Score</th></tr></thead><tbody id="topFacts"><tr><td colspan="5" class="muted">—</td></tr></tbody></table></div>
+      <div class="card"><h2>Dados</h2><div class="muted">Exportar ou importar o histórico deste navegador.</div><div class="grid2" style="margin-top:10px;"><button id="exportBtn" class="secondary">Exportar JSON</button><button id="importBtn" class="secondary">Importar JSON</button></div><input id="fileInput" type="file" accept="application/json" style="display:none;" /></div>
+      <div class="card teacher-wide"><h2>Recomendações pedagógicas</h2><div id="pedagogy" class="box" style="margin-top:8px;">—</div></div>
+      <div class="card"><h2>Mensagens ao aluno</h2><div id="teacherCoachHistory" class="box" style="margin-top:8px;">—</div></div>
+    </section>
+  </div>
+
+<script>
+(() => {
+  // =========================
+  // Tunables (anti-massante)
+  // =========================
+  const KEY = "TABUADA_APP_V6";
+  const TAB_MIN = 2, TAB_MAX = 9;
+  const MULT_MIN = 1, MULT_MAX = 9;
+
+  const MAX_REPEAT_QUEUE = 10;
+  const REPEAT_DELAY_MIN = 3;
+  const REPEAT_DELAY_MAX = 5;
+
+  const MIX_WINDOW = 20;
+  // Você ajustou para 0.25 (mais leve)
+  const MAX_HARD_SHARE = 0.25;
+
+  // =========================
+  // Feedback/Coach tunables
+  // =========================
+  const COACH_EVERY_N = 10;           // mensagem a cada 10 tentativas
+  const COACH_HISTORY_MAX = 6;        // guarda últimas mensagens
+  const COACH_COOLDOWN = 5;           // não spammar: mínimo de X tentativas entre mensagens extras
+  const EXTRA_COACH_ON_ERR = true;    // gera dica extra em padrão de erro (pressa/dúvida)
+
+  const params = new URLSearchParams(window.location.search);
+  const portal = {
+    childId: params.get("child_id") || "",
+    childName: params.get("child_name") || "",
+    token: params.get("portal_event_token") || "",
+    returnUrl: params.get("portal_return_url") || ""
+  };
+  portal.enabled = Boolean(portal.token && portal.returnUrl);
+  let portalLastSentTotal = 0;
+
+  // =========================
+  // Storage
+  // =========================
+  const loadAll = () => {
+    try { return JSON.parse(localStorage.getItem(KEY)) || { students: {} }; }
+    catch { return { students: {} }; }
+  };
+  const saveAll = (db) => localStorage.setItem(KEY, JSON.stringify(db));
+  const nowISO = () => new Date().toISOString();
+
+  const el = (id) => document.getElementById(id);
+
+  // Role UI
+  const roleStudentBtn = el("roleStudent");
+  const roleTeacherBtn = el("roleTeacher");
+  const returnPortalBtn = el("returnPortalBtn");
+  const roleHint = el("roleHint");
+  const teacherArea = el("teacherArea");
+  const studentMini = el("studentMini");
+
+  // Student coach UI
+  const studentCoachMsg = el("studentCoachMsg");
+  const studentCoachHistory = el("studentCoachHistory");
+
+  // Teacher coach UI
+  const teacherCoachHistory = el("teacherCoachHistory");
+
+  const studentIdEl = el("studentId");
+  const modeEl = el("mode");
+  const tabsBox = el("tabsBox");
+  const allBtn = el("allBtn");
+  const noneBtn = el("noneBtn");
+
+  const startBtn = el("startBtn");
+  const pauseBtn = el("pauseBtn");
+  const resetBtn = el("resetBtn");
+
+  const questionEl = el("question");
+  const answerEl = el("answer");
+  const sendBtn = el("sendBtn");
+  const feedbackEl = el("feedback");
+  const timerEl = el("timer");
+  const streakEl = el("streak");
+
+  const studentMiniBox = el("studentMiniBox");
+  const studentMostErrors = el("studentMostErrors");
+
+  const summaryGlobalEl = el("summaryGlobal");
+  const progressGlobalEl = el("progressGlobal");
+  const progressSelectedEl = el("progressSelected");
+  const topFactsEl = el("topFacts");
+  const errorsByTabEl = el("errorsByTab");
+  const pedagogyEl = el("pedagogy");
+  const mostErrorsGlobalEl = el("mostErrorsGlobal");
+
+  const exportBtn = el("exportBtn");
+  const importBtn = el("importBtn");
+  const fileInput = el("fileInput");
+
+  // =========================
+  // State
+  // =========================
+  let db = loadAll();
+  let current = null;
+  let streak = 0;
+  let paused = false;
+  let timerHandle = null;
+
+  const TEACHER_DEMO_PASS = "1234";
+  let role = "student";
+
+  const repeatQueue = []; // {a,b,dueAfter}
+
+  const selectedTabs = new Set();
+
+  const recentHardFlags = [];
+  const recentKeys = [];
+
+  // =========================
+  // Helpers
+  // =========================
+  function portalReturnUrl(status = "activity_saved") {
+    if (!portal.returnUrl) return "";
+    const url = new URL(portal.returnUrl);
+    url.searchParams.set("portal_status", status);
+    url.searchParams.set("service", "tabuada");
+    if (portal.childId) url.searchParams.set("child_id", portal.childId);
+    return url.toString();
+  }
+
+  function returnToPortal(status = "activity_saved") {
+    const url = portalReturnUrl(status);
+    if (url) window.location.href = url;
+  }
+
+  function tabuadaSummary(student) {
+    const recent = lastN(student.events, 20);
+    const total = recent.length;
+    const correct = recent.filter((event) => event.ok).length;
+    const acc = total ? Math.round((correct / total) * 100) : 0;
+    const facts = buildFactsFromEvents(recent.length ? recent : student.events, student.created_at);
+    const globalMed = median((recent.length ? recent : student.events).map((event) => event.ms)) || student.stats.medianMs || 0;
+    const hard = Object.values(facts)
+      .map((fact) => ({ key: factKey(fact.a, fact.b), score: scoreFact(fact, globalMed) }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map((fact) => fact.key)
+      .join(", ");
+    return { total, correct, acc, hard };
+  }
+
+  async function sendPortalEventIfNeeded(student, force = false) {
+    if (!portal.enabled || !student) return false;
+    const total = student.events.length;
+    if (!force && total - portalLastSentTotal < 10) return false;
+    if (!total) return false;
+
+    const returnUrl = new URL(portal.returnUrl);
+    const recentEvents = lastN(student.events, 20);
+    const summary = tabuadaSummary(student);
+    const lastEvent = student.events[student.events.length - 1] || {};
+    const adultSummary = summary.total
+      ? `Nas últimas ${summary.total} tentativas, acertou ${summary.correct} (${summary.acc}%). ${summary.hard ? `Foque um pouco em: ${summary.hard}.` : "Continue com treinos curtos."}`
+      : "Ainda há poucos dados para uma leitura pedagógica.";
+
+    const response = await fetch(`${returnUrl.origin}/api/activity-events`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Portal-Activity-Token": portal.token
+      },
+      body: JSON.stringify({
+        portal_event_token: portal.token,
+        service: "tabuada",
+        activity_type: force ? "treino_finalizado" : "bloco_de_treino",
+        title: "Treino de tabuada",
+        duration_ms: Number.isFinite(lastEvent.ms) ? lastEvent.ms : null,
+        metrics: {
+          total_attempts: student.events.length,
+          recent_attempts: summary.total,
+          recent_correct: summary.correct,
+          recent_accuracy_pct: summary.acc,
+          hard_facts: summary.hard
+        },
+        feedback: {
+          child: {
+            tone: "positive",
+            message: student.coach?.history?.[0]?.body || "Bom treino. Cada tentativa ajuda você a ficar mais seguro.",
+            next_step: "Entregar o treino para o adulto acompanhar no portal."
+          },
+          adult: {
+            summary: adultSummary,
+            strengths: summary.acc >= 80 ? ["boa precisão recente"] : [],
+            attention_points: summary.acc < 80 ? ["precisão recente ainda em construção"] : [],
+            recipe: [
+              "Faça treinos curtos de 5 minutos.",
+              "Misture fatos fáceis com os que deram mais erro.",
+              "Evite transformar velocidade em pressão."
+            ],
+            avoid_saying: ["Você deveria saber isso.", "Foi muito lento."]
+          }
+        },
+        artifacts: {
+          recent_events: recentEvents,
+          coach_history: student.coach?.history || []
+        }
+      })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.ok === false) throw new Error(result.message || "Não foi possível enviar ao portal.");
+    portalLastSentTotal = total;
+    return true;
+  }
+
+  function setRole(newRole) {
+    if (portal.enabled && newRole === "teacher") newRole = "student";
+    role = newRole;
+    const isTeacher = (role === "teacher");
+    roleStudentBtn.classList.toggle("role-active", !isTeacher);
+    roleTeacherBtn.classList.toggle("role-active", isTeacher);
+    teacherArea.classList.toggle("hidden", !isTeacher);
+    studentMini.classList.toggle("hidden", isTeacher);
+    roleHint.textContent = portal.enabled
+      ? "Treine por alguns minutos e entregue para o adulto acompanhar no Portal."
+      : (isTeacher
+        ? "Professor: visão pedagógica e analítica (demo)."
+        : "Aluno: treino leve, com incentivo.");
+    refreshPanels(getStudent());
+  }
+
+  roleStudentBtn.addEventListener("click", () => setRole("student"));
+  roleTeacherBtn.addEventListener("click", () => {
+    if (portal.enabled) return;
+    const pass = prompt("Modo Professor (demo). Digite a senha:");
+    if (pass !== TEACHER_DEMO_PASS) { alert("Senha incorreta."); return; }
+    setRole("teacher");
+  });
+
+  function ensureStudent(studentId) {
+    if (!db.students[studentId]) {
+      db.students[studentId] = {
+        created_at: nowISO(),
+        events: [],
+        stats: {},
+        coach: {
+          history: [],               // [{ts, title, body, reason}]
+          lastCoachAtTotal: 0        // last total attempts when message was issued
+        }
+      };
+    } else {
+      // migrate older data if needed
+      if (!db.students[studentId].coach) {
+        db.students[studentId].coach = { history: [], lastCoachAtTotal: 0 };
+      }
+    }
+  }
+
+  function getStudentId() { return (studentIdEl.value || "").trim(); }
+  function getStudent() {
+    const sid = getStudentId();
+    if (!sid) return null;
+    ensureStudent(sid);
+    const st = db.students[sid];
+    recomputeStats(st);
+    return st;
+  }
+
+  function factKey(a,b){ return `${a}x${b}`; }
+  function msToSec(ms){ return (ms/1000).toFixed(1) + "s"; }
+
+  function median(arr) {
+    if (!arr.length) return 0;
+    const s = [...arr].sort((a,b)=>a-b);
+    const mid = Math.floor(s.length/2);
+    return (s.length % 2) ? s[mid] : (s[mid-1] + s[mid]) / 2;
+  }
+  function mean(arr) {
+    if (!arr.length) return 0;
+    return arr.reduce((a,b)=>a+b,0)/arr.length;
+  }
+  function percentile(arr, p) {
+    if (!arr.length) return 0;
+    const s = [...arr].sort((a,b)=>a-b);
+    const idx = Math.min(s.length-1, Math.max(0, Math.floor((p/100) * (s.length-1))));
+    return s[idx];
+  }
+
+  // =========================
+  // Stats
+  // =========================
+  function recomputeStats(student) {
+    const timesAll = student.events.map(e=>e.ms);
+    student.stats.total = student.events.length;
+    student.stats.correct = student.events.filter(e=>e.ok).length;
+    student.stats.acc = student.stats.total ? (student.stats.correct/student.stats.total) : 0;
+    student.stats.meanMs = mean(timesAll);
+    student.stats.medianMs = median(timesAll);
+    student.stats.fastTh = percentile(timesAll, 20) || 900;
+    student.stats.slowTh = percentile(timesAll, 80) || 2500;
+  }
+
+  function tabStats(events) {
+    const tabs = {};
+    for (let a=TAB_MIN; a<=TAB_MAX; a++) tabs[a] = { attempts:0, errors:0, times:[] };
+    for (const ev of events) {
+      if (!tabs[ev.a]) continue;
+      tabs[ev.a].attempts += 1;
+      if (!ev.ok) tabs[ev.a].errors += 1;
+      tabs[ev.a].times.push(ev.ms);
+    }
+    return tabs;
+  }
+
+  function topErrorTabuadas(events, topN=3) {
+    const ts = tabStats(events);
+    const rows = Object.entries(ts).map(([a,v]) => {
+      const attempts = v.attempts;
+      const errors = v.errors;
+      const rate = attempts ? errors/attempts : 0;
+      return { a: parseInt(a,10), attempts, errors, rate };
+    }).filter(r=>r.attempts>0)
+      .sort((x,y)=> (y.errors - x.errors) || (y.rate - x.rate));
+    return rows.slice(0, topN);
+  }
+
+  // =========================
+  // Selection UI
+  // =========================
+  function buildTabSelectors() {
+    tabsBox.innerHTML = "";
+    for (let a = TAB_MIN; a <= TAB_MAX; a++) {
+      const id = `tab_${a}`;
+      const label = document.createElement("label");
+      label.innerHTML = `<input type="checkbox" id="${id}" /> <b>${a}</b>`;
+      tabsBox.appendChild(label);
+
+      const cb = label.querySelector("input");
+      cb.addEventListener("change", () => {
+        if (cb.checked) selectedTabs.add(a);
+        else selectedTabs.delete(a);
+        refreshPanels(getStudent());
+      });
+    }
+    markAllTabs();
+  }
+
+  function markAllTabs() {
+    selectedTabs.clear();
+    for (let a = TAB_MIN; a <= TAB_MAX; a++) selectedTabs.add(a);
+    for (let a = TAB_MIN; a <= TAB_MAX; a++) el(`tab_${a}`).checked = true;
+  }
+  function unmarkAllTabs() {
+    selectedTabs.clear();
+    for (let a = TAB_MIN; a <= TAB_MAX; a++) el(`tab_${a}`).checked = false;
+  }
+  function getSelectedTabsArray() {
+    const arr = [...selectedTabs].sort((a,b)=>a-b);
+    if (arr.length) return arr;
+    return [...Array(TAB_MAX-TAB_MIN+1)].map((_,i)=>i+TAB_MIN);
+  }
+  function filteredEventsBySelection(student) {
+    const tabs = new Set(getSelectedTabsArray());
+    return student.events.filter(ev => tabs.has(ev.a));
+  }
+
+  // =========================
+  // Adaptive scoring
+  // =========================
+  function scoreFact(f, globalMedianMs) {
+    const attempts = f.attempts;
+    const errors = f.errors;
+    const errRate = (errors + 0.5) / (attempts + 1);
+    const medMs = median(f.times);
+    const timeNorm = globalMedianMs ? Math.max(0, (medMs - globalMedianMs) / globalMedianMs) : 0;
+    const days = (Date.now() - new Date(f.lastSeen).getTime()) / (1000*60*60*24);
+    const recency = Math.min(1, Math.max(0, days / 7));
+    return (0.65*errRate) + (0.25*timeNorm) + (0.10*recency);
+  }
+
+  function buildUniverse() {
+    const tabs = getSelectedTabsArray();
+    const u = [];
+    for (const a of tabs) for (let b=MULT_MIN; b<=MULT_MAX; b++) u.push({a,b});
+    return u;
+  }
+
+  function buildFactsFromEvents(events, createdAtISO) {
+    const facts = {};
+    for (const ev of events) {
+      const k = factKey(ev.a, ev.b);
+      if (!facts[k]) facts[k] = { a:ev.a, b:ev.b, attempts:0, errors:0, times:[], lastSeen: ev.ts };
+      const f = facts[k];
+      f.attempts += 1;
+      if (!ev.ok) f.errors += 1;
+      f.times.push(ev.ms);
+      f.lastSeen = ev.ts;
+    }
+    return facts;
+  }
+
+  // =========================
+  // Mix control
+  // =========================
+  function hardShare() {
+    if (!recentHardFlags.length) return 0;
+    const n = recentHardFlags.length;
+    const hard = recentHardFlags.reduce((s,x)=>s+(x?1:0),0);
+    return hard / n;
+  }
+  function pushHardFlag(isHard, key) {
+    recentHardFlags.push(!!isHard);
+    if (recentHardFlags.length > MIX_WINDOW) recentHardFlags.shift();
+    recentKeys.push(key);
+    if (recentKeys.length > MIX_WINDOW) recentKeys.shift();
+  }
+
+  function scheduleRepeat(a,b) {
+    if (repeatQueue.length >= MAX_REPEAT_QUEUE) return;
+    const delay = REPEAT_DELAY_MIN + Math.floor(Math.random() * (REPEAT_DELAY_MAX - REPEAT_DELAY_MIN + 1));
+    repeatQueue.push({ a, b, dueAfter: delay });
+  }
+
+  function pickFromRepeatQueue() {
+    for (let i=0; i<repeatQueue.length; i++) {
+      repeatQueue[i].dueAfter -= 1;
+      if (repeatQueue[i].dueAfter <= 0) {
+        return repeatQueue.splice(i,1)[0];
+      }
+    }
+    return null;
+  }
+
+  function pickEasyOrMedium(scored) {
+    const n = scored.length;
+    const easyStart = Math.floor(n * 0.70);          // bottom 30%
+    const medStart  = Math.floor(n * 0.35);
+    const medEnd    = Math.floor(n * 0.65);
+
+    let pool;
+    const r = Math.random();
+    if (r < 0.70) pool = scored.slice(easyStart);
+    else pool = scored.slice(medStart, Math.max(medStart+1, medEnd));
+
+    if (!pool.length) pool = scored;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    return { a: pick.a, b: pick.b, fromHard: false };
+  }
+
+  function pickHard(scored) {
+    const pool = scored.slice(0, Math.min(12, scored.length));
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    return { a: pick.a, b: pick.b, fromHard: true };
+  }
+
+  function pickNextQuestion(student) {
+    const universe = buildUniverse();
+
+    if (!student || student.stats.total < 10 || modeEl.value === "random") {
+      const q = universe[Math.floor(Math.random()*universe.length)];
+      return { ...q, fromHard: false, fromRepeat: false };
+    }
+
+    const evSel = filteredEventsBySelection(student);
+    const timesSel = evSel.map(e=>e.ms);
+    const globalMedSel = median(timesSel) || student.stats.medianMs || 0;
+    const factsSel = buildFactsFromEvents(evSel, student.created_at);
+
+    const scored = universe.map(({a,b}) => {
+      const k = factKey(a,b);
+      const f = factsSel[k] || { a,b, attempts:0, errors:0, times:[], lastSeen: student.created_at };
+      return { a,b, score: scoreFact(f, globalMedSel) };
+    }).sort((x,y)=> y.score-x.score);
+
+    const share = hardShare();
+    const canServeHard = (recentHardFlags.length < MIX_WINDOW) || (share < MAX_HARD_SHARE);
+
+    if (canServeHard) {
+      const rep = pickFromRepeatQueue();
+      if (rep) {
+        const tabs = new Set(getSelectedTabsArray());
+        if (tabs.has(rep.a)) return { a: rep.a, b: rep.b, fromHard: true, fromRepeat: true };
+      }
+    }
+
+    if (!canServeHard) {
+      const pick = pickEasyOrMedium(scored);
+      return { a: pick.a, b: pick.b, fromHard: false, fromRepeat: false };
+    }
+
+    if (Math.random() < 0.55) {
+      const pick = pickHard(scored);
+      return { a: pick.a, b: pick.b, fromHard: true, fromRepeat: false };
+    } else {
+      const pick = pickEasyOrMedium(scored);
+      return { a: pick.a, b: pick.b, fromHard: false, fromRepeat: false };
+    }
+  }
+
+  // =========================
+  // Timer + error type
+  // =========================
+  function startTimer() {
+    timerEl.textContent = "0.0s";
+    if (timerHandle) clearInterval(timerHandle);
+    timerHandle = setInterval(() => {
+      if (!current) return;
+      timerEl.textContent = ((Date.now() - current.startMs)/1000).toFixed(1) + "s";
+    }, 100);
+  }
+  function stopTimer() { if (timerHandle) clearInterval(timerHandle); timerHandle = null; }
+
+  function classifyError(student, ms) {
+    const fast = student.stats.fastTh || 900;
+    const slow = student.stats.slowTh || 2500;
+    if (ms <= fast) return "pressa";
+    if (ms >= slow) return "duvida";
+    return "normal";
+  }
+
+  // =========================
+  // Progress blocks
+  // =========================
+  function blockStats(arr) {
+    const total = arr.length;
+    const correct = arr.filter(e=>e.ok).length;
+    const acc = total ? correct/total : 0;
+    const med = median(arr.map(e=>e.ms));
+    const pressaErr = arr.filter(e=>!e.ok && e.errType==="pressa").length;
+    const duvidaErr = arr.filter(e=>!e.ok && e.errType==="duvida").length;
+    return { total, correct, acc, med, pressaErr, duvidaErr };
+  }
+
+  function renderProgressBox(events, tabsLabel) {
+    if (events.length < 10) return `<span class="muted">Poucos dados. Faça mais tentativas para comparar.</span>`;
+    const last20 = events.slice(-20);
+    const prev20 = events.slice(-40, -20);
+
+    const a = blockStats(last20);
+    const b = prev20.length ? blockStats(prev20) : null;
+
+    const deltaAcc = b ? ((a.acc - b.acc)*100).toFixed(1) : null;
+    const deltaMed = b ? (a.med - b.med) : null;
+
+    return `
+      ${tabsLabel ? `<div class="pill">${tabsLabel}</div><br><br>` : ``}
+      <b>Últimas 20</b>: acerto <b>${(a.acc*100).toFixed(1)}%</b> • mediana <b>${msToSec(a.med)}</b> •
+      erros(pressa): <b>${a.pressaErr}</b> • erros(dúvida): <b>${a.duvidaErr}</b><br>
+      ${b ? `<b>20 anteriores</b>: acerto <b>${(b.acc*100).toFixed(1)}%</b> • mediana <b>${msToSec(b.med)}</b><br>` :
+        `<span class="muted">Ainda não há 40 tentativas para comparar com 20 anteriores.</span><br>`
+      }
+      ${b ? `<b>Variação</b>: acerto <b>${deltaAcc}%</b> • mediana <b>${deltaMed>0?"+":""}${(deltaMed/1000).toFixed(2)}s</b>` : ``}
+    `;
+  }
+
+  // =========================
+  // Coach messages
+  // =========================
+  function pushCoachMessage(student, title, body, reason) {
+    const entry = { ts: nowISO(), title, body, reason };
+    student.coach.history.unshift(entry);
+    if (student.coach.history.length > COACH_HISTORY_MAX) student.coach.history.pop();
+    student.coach.lastCoachAtTotal = student.stats.total || student.events.length;
+    saveAll(db);
+    renderCoach(student);
+  }
+
+  function lastN(arr, n) { return arr.slice(Math.max(0, arr.length-n)); }
+
+  function makeCoachMessage(student, context) {
+    // context: { reason, lastBlockStats, topTabsGlobal, topTabsSel, lastErrType, lastWasOk }
+    const topG = context.topTabsGlobal || [];
+    const topS = context.topTabsSel || [];
+    const mainTab = (topS[0]?.a || topG[0]?.a || null);
+
+    const pieces = [];
+
+    // Positivo base
+    const basePos = [
+      "Mandou bem em aparecer aqui e treinar.",
+      "Boa! Treino constante é o que mais funciona.",
+      "Você está fazendo o que os bons fazem: praticar um pouco por dia."
+    ];
+
+    // Dicas curtas
+    const tipPressa = [
+      "Dica rápida: antes do Enter, confere 1 segundo na mente. Isso derruba erros por pressa.",
+      "Se estiver rápido demais e errando, desacelera um pouquinho e confere: acerto primeiro, velocidade depois."
+    ];
+
+    const tipDuvida = [
+      "Quando travar, use uma âncora: pense em 10× e ajuste (ex.: 7×8 = 7×10 − 7×2).",
+      "Se der branco, quebra em pedaços: dobro/metade ajuda muito (ex.: 8×6 = 8×3 dobrado)."
+    ];
+
+    const tipGeral = [
+      "Meta da rodada: acertar com calma. A velocidade vem sozinha.",
+      "Errou? Sem drama. Isso só mostra o próximo passo do treino."
+    ];
+
+    const tabTip = mainTab
+      ? `Hoje, dá um carinho especial na tabuada do <b>${mainTab}</b>. Só alguns minutos e pronto.`
+      : null;
+
+    // Escolha pelo contexto
+    let title = "Ótimo trabalho!";
+    let body = basePos[Math.floor(Math.random()*basePos.length)] + " ";
+
+    if (context.lastErrType === "pressa") {
+      title = "Ajuste pequeno, ganho grande";
+      body += tipPressa[Math.floor(Math.random()*tipPressa.length)] + " ";
+    } else if (context.lastErrType === "duvida") {
+      title = "Você está quase lá";
+      body += tipDuvida[Math.floor(Math.random()*tipDuvida.length)] + " ";
+    } else {
+      body += tipGeral[Math.floor(Math.random()*tipGeral.length)] + " ";
+    }
+
+    if (tabTip) body += tabTip;
+
+    return { title, body };
+  }
+
+  function canEmitExtraCoach(student) {
+    const total = student.stats.total || student.events.length;
+    const last = student.coach.lastCoachAtTotal || 0;
+    return (total - last) >= COACH_COOLDOWN;
+  }
+
+  function maybeEmitCoach(student, opts) {
+    // opts: { reason, lastErrType, lastWasOk }
+    const total = student.stats.total || student.events.length;
+    const evSel = filteredEventsBySelection(student);
+
+    const topTabsGlobal = topErrorTabuadas(student.events, 2);
+    const topTabsSel = topErrorTabuadas(evSel, 2);
+
+    const last20Sel = evSel.slice(-20);
+    const lastBlockStats = last20Sel.length ? blockStats(last20Sel) : null;
+
+    const msg = makeCoachMessage(student, {
+      reason: opts.reason,
+      lastBlockStats,
+      topTabsGlobal,
+      topTabsSel,
+      lastErrType: opts.lastErrType,
+      lastWasOk: opts.lastWasOk
+    });
+
+    pushCoachMessage(student, msg.title, msg.body, opts.reason);
+  }
+
+  function renderCoach(student) {
+    // Student box (latest)
+    const hist = student?.coach?.history || [];
+    if (!hist.length) {
+      studentCoachMsg.innerHTML = `<strong>—</strong><div class="muted">—</div>`;
+      studentCoachHistory.textContent = "—";
+      teacherCoachHistory.textContent = "—";
+      return;
+    }
+
+    const latest = hist[0];
+    studentCoachMsg.innerHTML = `<strong>${latest.title}</strong><div>${latest.body}</div>`;
+
+    const lines = hist.map(h => `• ${new Date(h.ts).toLocaleString()} — ${h.title}`).join("<br>");
+    studentCoachHistory.innerHTML = lines;
+
+    const detailed = hist.map(h => {
+      return `<div style="margin-bottom:10px;">
+        <div class="muted">${new Date(h.ts).toLocaleString()} • motivo: ${h.reason}</div>
+        <b>${h.title}</b><br>
+        <div>${h.body}</div>
+      </div>`;
+    }).join("");
+    teacherCoachHistory.innerHTML = detailed || "—";
+  }
+
+  // =========================
+  // Render teacher + student panels
+  // =========================
+  function refreshPanels(student) {
+    if (!student) {
+      studentMiniBox.textContent = "—";
+      studentMostErrors.textContent = "—";
+      summaryGlobalEl.textContent = "—";
+      progressGlobalEl.textContent = "—";
+      progressSelectedEl.textContent = "—";
+      mostErrorsGlobalEl.textContent = "—";
+      errorsByTabEl.innerHTML = `<tr><td colspan="5" class="muted">—</td></tr>`;
+      topFactsEl.innerHTML = `<tr><td colspan="5" class="muted">—</td></tr>`;
+      pedagogyEl.textContent = "—";
+      renderCoach({ coach: { history: [] } });
+      return;
+    }
+
+    const evSel = filteredEventsBySelection(student);
+    const tabsLabel = `Tabuadas selecionadas: <b>${getSelectedTabsArray().join(", ")}</b>`;
+
+    // Student mini (last 20 selection)
+    const mini = evSel.slice(-20);
+    if (!mini.length) {
+      studentMiniBox.innerHTML = `<span class="muted">Sem tentativas neste recorte ainda.</span>`;
+      studentMostErrors.textContent = "—";
+    } else {
+      const s = blockStats(mini);
+      studentMiniBox.innerHTML =
+        `Acerto: <b>${(s.acc*100).toFixed(1)}%</b> • Mediana: <b>${msToSec(s.med)}</b> • ` +
+        `Erros(pressa): <b>${s.pressaErr}</b> • Erros(dúvida): <b>${s.duvidaErr}</b>`;
+      const topTabsSel = topErrorTabuadas(evSel, 3);
+      studentMostErrors.textContent = topTabsSel.length
+        ? topTabsSel.map(x=>`${x.a} (${x.errors})`).join(", ")
+        : "—";
+    }
+
+    // Teacher summary
+    const total = student.stats.total || 0;
+    const acc = ((student.stats.acc || 0)*100).toFixed(1)+"%";
+    summaryGlobalEl.innerHTML =
+      `Tentativas: <b>${total}</b> • Acerto: <b>${acc}</b><br>` +
+      `Tempo mediano: <b>${total ? msToSec(student.stats.medianMs) : "—"}</b><br>` +
+      `<span class="muted">Pressa ≤ ${msToSec(student.stats.fastTh||0)} • Dúvida ≥ ${msToSec(student.stats.slowTh||0)}</span><br>` +
+      `<span class="muted">Balanceamento hard/repeat (sessão): ${(hardShare()*100).toFixed(0)}% (limite ${(MAX_HARD_SHARE*100).toFixed(0)}%)</span>`;
+
+    progressGlobalEl.innerHTML = renderProgressBox(student.events, null);
+    progressSelectedEl.innerHTML = renderProgressBox(evSel, tabsLabel);
+
+    const topTabsGlobal = topErrorTabuadas(student.events, 3);
+    mostErrorsGlobalEl.textContent = topTabsGlobal.length
+      ? topTabsGlobal.map(x=>`${x.a} (erros ${x.errors}/${x.attempts})`).join(", ")
+      : "—";
+
+    renderErrorsByTab(student.events);
+    renderTopFactsSelection(student, evSel);
+    renderPedagogy(student, evSel);
+    renderCoach(student);
+  }
+
+  function renderErrorsByTab(events) {
+    errorsByTabEl.innerHTML = "";
+    const ts = tabStats(events);
+    const rows = Object.entries(ts).map(([a,v]) => {
+      const attempts = v.attempts;
+      const errors = v.errors;
+      const rate = attempts ? errors/attempts : 0;
+      const med = attempts ? median(v.times) : 0;
+      return { a: parseInt(a,10), attempts, errors, rate, med };
+    }).sort((x,y)=> (y.errors - x.errors) || (y.rate - x.rate));
+
+    const any = rows.some(r=>r.attempts>0);
+    if (!any) {
+      errorsByTabEl.innerHTML = `<tr><td colspan="5" class="muted">Sem dados ainda.</td></tr>`;
+      return;
+    }
+
+    for (const r of rows) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.a}</td>
+        <td>${r.attempts}</td>
+        <td>${r.errors}</td>
+        <td>${r.attempts ? (r.rate*100).toFixed(1)+"%" : "—"}</td>
+        <td>${r.attempts ? msToSec(r.med) : "—"}</td>
+      `;
+      errorsByTabEl.appendChild(tr);
+    }
+  }
+
+  function renderTopFactsSelection(student, evSel) {
+    topFactsEl.innerHTML = "";
+    if (!evSel.length) {
+      topFactsEl.innerHTML = `<tr><td colspan="5" class="muted">Sem dados no recorte atual.</td></tr>`;
+      return;
+    }
+
+    const timesSel = evSel.map(e=>e.ms);
+    const globalMedSel = median(timesSel) || student.stats.medianMs || 0;
+    const factsSel = buildFactsFromEvents(evSel, student.created_at);
+
+    const rows = Object.values(factsSel).map(f => {
+      const s = scoreFact(f, globalMedSel);
+      return { key: factKey(f.a,f.b), attempts:f.attempts, errors:f.errors, med: median(f.times), score: s };
+    }).sort((a,b)=> b.score-a.score).slice(0,10);
+
+    for (const r of rows) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.key}</td>
+        <td>${r.attempts}</td>
+        <td>${r.errors}</td>
+        <td>${msToSec(r.med)}</td>
+        <td>${r.score.toFixed(3)}</td>
+      `;
+      topFactsEl.appendChild(tr);
+    }
+  }
+
+  function renderPedagogy(student, evSel) {
+    if (!student.events.length) { pedagogyEl.textContent = "Sem dados ainda."; return; }
+
+    const globalLast = student.events.slice(-50);
+    const pressa = globalLast.filter(e=>!e.ok && e.errType==="pressa").length;
+    const duvida = globalLast.filter(e=>!e.ok && e.errType==="duvida").length;
+
+    const topTabsG = topErrorTabuadas(student.events, 2);
+    const topTabsS = topErrorTabuadas(evSel, 2);
+
+    let topFacts = [];
+    if (evSel.length) {
+      const timesSel = evSel.map(e=>e.ms);
+      const globalMedSel = median(timesSel) || student.stats.medianMs || 0;
+      const factsSel = buildFactsFromEvents(evSel, student.created_at);
+      topFacts = Object.values(factsSel).map(f => ({
+        key: factKey(f.a,f.b),
+        attempts: f.attempts,
+        errors: f.errors,
+        score: scoreFact(f, globalMedSel)
+      }))
+      .sort((a,b)=> b.score-a.score)
+      .slice(0,6);
+    }
+
+    const selTabsText = getSelectedTabsArray().join(", ");
+    const focoG = topTabsG.length ? topTabsG.map(t=>`${t.a}`).join(" e ") : "—";
+    const focoS = topTabsS.length ? topTabsS.map(t=>`${t.a}`).join(" e ") : "—";
+
+    const focoFacts = topFacts.length
+      ? topFacts.map(f=>`${f.key} (${f.errors}/${f.attempts})`).join(", ")
+      : "—";
+
+    const perfil = (pressa > duvida)
+      ? "Predomina erro por <b>pressa</b>."
+      : (duvida > pressa)
+        ? "Predomina erro por <b>dúvida</b>."
+        : "Pressa e dúvida estão equilibrados.";
+
+    pedagogyEl.innerHTML = `
+      <b>Diagnóstico rápido</b>
+      <ul>
+        <li>${perfil}</li>
+        <li><b>Tabuadas com mais erros (global):</b> ${focoG}</li>
+        <li><b>Tabuadas com mais erros (seleção atual: ${selTabsText}):</b> ${focoS}</li>
+        <li><b>Fatos prioritários (seleção):</b> ${focoFacts}</li>
+      </ul>
+      <b>Plano de intervenção (5–7 minutos/dia)</b>
+      <ul>
+        <li><b>2 minutos</b>: aquecimento com itens fáceis (ganhar fluência).</li>
+        <li><b>3 minutos</b>: foco nos <b>fatos prioritários</b> (sem pressa).</li>
+        <li><b>1–2 minutos</b>: revisão rápida (mistura) para consolidar.</li>
+      </ul>
+      <b>Orientação conforme o tipo de erro</b>
+      <ul>
+        <li><b>Pressa</b>: 1 segundo de conferência antes do Enter (acerto primeiro).</li>
+        <li><b>Dúvida</b>: usar âncoras (10× e ajuste / dobro e metade) por 2 dias.</li>
+      </ul>
+      <div class="muted">Obs.: hard/repeat ≤ ${(MAX_HARD_SHARE*100).toFixed(0)}% na janela recente (evita treino massante).</div>
+    `;
+  }
+
+  // =========================
+  // Coach rendering
+  // =========================
+  function renderCoach(student) {
+    const hist = student?.coach?.history || [];
+    if (!hist.length) {
+      studentCoachMsg.innerHTML = `<strong>—</strong><div class="muted">—</div>`;
+      studentCoachHistory.innerHTML = "—";
+      teacherCoachHistory.innerHTML = "—";
+      return;
+    }
+
+    const latest = hist[0];
+    studentCoachMsg.innerHTML = `<strong>${latest.title}</strong><div>${latest.body}</div>`;
+
+    const lines = hist.map(h => `• ${new Date(h.ts).toLocaleString()} — ${h.title}`).join("<br>");
+    studentCoachHistory.innerHTML = lines;
+
+    const detailed = hist.map(h => {
+      return `<div style="margin-bottom:10px;">
+        <div class="muted">${new Date(h.ts).toLocaleString()} • motivo: ${h.reason}</div>
+        <b>${h.title}</b><br>
+        <div>${h.body}</div>
+      </div>`;
+    }).join("");
+    teacherCoachHistory.innerHTML = detailed || "—";
+  }
+
+  // =========================
+  // Coach logic
+  // =========================
+  function pushCoachMessage(student, title, body, reason) {
+    const entry = { ts: nowISO(), title, body, reason };
+    student.coach.history.unshift(entry);
+    if (student.coach.history.length > COACH_HISTORY_MAX) student.coach.history.pop();
+    student.coach.lastCoachAtTotal = student.stats.total || student.events.length;
+    saveAll(db);
+    renderCoach(student);
+  }
+
+  function makeCoachMessage(student, context) {
+    const evSel = filteredEventsBySelection(student);
+    const topG = topErrorTabuadas(student.events, 2);
+    const topS = topErrorTabuadas(evSel, 2);
+    const mainTab = (topS[0]?.a || topG[0]?.a || null);
+
+    const basePos = [
+      "Mandou bem em treinar hoje. Isso é o que faz você ficar bom de verdade.",
+      "Boa! Você está construindo tabuada do jeito certo: repetição leve e constante.",
+      "Excelente. Cada rodada te deixa mais rápido e mais seguro."
+    ];
+
+    const tipPressa = [
+      "Dica: antes do Enter, confere 1 segundo na mente. Acerto primeiro, velocidade depois.",
+      "Se estiver correndo, faz uma pausa curta e confere. Isso corta erros bobos."
+    ];
+
+    const tipDuvida = [
+      "Quando travar, use uma âncora: 7×8 = 7×10 − 7×2 (70 − 14).",
+      "Se der branco, quebra em pedaços: 8×6 = 8×3 dobrado (24 dobrado = 48)."
+    ];
+
+    const tipGeral = [
+      "Meta: acertar com calma. A velocidade vem sozinha depois.",
+      "Errou? Sem problema. O erro é só uma pista do que treinar um pouquinho."
+    ];
+
+    const tabTip = mainTab
+      ? `Hoje, dá um carinho especial na tabuada do <b>${mainTab}</b> por 2 min.`
+      : "";
+
+    let title = "Ótimo trabalho!";
+    let body = basePos[Math.floor(Math.random()*basePos.length)] + " ";
+
+    if (context.lastErrType === "pressa") {
+      title = "Pequeno ajuste";
+      body += tipPressa[Math.floor(Math.random()*tipPressa.length)] + " ";
+    } else if (context.lastErrType === "duvida") {
+      title = "Você está evoluindo";
+      body += tipDuvida[Math.floor(Math.random()*tipDuvida.length)] + " ";
+    } else {
+      body += tipGeral[Math.floor(Math.random()*tipGeral.length)] + " ";
+    }
+
+    body += tabTip;
+
+    return { title, body };
+  }
+
+  function canEmitExtraCoach(student) {
+    const total = student.stats.total || student.events.length;
+    const last = student.coach.lastCoachAtTotal || 0;
+    return (total - last) >= COACH_COOLDOWN;
+  }
+
+  function maybeEmitCoach(student, opts) {
+    const msg = makeCoachMessage(student, opts);
+    pushCoachMessage(student, msg.title, msg.body, opts.reason);
+  }
+
+  // =========================
+  // Question flow
+  // =========================
+  function showQuestion(student) {
+    if (paused) return;
+    const q = pickNextQuestion(student);
+    current = { a:q.a, b:q.b, correct:q.a*q.b, startMs: Date.now(), fromHard: !!q.fromHard, fromRepeat: !!q.fromRepeat };
+    questionEl.textContent = `${current.a} × ${current.b} = ?`;
+    feedbackEl.textContent = "";
+    answerEl.value = "";
+    answerEl.focus();
+    startTimer();
+  }
+
+  function onSend() {
+    const student = getStudent();
+    if (!student || !current || paused) return;
+
+    const raw = (answerEl.value||"").trim();
+    if (!raw || raw === "-") return;
+
+    const ms = Date.now() - current.startMs;
+    stopTimer();
+
+    const ans = parseInt(raw,10);
+    const ok = (ans === current.correct);
+    const errType = ok ? "none" : classifyError(student, ms);
+
+    // store event
+    student.events.push({
+      ts: nowISO(),
+      a: current.a,
+      b: current.b,
+      correct: current.correct,
+      answer: ans,
+      ok,
+      ms,
+      errType
+    });
+
+    // mix flag
+    const key = factKey(current.a, current.b);
+    const isHard = current.fromHard || current.fromRepeat;
+    pushHardFlag(isHard, key);
+
+    recomputeStats(student);
+    saveAll(db);
+
+    // feedback on answer
+    if (ok) {
+      streak += 1;
+      feedbackEl.innerHTML = `<span class="ok">Certo!</span> (${current.a}×${current.b}=${current.correct}) • ${msToSec(ms)}`;
+    } else {
+      streak = 0;
+      const tag = (errType === "pressa")
+        ? `<span class="warn">Erro por pressa</span>`
+        : (errType === "duvida")
+          ? `<span class="warn">Erro por dúvida</span>`
+          : `<span class="bad">Errado</span>`;
+      feedbackEl.innerHTML = `${tag}. Correto: <b>${current.correct}</b> • Você: <b>${ans}</b> • ${msToSec(ms)}`;
+      scheduleRepeat(current.a, current.b);
+    }
+
+    streakEl.textContent = String(streak);
+
+    // =========================
+    // Coach emission rules
+    // =========================
+    const total = student.stats.total || student.events.length;
+
+    // 1) every N attempts
+    if (total > 0 && (total % COACH_EVERY_N === 0)) {
+      maybeEmitCoach(student, {
+        reason: `aCada${COACH_EVERY_N}`,
+        lastErrType: ok ? "none" : errType,
+        lastWasOk: ok
+      });
+    } else if (EXTRA_COACH_ON_ERR && !ok && (errType === "pressa" || errType === "duvida") && canEmitExtraCoach(student)) {
+      // 2) extra coach on pattern error (cooldown protected)
+      maybeEmitCoach(student, {
+        reason: `erro_${errType}`,
+        lastErrType: errType,
+        lastWasOk: ok
+      });
+    }
+
+    refreshPanels(student);
+    sendPortalEventIfNeeded(student).catch((err) => {
+      console.warn("Falha ao salvar bloco da Tabuada no Portal:", err);
+    });
+
+    setTimeout(() => showQuestion(student), 450);
+  }
+
+  // =========================
+  // Controls
+  // =========================
+  function onStart() {
+    const student = getStudent();
+    if (!student) { alert("Digite um ID de aluno primeiro."); return; }
+    if (selectedTabs.size === 0) markAllTabs();
+
+    paused = false;
+    pauseBtn.textContent = "Pausar";
+
+    // if no coach message yet, seed one
+    if (!student.coach.history.length) {
+      maybeEmitCoach(student, { reason: "inicio", lastErrType: "none", lastWasOk: true });
+    }
+
+    refreshPanels(student);
+    showQuestion(student);
+  }
+
+  function onPause() {
+    paused = !paused;
+    pauseBtn.textContent = paused ? "Retomar" : "Pausar";
+    if (paused) {
+      stopTimer();
+      feedbackEl.innerHTML = `<span class="pill">Pausado</span>`;
+      questionEl.textContent = "—";
+      current = null;
+    } else {
+      const student = getStudent();
+      if (!student) return;
+      showQuestion(student);
+    }
+  }
+
+  function onResetStudent() {
+    const sid = getStudentId();
+    if (!sid) return alert("Digite o ID do aluno para resetar.");
+    if (!confirm(`Apagar todos os dados do aluno "${sid}" neste navegador?`)) return;
+
+    delete db.students[sid];
+    saveAll(db);
+
+    paused = false;
+    stopTimer();
+    current = null;
+    streak = 0;
+    repeatQueue.length = 0;
+    recentHardFlags.length = 0;
+    recentKeys.length = 0;
+
+    streakEl.textContent = "0";
+    questionEl.textContent = "—";
+    feedbackEl.textContent = "";
+    timerEl.textContent = "—";
+
+    refreshPanels(null);
+  }
+
+  // =========================
+  // Export / Import
+  // =========================
+  function onExport() {
+    const sid = getStudentId();
+    if (!sid) return alert("Digite o ID do aluno para exportar.");
+    const student = getStudent();
+    if (!student) return;
+
+    const payload = { version: 6, exported_at: nowISO(), student_id: sid, data: student };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `tabuada_${sid}_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  function onImport() { fileInput.value=""; fileInput.click(); }
+
+  fileInput.addEventListener("change", async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    let payload;
+    try { payload = JSON.parse(text); } catch { return alert("JSON inválido."); }
+    if (!payload || !payload.student_id || !payload.data) return alert("Formato inesperado.");
+
+    const sid = String(payload.student_id);
+    db = loadAll();
+    // ensure coach exists
+    if (!payload.data.coach) payload.data.coach = { history: [], lastCoachAtTotal: 0 };
+    db.students[sid] = payload.data;
+    saveAll(db);
+
+    studentIdEl.value = sid;
+    const st = getStudent();
+    refreshPanels(st);
+    alert(`Importado com sucesso para o aluno "${sid}".`);
+  });
+
+  // =========================
+  // Bind UI
+  // =========================
+  startBtn.addEventListener("click", onStart);
+  pauseBtn.addEventListener("click", onPause);
+  resetBtn.addEventListener("click", onResetStudent);
+  sendBtn.addEventListener("click", onSend);
+  answerEl.addEventListener("keydown", (e) => { if (e.key === "Enter") onSend(); });
+
+  allBtn.addEventListener("click", () => { markAllTabs(); refreshPanels(getStudent()); });
+  noneBtn.addEventListener("click", () => { unmarkAllTabs(); refreshPanels(getStudent()); });
+
+  exportBtn.addEventListener("click", onExport);
+  importBtn.addEventListener("click", onImport);
+  returnPortalBtn.addEventListener("click", async () => {
+    const student = getStudent();
+    returnPortalBtn.disabled = true;
+    returnPortalBtn.textContent = "Salvando...";
+    try {
+      await sendPortalEventIfNeeded(student, true);
+      returnToPortal("activity_saved");
+    } catch (err) {
+      console.warn("Falha ao entregar treino ao Portal:", err);
+      returnPortalBtn.disabled = false;
+      returnPortalBtn.textContent = "Entregar para o adulto";
+      alert("Não consegui salvar no Portal agora. Confira a conexão e tente novamente.");
+    }
+  });
+
+  // init
+  buildTabSelectors();
+  if (portal.enabled) {
+    roleTeacherBtn.style.display = "none";
+    returnPortalBtn.style.display = "inline-flex";
+    studentIdEl.value = portal.childName || portal.childId || "aluno";
+    studentIdEl.readOnly = true;
+    resetBtn.style.display = "none";
+    exportBtn.style.display = "none";
+    importBtn.style.display = "none";
+  }
+  setRole("student");
+  refreshPanels(null);
+})();
+</script>
+</body>
+</html>

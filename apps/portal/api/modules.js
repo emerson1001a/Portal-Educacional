@@ -27,8 +27,8 @@ const defaultModules = [
     short_name: "Tabuada",
     area: "matematica",
     description: "Treino de multiplicação com acompanhamento.",
-    url: "",
-    status: "planned",
+    url: "/tabuada.html",
+    status: "available",
     accent: "math",
     icon: "T"
   }
