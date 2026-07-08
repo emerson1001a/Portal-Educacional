@@ -32,6 +32,12 @@ Transformar observações soltas em acompanhamento pedagógico simples:
 4. O sistema registra evidências.
 5. O adulto recebe leitura clara e receita do que fazer depois.
 
+## Norte pedagógico
+
+A evolução deve ser observada principalmente em relação ao percurso da própria criança, e não por comparação com outras crianças. O portal usa habilidades pedagógicas como referência, mas evita transformar dificuldade em rótulo.
+
+As regras detalhadas de linguagem, limites e orientação estão em `guia-de-orientacao-pedagogica.md`.
+
 ## Feedback
 
 Para a criança:

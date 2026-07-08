@@ -29,6 +29,8 @@ PortalEducacional/
 - Evitar linguagem alarmista, culpabilizante ou rótulos negativos.
 - Evolução precisa ser visível por área, meta e evidência.
 
+As regras detalhadas de linguagem, limites e orientação estão em `docs/guia-de-orientacao-pedagogica.md`.
+
 ## Módulos iniciais
 
 - Interpretação de Texto
