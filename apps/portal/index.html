@@ -223,6 +223,29 @@
     }
 
     .child-list, .goal-list, .timeline { display: grid; gap: 10px; margin-top: 14px; }
+    .perception-tools {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+    .suggestion-list {
+      display: grid;
+      gap: 10px;
+    }
+    .suggestion-card {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+    .suggestion-card.meta { border-color: rgba(11,143,134,.34); background: #f0fbf9; }
+    .suggestion-card.observar { border-color: rgba(37,99,235,.22); background: #f5f8ff; }
+    .suggestion-card.apoio { border-color: rgba(239,123,91,.32); background: #fff7f2; }
+    .suggestion-card strong { display: block; margin: 8px 0 5px; }
+    .suggestion-card ul { margin: 8px 0 0; padding-left: 19px; color: var(--muted); }
     .child-button {
       width: 100%;
       min-height: 48px;
@@ -727,6 +750,15 @@
                   <input id="goalTitleInput" placeholder="Ex.: melhorar inferência em textos" required>
                 </label>
               </div>
+              <div class="perception-tools">
+                <label>
+                  O que você percebeu?
+                  <textarea id="perceptionInput" placeholder="Ex.: Ele lê o texto, mas responde sem olhar as pistas."></textarea>
+                </label>
+                <p class="muted small">A IA ajuda a organizar a percepção. Ela não faz diagnóstico e não salva nada sem sua confirmação.</p>
+                <button class="button secondary" id="organizePerceptionButton" type="button">Organizar percepção</button>
+                <div class="suggestion-list" id="perceptionSuggestions"></div>
+              </div>
               <label>
                 Observação
                 <textarea id="goalDescriptionInput" placeholder="O que você percebeu? Em que situações aparece?"></textarea>
@@ -872,6 +904,9 @@
       goalAreaInput: document.querySelector("#goalAreaInput"),
       goalTitleInput: document.querySelector("#goalTitleInput"),
       goalDescriptionInput: document.querySelector("#goalDescriptionInput"),
+      perceptionInput: document.querySelector("#perceptionInput"),
+      organizePerceptionButton: document.querySelector("#organizePerceptionButton"),
+      perceptionSuggestions: document.querySelector("#perceptionSuggestions"),
       goalsList: document.querySelector("#goalsList"),
       completedGoalsList: document.querySelector("#completedGoalsList"),
       modulesGrid: document.querySelector("#modulesGrid"),
@@ -1400,6 +1435,89 @@
       });
     }
 
+    function suggestionTypeLabel(type) {
+      return {
+        meta: "meta sugerida",
+        observar: "observação orientada",
+        apoio: "apoio recomendado"
+      }[type] || "orientação";
+    }
+
+    function fillGoalFromSuggestion(suggestion) {
+      const goal = suggestion.suggested_goal || {};
+      els.goalAreaInput.value = goal.area || suggestion.suggested_area || els.goalAreaInput.value;
+      els.goalTitleInput.value = goal.title || "";
+      els.goalDescriptionInput.value = [
+        goal.description,
+        goal.measurement ? `Como observar evolução: ${goal.measurement}` : "",
+        goal.adult_phrase ? `Frase para usar: "${goal.adult_phrase}"` : ""
+      ].filter(Boolean).join("\n\n");
+      message("Sugestão preenchida. Revise com calma antes de salvar a meta.");
+    }
+
+    function renderPerceptionSuggestion(suggestion) {
+      const type = suggestion.type || "observar";
+      const steps = Array.isArray(suggestion.next_steps) ? suggestion.next_steps : [];
+      const goal = suggestion.suggested_goal || {};
+      els.perceptionSuggestions.innerHTML = `
+        <article class="suggestion-card ${type}">
+          <span class="pill">${suggestionTypeLabel(type)}</span>
+          <strong>${escapeHtml(suggestion.reassurance || "Vamos organizar isso com calma.")}</strong>
+          <p class="muted">${escapeHtml(suggestion.explanation || "")}</p>
+          ${steps.length ? `<ul>${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ul>` : ""}
+          ${type === "meta" && goal.title ? `
+            <div class="report-block">
+              <span class="pill">${areaLabel(goal.area || suggestion.suggested_area)}</span>
+              <strong>${escapeHtml(goal.title)}</strong>
+              <p class="muted">${escapeHtml(goal.description || "")}</p>
+              ${goal.measurement ? `<p class="small"><strong>Como observar:</strong> ${escapeHtml(goal.measurement)}</p>` : ""}
+              ${goal.adult_phrase ? `<p class="small"><strong>Frase positiva:</strong> "${escapeHtml(goal.adult_phrase)}"</p>` : ""}
+            </div>
+            <button class="button blue" type="button" id="useSuggestedGoalButton">Usar esta meta</button>
+          ` : ""}
+        </article>
+      `;
+      const useButton = document.querySelector("#useSuggestedGoalButton");
+      if (useButton) useButton.addEventListener("click", () => fillGoalFromSuggestion(suggestion));
+    }
+
+    async function organizePerception() {
+      const child = activeChild();
+      if (!child) {
+        message("Selecione uma criança antes de organizar a percepção.", true);
+        return;
+      }
+      const perception = els.perceptionInput.value.trim();
+      if (perception.length < 12) {
+        message("Escreva um pouco mais sobre o que você percebeu.", true);
+        return;
+      }
+      setButtonBusy(els.organizePerceptionButton, true, "Organizando...");
+      els.perceptionSuggestions.innerHTML = '<div class="notice">Organizando com cuidado, sem diagnóstico...</div>';
+      try {
+        const response = await fetch("/api/suggest-goal", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.session.access_token}`
+          },
+          body: JSON.stringify({
+            child_id: child.id,
+            perception,
+            area_hint: els.goalAreaInput.value
+          })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.message || "Não foi possível organizar a percepção.");
+        renderPerceptionSuggestion(data.suggestion);
+      } catch (error) {
+        els.perceptionSuggestions.innerHTML = "";
+        message(error.message, true);
+      } finally {
+        setButtonBusy(els.organizePerceptionButton, false);
+      }
+    }
+
     async function completeGoal(goal, button) {
       if (!goal?.id) return;
       setButtonBusy(button, true, "Concluindo...");
@@ -1815,6 +1933,7 @@
     els.loginTab.addEventListener("click", () => setMode("login"));
     els.signupTab.addEventListener("click", () => setMode("signup"));
     els.refreshButton.addEventListener("click", refreshAll);
+    els.organizePerceptionButton.addEventListener("click", organizePerception);
     els.openChildModeButton.addEventListener("click", openChildMode);
     els.closeChildModeButton.addEventListener("click", closeChildMode);
     els.openReportButton.addEventListener("click", openReport);
@@ -1905,6 +2024,7 @@
           return;
         }
         els.goalForm.reset();
+        els.perceptionSuggestions.innerHTML = "";
         message("Meta pedagógica salva e vinculada ao aluno selecionado.");
         await loadGoals();
         render();
