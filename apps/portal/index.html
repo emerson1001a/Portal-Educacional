@@ -269,6 +269,23 @@
       font-size: 14px;
       line-height: 1.45;
     }
+    .practice-plan {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .plan-step {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+    .plan-step strong { display: block; margin-bottom: 4px; }
+    .plan-step .button { min-height: 38px; padding: 9px 14px; }
     .metric strong { display: block; margin: 7px 0 4px; font-size: 30px; line-height: 1; }
     .goal-card strong, .evolution-card strong, .feedback-card strong { display: block; margin: 8px 0 5px; }
 
@@ -374,6 +391,7 @@
 
     @media (max-width: 980px) {
       .hero, .app, .metrics, .evolution-grid, .services, .adult-feedback, .child-modules { grid-template-columns: 1fr; }
+      .plan-step { grid-template-columns: 1fr; align-items: stretch; }
       .hero-copy { min-height: 440px; }
       .sidebar { position: static; }
       .child-hero { align-items: stretch; flex-direction: column; }
@@ -509,6 +527,12 @@
         </section>
 
         <section class="card">
+          <h2>Plano dos próximos 7 dias</h2>
+          <p class="muted">Uma rotina curta para transformar feedback em prática, sem pressão e sem excesso de tarefas.</p>
+          <div class="practice-plan" id="practicePlan"></div>
+        </section>
+
+        <section class="card">
           <h2>Evolução por área</h2>
           <p class="muted">O portal cruza metas e atividades para mostrar onde já existe prática e onde ainda falta evidência.</p>
           <div class="evolution-grid" id="evolutionGrid"></div>
@@ -636,6 +660,7 @@
       metricGoals: document.querySelector("#metricGoals"),
       metricLast: document.querySelector("#metricLast"),
       generalFeedback: document.querySelector("#generalFeedback"),
+      practicePlan: document.querySelector("#practicePlan"),
       evolutionGrid: document.querySelector("#evolutionGrid"),
       goalForm: document.querySelector("#goalForm"),
       goalAreaInput: document.querySelector("#goalAreaInput"),
@@ -753,6 +778,80 @@
       };
       const services = byArea[area] || [];
       return state.events.filter((event) => services.includes(event.service));
+    }
+
+    function moduleForArea(area) {
+      const preferred = {
+        leitura: "interpretacao",
+        escrita: "redacao",
+        matematica: "tabuada",
+        organizacao: "interpretacao",
+        outro: "interpretacao"
+      }[area] || "interpretacao";
+      return state.modules.find((module) => module.id === preferred)
+        || state.modules.find((module) => module.status === "available" && module.url)
+        || null;
+    }
+
+    function shortAdultPhrase(area) {
+      return {
+        leitura: "Me mostra onde está a pista no texto?",
+        escrita: "Qual é a primeira coisa que aconteceu? E depois?",
+        matematica: "Vamos treinar poucos exemplos com calma.",
+        organizacao: "Qual é o primeiro passo? E o próximo?",
+        outro: "Vamos fazer uma tentativa pequena e observar."
+      }[area] || "Vamos fazer uma tentativa pequena e observar.";
+    }
+
+    function planAreaCandidates() {
+      const core = ["leitura", "escrita", "matematica"];
+      const fromGoals = state.goals.map((goal) => goal.area);
+      const areas = uniqueList([...fromGoals, ...core], 5);
+      return areas.map((area) => {
+        const evidences = eventsForArea(area);
+        const goals = state.goals.filter((goal) => goal.area === area);
+        return {
+          area,
+          goals,
+          evidences,
+          module: moduleForArea(area),
+          score: (goals.length ? 20 : 0) + (evidences.length ? 0 : 10) - Math.min(evidences.length, 8)
+        };
+      }).sort((a, b) => b.score - a.score);
+    }
+
+    function buildPracticePlan() {
+      const child = activeChild();
+      if (!child) {
+        return [{
+          when: "Antes de começar",
+          area: "outro",
+          title: "Cadastre ou selecione uma criança",
+          detail: "O plano aparece depois que existe uma criança ativa no Portal.",
+          phrase: "Vamos organizar uma rotina pequena.",
+          module: null
+        }];
+      }
+
+      const candidates = planAreaCandidates();
+      const selected = candidates.slice(0, 3);
+      const labels = ["Hoje", "Daqui a 2 dias", "Fim da semana"];
+      const durations = { leitura: "8 minutos", escrita: "12 minutos", matematica: "5 minutos", organizacao: "6 minutos", outro: "8 minutos" };
+      return selected.map((item, index) => {
+        const goal = item.goals[0];
+        const hasEvidence = item.evidences.length > 0;
+        const moduleName = item.module?.short_name || item.module?.name || "atividade";
+        return {
+          when: labels[index] || "Nesta semana",
+          area: item.area,
+          title: goal ? goal.title : `Manter prática em ${areaLabel(item.area)}`,
+          detail: hasEvidence
+            ? `Faça ${durations[item.area] || "8 minutos"} em ${moduleName}, repetindo com leveza para confirmar evolução.`
+            : `Faça ${durations[item.area] || "8 minutos"} em ${moduleName} para criar a primeira evidência dessa área.`,
+          phrase: shortAdultPhrase(item.area),
+          module: item.module
+        };
+      });
     }
 
     function listItems(items) {
@@ -883,6 +982,35 @@
           ${feedback.avoid?.length ? `<p class="small"><strong>Evite dizer:</strong> ${escapeHtml(feedback.avoid.join(" / "))}</p>` : ""}
         </article>
       `;
+    }
+
+    function renderPracticePlan() {
+      const plan = buildPracticePlan();
+      els.practicePlan.innerHTML = "";
+      plan.forEach((step) => {
+        const available = step.module?.status === "available" && step.module?.url;
+        const item = document.createElement("article");
+        item.className = "plan-step";
+        item.innerHTML = `
+          <span class="pill">${escapeHtml(step.when)}</span>
+          <div>
+            <strong>${escapeHtml(step.title)}</strong>
+            <p class="muted small">${escapeHtml(step.detail)}</p>
+            <p class="small"><strong>Fala sugerida:</strong> "${escapeHtml(step.phrase)}"</p>
+          </div>
+          <button class="button ${step.area === "escrita" ? "coral" : step.area === "matematica" ? "secondary" : ""}" type="button" ${available ? "" : "disabled"}>
+            ${available ? "Começar" : "Pendente"}
+          </button>
+        `;
+        const button = item.querySelector("button");
+        button.addEventListener("click", async () => {
+          if (!available) return;
+          button.disabled = true;
+          button.textContent = "Abrindo...";
+          window.location.href = moduleUrl(step.module, await activityToken(step.module));
+        });
+        els.practicePlan.appendChild(item);
+      });
     }
 
     function renderEvolution() {
@@ -1121,6 +1249,7 @@
       renderChildren();
       renderDashboard();
       renderGeneralFeedback();
+      renderPracticePlan();
       renderEvolution();
       renderGoals();
       renderModules();
