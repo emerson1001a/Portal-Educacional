@@ -1285,6 +1285,71 @@
       }[confidence] || "evidência em formação";
     }
 
+    function confidenceRank(confidence) {
+      return { low: 1, medium: 2, high: 3 }[confidence] || 1;
+    }
+
+    function asTextList(value) {
+      return Array.isArray(value) ? value.map((item) => String(item || "").trim()).filter(Boolean) : [];
+    }
+
+    function listDifference(current, previous, limit = 2) {
+      const previousSet = new Set(previous.map((item) => item.toLowerCase()));
+      return current.filter((item) => !previousSet.has(item.toLowerCase())).slice(0, limit);
+    }
+
+    function buildReviewComparison() {
+      const child = activeChild();
+      if (!child) {
+        return ["Selecione uma criança para comparar leituras salvas."];
+      }
+      if (state.reviews.length < 2) {
+        return ["Salve pelo menos duas leituras em momentos diferentes para gerar um comparativo longitudinal."];
+      }
+
+      const [latest, previous] = state.reviews;
+      const latestSignals = asTextList(latest.strengths);
+      const previousSignals = asTextList(previous.strengths);
+      const latestAttention = asTextList(latest.attention_points);
+      const previousAttention = asTextList(previous.attention_points);
+      const latestEvidence = Array.isArray(latest.evidence_refs) ? latest.evidence_refs.length : 0;
+      const previousEvidence = Array.isArray(previous.evidence_refs) ? previous.evidence_refs.length : 0;
+      const confidenceDelta = confidenceRank(latest.confidence) - confidenceRank(previous.confidence);
+      const newSignals = listDifference(latestSignals, previousSignals);
+      const persistentAttention = latestAttention.filter((item) =>
+        previousAttention.some((oldItem) => oldItem.toLowerCase() === item.toLowerCase())
+      ).slice(0, 2);
+
+      const comparison = [
+        `Comparando ${formatDate(previous.created_at)} com ${formatDate(latest.created_at)}.`
+      ];
+
+      if (latestEvidence > previousEvidence) {
+        comparison.push(`Há mais evidências vinculadas nesta leitura (${latestEvidence} agora, ${previousEvidence} antes).`);
+      } else if (latestEvidence === previousEvidence) {
+        comparison.push("A quantidade de evidências ficou estável; observe qualidade, autonomia e continuidade.");
+      } else {
+        comparison.push("Esta leitura usa menos evidências recentes; vale gerar novas práticas antes de concluir mudança.");
+      }
+
+      if (confidenceDelta > 0) {
+        comparison.push(`A confiança da leitura subiu para ${reviewConfidenceLabel(latest.confidence)}.`);
+      } else if (confidenceDelta === 0) {
+        comparison.push(`A confiança permanece em ${reviewConfidenceLabel(latest.confidence)}.`);
+      } else {
+        comparison.push(`A confiança voltou para ${reviewConfidenceLabel(latest.confidence)}; isso pede mais observação, não conclusão apressada.`);
+      }
+
+      if (newSignals.length) {
+        comparison.push(`Novos sinais observáveis: ${newSignals.join("; ")}.`);
+      }
+      if (persistentAttention.length) {
+        comparison.push(`Ponto que ainda merece acompanhamento: ${persistentAttention.join("; ")}.`);
+      }
+
+      return uniqueList(comparison, 5);
+    }
+
     function currentReviewPayload() {
       const child = activeChild();
       const feedback = buildGeneralFeedback();
@@ -1390,6 +1455,15 @@
         els.reviewsList.innerHTML = '<div class="notice">Ainda não há leituras salvas. Salve uma leitura depois de registrar metas ou atividades.</div>';
         return;
       }
+
+      const comparisonCard = document.createElement("article");
+      comparisonCard.className = "feedback-card milestone";
+      comparisonCard.innerHTML = `
+        <span class="pill">memória longitudinal</span>
+        <strong>Comparativo das leituras</strong>
+        ${listItems(buildReviewComparison())}
+      `;
+      els.reviewsList.appendChild(comparisonCard);
 
       state.reviews.slice(0, 6).forEach((review) => {
         const strengths = Array.isArray(review.strengths) ? review.strengths : [];
@@ -1855,6 +1929,7 @@
       const goals = state.goals.map((goal) => `${areaLabel(goal.area)}: ${goal.title}`);
       const completedGoals = state.completedGoals.map((goal) => `${areaLabel(goal.area)}: ${goal.title} (${formatDate(goal.updated_at || goal.created_at)})`);
       const areaCounts = time.areaCounts.map((item) => `${areaLabel(item.area)}: ${item.count} registro${item.count === 1 ? "" : "s"} nos últimos 28 dias`);
+      const reviewComparison = buildReviewComparison();
 
       return `
         <div>
@@ -1876,6 +1951,10 @@
         <section class="report-block">
           <h3>Sinais de evolução</h3>
           ${reportList(feedback.markers || [])}
+        </section>
+        <section class="report-block">
+          <h3>Comparativo longitudinal</h3>
+          ${reportList(reviewComparison)}
         </section>
         <section class="report-block">
           <h3>Plano dos próximos 7 dias</h3>
