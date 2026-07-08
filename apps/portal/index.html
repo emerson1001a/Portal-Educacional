@@ -455,6 +455,29 @@
       box-shadow: var(--shadow);
     }
 
+    .adult-confirm {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border: 1px solid #ffd0ca;
+      border-radius: 8px;
+      background: #fff7f4;
+      box-shadow: var(--shadow);
+    }
+    .adult-confirm form {
+      display: grid;
+      gap: 12px;
+    }
+    .adult-confirm h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+    .adult-confirm .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
     .report-overlay {
       position: fixed;
       inset: 0;
@@ -850,6 +873,28 @@
         <button class="button ghost" id="closeChildModeButton" type="button">Voltar para o adulto</button>
       </header>
 
+      <section class="adult-confirm hidden" id="adultConfirmPanel" aria-label="Confirmação do adulto">
+        <form id="adultConfirmForm">
+          <div>
+            <h3>Confirmar adulto</h3>
+            <p class="muted small">Digite a senha do adulto para voltar ao painel de acompanhamento.</p>
+          </div>
+          <label>
+            E-mail do adulto
+            <input id="adultConfirmEmail" type="email" autocomplete="username" readonly>
+          </label>
+          <label>
+            Senha
+            <input id="adultConfirmPassword" type="password" autocomplete="current-password" placeholder="Senha do adulto">
+          </label>
+          <div class="row">
+            <button class="button" type="submit">Confirmar adulto</button>
+            <button class="button ghost" id="cancelAdultConfirmButton" type="button">Continuar na área da criança</button>
+          </div>
+          <p class="notice error hidden" id="adultConfirmMessage"></p>
+        </form>
+      </section>
+
       <div class="child-stage">
         <div class="child-modules" id="childModulesGrid"></div>
       </div>
@@ -937,6 +982,12 @@
       childModeTitle: document.querySelector("#childModeTitle"),
       childModeCopy: document.querySelector("#childModeCopy"),
       childModulesGrid: document.querySelector("#childModulesGrid"),
+      adultConfirmPanel: document.querySelector("#adultConfirmPanel"),
+      adultConfirmForm: document.querySelector("#adultConfirmForm"),
+      adultConfirmEmail: document.querySelector("#adultConfirmEmail"),
+      adultConfirmPassword: document.querySelector("#adultConfirmPassword"),
+      adultConfirmMessage: document.querySelector("#adultConfirmMessage"),
+      cancelAdultConfirmButton: document.querySelector("#cancelAdultConfirmButton"),
       reportOverlay: document.querySelector("#reportOverlay"),
       closeReportButton: document.querySelector("#closeReportButton"),
       printReportButton: document.querySelector("#printReportButton"),
@@ -1977,14 +2028,45 @@
         message("Selecione uma criança antes de abrir a área da criança.", true);
         return;
       }
+      hideAdultConfirm();
       renderChildModules();
       els.childOverlay.classList.remove("hidden");
       document.body.style.overflow = "hidden";
     }
 
     function closeChildMode() {
+      showAdultConfirm();
+    }
+
+    function finishCloseChildMode() {
       els.childOverlay.classList.add("hidden");
       document.body.style.overflow = "";
+    }
+
+    function showAdultConfirm() {
+      const email = state.session?.user?.email || "";
+      if (!email) {
+        finishCloseChildMode();
+        return;
+      }
+      els.adultConfirmEmail.value = email;
+      els.adultConfirmPassword.value = "";
+      els.adultConfirmMessage.textContent = "";
+      els.adultConfirmMessage.classList.add("hidden");
+      els.adultConfirmPanel.classList.remove("hidden");
+      window.setTimeout(() => els.adultConfirmPassword.focus(), 0);
+    }
+
+    function hideAdultConfirm() {
+      els.adultConfirmPanel.classList.add("hidden");
+      els.adultConfirmPassword.value = "";
+      els.adultConfirmMessage.textContent = "";
+      els.adultConfirmMessage.classList.add("hidden");
+    }
+
+    function setAdultConfirmMessage(text) {
+      els.adultConfirmMessage.textContent = text;
+      els.adultConfirmMessage.classList.remove("hidden");
     }
 
     function renderTimeline() {
@@ -2316,6 +2398,7 @@
     els.organizePerceptionButton.addEventListener("click", organizePerception);
     els.openChildModeButton.addEventListener("click", openChildMode);
     els.closeChildModeButton.addEventListener("click", closeChildMode);
+    els.cancelAdultConfirmButton.addEventListener("click", hideAdultConfirm);
     els.openReportButton.addEventListener("click", openReport);
     els.closeReportButton.addEventListener("click", closeReport);
     els.printReportButton.addEventListener("click", () => window.print());
@@ -2380,6 +2463,30 @@
       const { error } = await state.supabase.auth.updateUser({ password: els.newPasswordInput.value });
       message(error ? error.message : "Senha atualizada com sucesso.", Boolean(error));
       if (!error) els.newPasswordForm.classList.add("hidden");
+    });
+
+    els.adultConfirmForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const email = els.adultConfirmEmail.value.trim();
+      const password = els.adultConfirmPassword.value;
+      if (!password) {
+        setAdultConfirmMessage("Digite a senha do adulto para continuar.");
+        return;
+      }
+
+      const button = els.adultConfirmForm.querySelector('button[type="submit"]');
+      setButtonBusy(button, true, "Confirmando...");
+      try {
+        const { error } = await state.supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          setAdultConfirmMessage("Não foi possível confirmar agora. Confira a senha e tente novamente.");
+          return;
+        }
+        hideAdultConfirm();
+        finishCloseChildMode();
+      } finally {
+        setButtonBusy(button, false);
+      }
     });
 
     els.childForm.addEventListener("submit", async (event) => {
