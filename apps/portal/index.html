@@ -286,6 +286,51 @@
     }
     .plan-step strong { display: block; margin-bottom: 4px; }
     .plan-step .button { min-height: 38px; padding: 9px 14px; }
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .time-card {
+      min-height: 126px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+    .time-card strong {
+      display: block;
+      margin: 8px 0 8px;
+      font-size: 28px;
+      line-height: 1;
+    }
+    .area-bars {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .area-bar {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) 34px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .bar-track {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e9f2f7;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+    }
+    .bar-fill.writing { background: var(--coral); }
+    .bar-fill.math { background: var(--gold); }
     .topic {
       overflow: hidden;
       padding: 0;
@@ -427,7 +472,7 @@
     }
 
     @media (max-width: 980px) {
-      .hero, .app, .metrics, .evolution-grid, .services, .adult-feedback, .child-modules { grid-template-columns: 1fr; }
+      .hero, .app, .metrics, .evolution-grid, .services, .adult-feedback, .time-grid, .child-modules { grid-template-columns: 1fr; }
       .plan-step { grid-template-columns: 1fr; align-items: stretch; }
       .topic > summary { align-items: flex-start; flex-direction: column; }
       .topic-toggle { min-width: 0; }
@@ -570,6 +615,20 @@
           <p class="muted">Uma rotina curta para transformar feedback em prática, sem pressão e sem excesso de tarefas.</p>
           <div class="practice-plan" id="practicePlan"></div>
         </section>
+
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2>Evolução no tempo</h2>
+              <p class="muted">Acompanhe continuidade, semanas com prática e equilíbrio entre áreas.</p>
+            </div>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
+            <div class="time-grid" id="timeEvolutionGrid"></div>
+            <div class="area-bars" id="areaBalance"></div>
+          </div>
+        </details>
 
         <details class="card topic">
           <summary>
@@ -735,6 +794,8 @@
       metricLast: document.querySelector("#metricLast"),
       generalFeedback: document.querySelector("#generalFeedback"),
       practicePlan: document.querySelector("#practicePlan"),
+      timeEvolutionGrid: document.querySelector("#timeEvolutionGrid"),
+      areaBalance: document.querySelector("#areaBalance"),
       evolutionGrid: document.querySelector("#evolutionGrid"),
       goalForm: document.querySelector("#goalForm"),
       goalAreaInput: document.querySelector("#goalAreaInput"),
@@ -928,6 +989,55 @@
       });
     }
 
+    function eventDate(event) {
+      return new Date(event.occurred_at || event.created_at || Date.now());
+    }
+
+    function eventsSince(days) {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      start.setDate(start.getDate() - days + 1);
+      return state.events.filter((event) => eventDate(event) >= start);
+    }
+
+    function weekLabel(weekIndex) {
+      return weekIndex === 0 ? "Esta semana" : `${weekIndex + 1} semanas atrás`;
+    }
+
+    function buildTimeEvolution() {
+      const recent = eventsSince(28);
+      const weeks = [0, 1, 2, 3].map((index) => ({ index, events: [] }));
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+
+      recent.forEach((event) => {
+        const ageDays = Math.floor((today - eventDate(event)) / 86400000);
+        const weekIndex = Math.min(3, Math.max(0, Math.floor(ageDays / 7)));
+        weeks[weekIndex].events.push(event);
+      });
+
+      const areaServices = {
+        leitura: ["interpretacao"],
+        escrita: ["redacao"],
+        matematica: ["tabuada"]
+      };
+      const areaCounts = Object.entries(areaServices).map(([area, services]) => ({
+        area,
+        count: recent.filter((event) => services.includes(event.service)).length
+      }));
+      const activeWeeks = weeks.filter((week) => week.events.length).length;
+      const total = recent.length;
+      const continuity = !total
+        ? "Ainda não há registros nos últimos 28 dias. Uma primeira prática curta já começa a linha de evolução."
+        : activeWeeks >= 3
+          ? "Há boa continuidade recente. Agora vale manter a rotina curta e observar qualidade, não aumentar pressão."
+          : activeWeeks === 2
+            ? "A prática já apareceu em mais de uma semana. O próximo ganho vem de repetir sem transformar em cobrança."
+            : "Há registro recente, mas ainda pouca continuidade semanal. O plano de 7 dias ajuda a criar ritmo.";
+
+      return { weeks, areaCounts, total, activeWeeks, continuity };
+    }
+
     function listItems(items) {
       if (!items.length) return "";
       return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
@@ -1085,6 +1195,45 @@
         });
         els.practicePlan.appendChild(item);
       });
+    }
+
+    function renderTimeEvolution() {
+      const child = activeChild();
+      if (!child) {
+        els.timeEvolutionGrid.innerHTML = '<div class="notice">Selecione uma criança para acompanhar a evolução no tempo.</div>';
+        els.areaBalance.innerHTML = "";
+        return;
+      }
+
+      const evolution = buildTimeEvolution();
+      els.timeEvolutionGrid.innerHTML = evolution.weeks.map((week) => {
+        const services = uniqueList(week.events.map((event) => serviceName(event.service)), 3);
+        return `
+          <article class="time-card">
+            <span class="pill">${escapeHtml(weekLabel(week.index))}</span>
+            <strong>${week.events.length}</strong>
+            <p class="muted small">${week.events.length === 1 ? "atividade registrada" : "atividades registradas"}</p>
+            <p class="small">${services.length ? escapeHtml(services.join(", ")) : "Sem prática salva nesta semana."}</p>
+          </article>
+        `;
+      }).join("");
+
+      const max = Math.max(1, ...evolution.areaCounts.map((item) => item.count));
+      const fillClass = { leitura: "reading", escrita: "writing", matematica: "math" };
+      els.areaBalance.innerHTML = `
+        <article class="feedback-card primary">
+          <span class="pill">continuidade</span>
+          <strong>${evolution.activeWeeks} de 4 semanas com prática</strong>
+          <p class="muted">${escapeHtml(evolution.continuity)}</p>
+        </article>
+        ${evolution.areaCounts.map((item) => `
+          <div class="area-bar">
+            <span>${areaLabel(item.area)}</span>
+            <div class="bar-track"><div class="bar-fill ${fillClass[item.area] || ""}" style="width:${Math.max(6, Math.round((item.count / max) * 100))}%"></div></div>
+            <span>${item.count}</span>
+          </div>
+        `).join("")}
+      `;
     }
 
     function renderEvolution() {
@@ -1324,6 +1473,7 @@
       renderDashboard();
       renderGeneralFeedback();
       renderPracticePlan();
+      renderTimeEvolution();
       renderEvolution();
       renderGoals();
       renderModules();
