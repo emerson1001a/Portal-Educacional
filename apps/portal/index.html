@@ -222,7 +222,7 @@
       font-weight: 850;
     }
 
-    .child-list, .goal-list, .timeline { display: grid; gap: 10px; margin-top: 14px; }
+    .child-list, .goal-list, .review-list, .timeline { display: grid; gap: 10px; margin-top: 14px; }
     .perception-tools {
       display: grid;
       gap: 10px;
@@ -690,6 +690,14 @@
             </div>
           </div>
           <div class="adult-feedback" id="generalFeedback"></div>
+          <div class="row between" style="margin-top:18px">
+            <div>
+              <h3>Leituras salvas</h3>
+              <p class="muted small">Guarde marcos do acompanhamento para comparar a evolução ao longo do tempo.</p>
+            </div>
+            <button class="button secondary" id="saveReviewButton" type="button">Salvar leitura do momento</button>
+          </div>
+          <div class="review-list" id="reviewsList"></div>
         </section>
 
         <section class="card">
@@ -860,6 +868,7 @@
       children: [],
       goals: [],
       completedGoals: [],
+      reviews: [],
       modules: [],
       events: [],
       activeChildId: localStorage.getItem("portal.activeChildId") || ""
@@ -897,6 +906,8 @@
       metricGoals: document.querySelector("#metricGoals"),
       metricLast: document.querySelector("#metricLast"),
       generalFeedback: document.querySelector("#generalFeedback"),
+      saveReviewButton: document.querySelector("#saveReviewButton"),
+      reviewsList: document.querySelector("#reviewsList"),
       practicePlan: document.querySelector("#practicePlan"),
       timeEvolutionGrid: document.querySelector("#timeEvolutionGrid"),
       areaBalance: document.querySelector("#areaBalance"),
@@ -1266,6 +1277,40 @@
       };
     }
 
+    function reviewConfidenceLabel(confidence) {
+      return {
+        low: "pouca evidência",
+        medium: "evidência em formação",
+        high: "boa base de evidências"
+      }[confidence] || "evidência em formação";
+    }
+
+    function currentReviewPayload() {
+      const child = activeChild();
+      const feedback = buildGeneralFeedback();
+      const confidence = state.events.length >= 10 ? "high" : state.events.length >= 3 ? "medium" : "low";
+      const today = new Date();
+      const periodStart = new Date(today);
+      periodStart.setDate(today.getDate() - 27);
+      return {
+        child_id: child.id,
+        owner_id: state.session.user.id,
+        period_start: periodStart.toISOString().slice(0, 10),
+        period_end: today.toISOString().slice(0, 10),
+        summary: `${feedback.status}. ${feedback.summary}`,
+        strengths: feedback.markers || [],
+        attention_points: [feedback.attention].filter(Boolean),
+        home_recipe: feedback.recipe || [],
+        evidence_refs: state.events.slice(0, 12).map((event) => ({
+          id: event.id,
+          service: event.service,
+          title: event.title,
+          occurred_at: event.occurred_at || event.created_at
+        })),
+        confidence
+      };
+    }
+
     function escapeHtml(text) {
       return String(text || "")
         .replaceAll("&", "&amp;")
@@ -1331,6 +1376,37 @@
           ${listItems(feedback.markers || [])}
         </article>
       `;
+    }
+
+    function renderReviews() {
+      const child = activeChild();
+      els.reviewsList.innerHTML = "";
+      els.saveReviewButton.disabled = !child;
+      if (!child) {
+        els.reviewsList.innerHTML = '<div class="notice">Selecione uma criança para salvar leituras do acompanhamento.</div>';
+        return;
+      }
+      if (!state.reviews.length) {
+        els.reviewsList.innerHTML = '<div class="notice">Ainda não há leituras salvas. Salve uma leitura depois de registrar metas ou atividades.</div>';
+        return;
+      }
+
+      state.reviews.slice(0, 6).forEach((review) => {
+        const strengths = Array.isArray(review.strengths) ? review.strengths : [];
+        const attention = Array.isArray(review.attention_points) ? review.attention_points : [];
+        const recipe = Array.isArray(review.home_recipe) ? review.home_recipe : [];
+        const card = document.createElement("article");
+        card.className = "feedback-card";
+        card.innerHTML = `
+          <span class="pill">${reviewConfidenceLabel(review.confidence)}</span>
+          <strong>${formatDate(review.created_at)}</strong>
+          <p class="muted">${escapeHtml(review.summary)}</p>
+          ${strengths.length ? `<p class="small"><strong>Sinais:</strong> ${escapeHtml(strengths.slice(0, 2).join(" / "))}</p>` : ""}
+          ${attention.length ? `<p class="small"><strong>Próximo foco:</strong> ${escapeHtml(attention[0])}</p>` : ""}
+          ${recipe.length ? `<p class="small"><strong>Receita:</strong> ${escapeHtml(recipe[0])}</p>` : ""}
+        `;
+        els.reviewsList.appendChild(card);
+      });
     }
 
     function renderPracticePlan() {
@@ -1870,6 +1946,7 @@
       renderChildren();
       renderDashboard();
       renderGeneralFeedback();
+      renderReviews();
       renderPracticePlan();
       renderTimeEvolution();
       renderEvolution();
@@ -1960,9 +2037,26 @@
       if (doneError) message(`Metas concluídas ainda não disponíveis: ${doneError.message}`, true);
     }
 
+    async function loadReviews() {
+      const child = activeChild();
+      if (!child) {
+        state.reviews = [];
+        return;
+      }
+      const { data, error } = await state.supabase
+        .from("learning_reviews")
+        .select("*")
+        .eq("child_id", child.id)
+        .order("created_at", { ascending: false })
+        .limit(12);
+      state.reviews = error ? [] : data || [];
+      if (error) message(`Leituras salvas ainda não disponíveis: ${error.message}`, true);
+    }
+
     async function loadChildData() {
       await loadEvents();
       await loadGoals();
+      await loadReviews();
     }
 
     async function refreshAll() {
@@ -1998,6 +2092,7 @@
           state.children = [];
           state.goals = [];
           state.completedGoals = [];
+          state.reviews = [];
           state.events = [];
           render();
         }
@@ -2017,6 +2112,29 @@
     els.closeReportButton.addEventListener("click", closeReport);
     els.printReportButton.addEventListener("click", () => window.print());
     els.logoutButton.addEventListener("click", async () => state.supabase.auth.signOut());
+
+    els.saveReviewButton.addEventListener("click", async () => {
+      clearMessage();
+      const child = activeChild();
+      if (!child) {
+        message("Selecione uma criança antes de salvar uma leitura.", true);
+        return;
+      }
+      const button = els.saveReviewButton;
+      setButtonBusy(button, true, "Salvando...");
+      try {
+        const { error } = await state.supabase.from("learning_reviews").insert(currentReviewPayload());
+        if (error) {
+          message(error.message, true);
+          return;
+        }
+        message("Leitura do momento salva. Ela ficará no histórico para comparação futura.");
+        await loadReviews();
+        renderReviews();
+      } finally {
+        setButtonBusy(button, false);
+      }
+    });
 
     els.authForm.addEventListener("submit", async (event) => {
       event.preventDefault();
