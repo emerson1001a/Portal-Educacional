@@ -286,6 +286,43 @@
     }
     .plan-step strong { display: block; margin-bottom: 4px; }
     .plan-step .button { min-height: 38px; padding: 9px 14px; }
+    .topic {
+      overflow: hidden;
+      padding: 0;
+    }
+    .topic > summary {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    .topic > summary::-webkit-details-marker { display: none; }
+    .topic-title { min-width: 0; }
+    .topic-title h2 { margin: 0 0 4px; }
+    .topic-title p { margin: 0; }
+    .topic-toggle {
+      flex: 0 0 auto;
+      min-width: 112px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: #e9f2f7;
+      color: #22556a;
+      font-size: 12px;
+      font-weight: 850;
+      text-align: center;
+    }
+    .topic[open] .topic-toggle { background: #e9f8f6; color: #0b6f68; }
+    .topic[open] .topic-toggle::before { content: "Recolher"; }
+    .topic:not([open]) .topic-toggle::before { content: "Abrir"; }
+    .topic-body {
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--line);
+    }
     .metric strong { display: block; margin: 7px 0 4px; font-size: 30px; line-height: 1; }
     .goal-card strong, .evolution-card strong, .feedback-card strong { display: block; margin: 8px 0 5px; }
 
@@ -392,6 +429,8 @@
     @media (max-width: 980px) {
       .hero, .app, .metrics, .evolution-grid, .services, .adult-feedback, .child-modules { grid-template-columns: 1fr; }
       .plan-step { grid-template-columns: 1fr; align-items: stretch; }
+      .topic > summary { align-items: flex-start; flex-direction: column; }
+      .topic-toggle { min-width: 0; }
       .hero-copy { min-height: 440px; }
       .sidebar { position: static; }
       .child-hero { align-items: stretch; flex-direction: column; }
@@ -532,69 +571,104 @@
           <div class="practice-plan" id="practicePlan"></div>
         </section>
 
-        <section class="card">
-          <h2>Evolução por área</h2>
-          <p class="muted">O portal cruza metas e atividades para mostrar onde já existe prática e onde ainda falta evidência.</p>
-          <div class="evolution-grid" id="evolutionGrid"></div>
-        </section>
-
-        <section class="card">
-          <h2>O que precisa reforçar?</h2>
-          <p class="muted">Registre o que o pai ou professor percebeu. O portal transforma isso em acompanhamento.</p>
-          <form class="stack" id="goalForm">
-            <div class="row">
-              <label style="flex:1 1 170px">
-                Área
-                <select id="goalAreaInput">
-                  <option value="leitura">Leitura</option>
-                  <option value="escrita">Escrita</option>
-                  <option value="matematica">Matemática</option>
-                  <option value="organizacao">Organização</option>
-                  <option value="outro">Outro</option>
-                </select>
-              </label>
-              <label style="flex:2 1 260px">
-                Necessidade
-                <input id="goalTitleInput" placeholder="Ex.: melhorar inferência em textos" required>
-              </label>
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2>Evolução por área</h2>
+              <p class="muted">Veja leitura, escrita e matemática com evidências e sinais de progresso.</p>
             </div>
-            <label>
-              Observação
-              <textarea id="goalDescriptionInput" placeholder="O que você percebeu? Em que situações aparece?"></textarea>
-            </label>
-            <button class="button blue" type="submit">Salvar meta pedagógica</button>
-          </form>
-          <div class="goal-list" id="goalsList"></div>
-        </section>
-
-        <section class="card">
-          <h2>Guia para o adulto</h2>
-          <p class="muted">Feedback bom não machuca nem assusta. Ele mostra um caminho pequeno e repetível.</p>
-          <div class="goal-list">
-            <article class="goal-card">
-              <span class="pill">criança</span>
-              <strong>Curto, positivo e acionável</strong>
-              <p class="muted">Mostre uma conquista real e proponha uma única próxima tentativa.</p>
-            </article>
-            <article class="goal-card">
-              <span class="pill">adulto</span>
-              <strong>Completo, mas com receita</strong>
-              <p class="muted">Explique o que apareceu, onde reforçar e o que fazer nos próximos dias.</p>
-            </article>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
+            <div class="evolution-grid" id="evolutionGrid"></div>
           </div>
-        </section>
+        </details>
 
-        <section class="card">
-          <h2>Módulos de aprendizagem</h2>
-          <p class="muted">Novos módulos podem ser plugados ao catálogo e usar o mesmo histórico central.</p>
-          <div class="services" id="modulesGrid"></div>
-        </section>
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2>Metas pedagógicas</h2>
+              <p class="muted">Registre o que precisa de reforço e acompanhe evidências relacionadas.</p>
+            </div>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
+            <form class="stack" id="goalForm">
+              <div class="row">
+                <label style="flex:1 1 170px">
+                  Área
+                  <select id="goalAreaInput">
+                    <option value="leitura">Leitura</option>
+                    <option value="escrita">Escrita</option>
+                    <option value="matematica">Matemática</option>
+                    <option value="organizacao">Organização</option>
+                    <option value="outro">Outro</option>
+                  </select>
+                </label>
+                <label style="flex:2 1 260px">
+                  Necessidade
+                  <input id="goalTitleInput" placeholder="Ex.: melhorar inferência em textos" required>
+                </label>
+              </div>
+              <label>
+                Observação
+                <textarea id="goalDescriptionInput" placeholder="O que você percebeu? Em que situações aparece?"></textarea>
+              </label>
+              <button class="button blue" type="submit">Salvar meta pedagógica</button>
+            </form>
+            <div class="goal-list" id="goalsList"></div>
+          </div>
+        </details>
 
-        <section class="card">
-          <h2>Histórico unificado</h2>
-          <p class="muted">As evidências dos módulos aparecem aqui por ordem de data.</p>
-          <div class="timeline" id="timeline"></div>
-        </section>
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2>Guia para o adulto</h2>
+              <p class="muted">Princípios para orientar sem pressionar e transformar correção em conversa.</p>
+            </div>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
+            <div class="goal-list">
+              <article class="goal-card">
+                <span class="pill">criança</span>
+                <strong>Curto, positivo e acionável</strong>
+                <p class="muted">Mostre uma conquista real e proponha uma única próxima tentativa.</p>
+              </article>
+              <article class="goal-card">
+                <span class="pill">adulto</span>
+                <strong>Completo, mas com receita</strong>
+                <p class="muted">Explique o que apareceu, onde reforçar e o que fazer nos próximos dias.</p>
+              </article>
+            </div>
+          </div>
+        </details>
+
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2>Módulos de aprendizagem</h2>
+              <p class="muted">Abra atividades ou veja quais módulos estão conectados ao histórico central.</p>
+            </div>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
+            <div class="services" id="modulesGrid"></div>
+          </div>
+        </details>
+
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2>Histórico unificado</h2>
+              <p class="muted">Consulte as evidências salvas pelos módulos, em ordem de data.</p>
+            </div>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
+            <div class="timeline" id="timeline"></div>
+          </div>
+        </details>
       </div>
     </section>
   </main>
