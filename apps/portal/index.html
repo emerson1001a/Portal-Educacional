@@ -272,7 +272,7 @@
 
     .adult-feedback {
       display: grid;
-      grid-template-columns: 1.2fr 1fr 1fr;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr;
       gap: 12px;
       margin-top: 16px;
     }
@@ -285,6 +285,7 @@
     }
     .feedback-card.primary { border-color: rgba(11,143,134,.32); background: #f0fbf9; }
     .feedback-card.attention { border-color: rgba(239,123,91,.28); background: #fff7f2; }
+    .feedback-card.milestone { border-color: rgba(37,99,235,.24); background: #f5f8ff; }
     .feedback-card ul {
       margin: 10px 0 0;
       padding-left: 18px;
@@ -1154,6 +1155,51 @@
       return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
     }
 
+    function buildEvolutionMarkers() {
+      const child = activeChild();
+      if (!child) {
+        return ["Selecione uma criança para acompanhar sinais de evolução."];
+      }
+      if (!state.events.length) {
+        return [
+          "Ainda não há evidências registradas. A primeira atividade já cria um ponto de partida.",
+          "No começo, observe tentativa, calma e disposição para revisar antes de comparar resultado."
+        ];
+      }
+
+      const markers = [];
+      const time = buildTimeEvolution();
+      const practicedAreas = time.areaCounts.filter((item) => item.count > 0);
+      const latestEvent = state.events[0];
+      const latestSummary = eventAdultSummary(latestEvent);
+      const goalsWithEvidence = state.goals.filter((goal) => eventsForArea(goal.area).length > 0);
+      const goalsWithoutEvidence = state.goals.filter((goal) => eventsForArea(goal.area).length === 0);
+
+      markers.push(`${state.events.length} evidência${state.events.length === 1 ? "" : "s"} para acompanhar a evolução em relação ao próprio percurso.`);
+
+      if (time.activeWeeks >= 3) {
+        markers.push("A prática apareceu em várias semanas recentes. Agora vale observar qualidade e autonomia, não aumentar pressão.");
+      } else if (time.activeWeeks >= 1) {
+        markers.push("Já existe ponto de partida. O próximo avanço é criar continuidade com práticas curtas.");
+      }
+
+      if (practicedAreas.length) {
+        markers.push(`Áreas com prática recente: ${practicedAreas.map((item) => areaLabel(item.area)).join(", ")}.`);
+      }
+
+      if (goalsWithEvidence.length) {
+        markers.push(`Meta com evidência vinculada: ${areaLabel(goalsWithEvidence[0].area)}.`);
+      } else if (goalsWithoutEvidence.length) {
+        markers.push(`Há meta em ${areaLabel(goalsWithoutEvidence[0].area)}, mas ainda falta uma prática registrada para comparar evolução.`);
+      }
+
+      if (latestSummary) {
+        markers.push(`Última leitura pedagógica: ${latestSummary}`);
+      }
+
+      return uniqueList(markers, 5);
+    }
+
     function buildGeneralFeedback() {
       const child = activeChild();
       if (!child) {
@@ -1161,7 +1207,8 @@
           status: "Selecione uma criança",
           summary: "Escolha uma criança para o Portal organizar a leitura pedagógica.",
           attention: "Depois de algumas atividades, o resumo passa a mostrar evolução por área.",
-          recipe: ["Cadastre a criança.", "Registre uma meta simples.", "Abra uma atividade curta."]
+          recipe: ["Cadastre a criança.", "Registre uma meta simples.", "Abra uma atividade curta."],
+          markers: buildEvolutionMarkers()
         };
       }
 
@@ -1180,7 +1227,8 @@
             ? `Há meta registrada em ${goalAreas.join(", ")}. Agora falta gerar evidência com uma prática.`
             : "Ainda não há atividades salvas. Isso é normal no começo: primeiro registramos a necessidade, depois observamos a prática.",
           attention: "Evite avaliar por sensação. O Portal melhora quando há pequenas práticas registradas ao longo dos dias.",
-          recipe: recipes
+          recipe: recipes,
+          markers: buildEvolutionMarkers()
         };
       }
 
@@ -1213,7 +1261,8 @@
           "Repita em dias alternados para enxergar evolução real.",
           "Converse com uma pergunta simples antes de corrigir."
         ],
-        avoid
+        avoid,
+        markers: buildEvolutionMarkers()
       };
     }
 
@@ -1275,6 +1324,11 @@
           <strong>O que fazer agora</strong>
           ${listItems(feedback.recipe || [])}
           ${feedback.avoid?.length ? `<p class="small"><strong>Evite dizer:</strong> ${escapeHtml(feedback.avoid.join(" / "))}</p>` : ""}
+        </article>
+        <article class="feedback-card milestone">
+          <span class="pill">evolução</span>
+          <strong>Sinais observáveis</strong>
+          ${listItems(feedback.markers || [])}
         </article>
       `;
     }
@@ -1742,6 +1796,10 @@
           <h3>Receita para o adulto</h3>
           ${reportList(feedback.recipe || [])}
           ${feedback.avoid?.length ? `<p class="small"><strong>Evite dizer:</strong> ${escapeHtml(feedback.avoid.join(" / "))}</p>` : ""}
+        </section>
+        <section class="report-block">
+          <h3>Sinais de evolução</h3>
+          ${reportList(feedback.markers || [])}
         </section>
         <section class="report-block">
           <h3>Plano dos próximos 7 dias</h3>
