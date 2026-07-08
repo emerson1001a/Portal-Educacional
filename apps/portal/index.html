@@ -734,6 +734,7 @@
               <button class="button blue" type="submit">Salvar meta pedagógica</button>
             </form>
             <div class="goal-list" id="goalsList"></div>
+            <div class="goal-list" id="completedGoalsList"></div>
           </div>
         </details>
 
@@ -825,6 +826,7 @@
       mode: "login",
       children: [],
       goals: [],
+      completedGoals: [],
       modules: [],
       events: [],
       activeChildId: localStorage.getItem("portal.activeChildId") || ""
@@ -871,6 +873,7 @@
       goalTitleInput: document.querySelector("#goalTitleInput"),
       goalDescriptionInput: document.querySelector("#goalDescriptionInput"),
       goalsList: document.querySelector("#goalsList"),
+      completedGoalsList: document.querySelector("#completedGoalsList"),
       modulesGrid: document.querySelector("#modulesGrid"),
       timeline: document.querySelector("#timeline"),
       childOverlay: document.querySelector("#childOverlay"),
@@ -1338,13 +1341,17 @@
     function renderGoals() {
       const child = activeChild();
       els.goalsList.innerHTML = "";
+      els.completedGoalsList.innerHTML = "";
       if (!child) {
         els.goalsList.innerHTML = '<div class="notice">Selecione uma criança para definir metas.</div>';
         return;
       }
-      if (!state.goals.length) {
+      if (!state.goals.length && !state.completedGoals.length) {
         els.goalsList.innerHTML = '<div class="notice">Ainda não há metas. Registre a primeira necessidade que você quer reforçar.</div>';
         return;
+      }
+      if (!state.goals.length) {
+        els.goalsList.innerHTML = '<div class="notice">Não há metas ativas agora. As concluídas aparecem abaixo como conquistas.</div>';
       }
       state.goals.forEach((goal) => {
         const evidences = eventsForArea(goal.area);
@@ -1366,6 +1373,30 @@
         const doneButton = card.querySelector("[data-goal-done]");
         doneButton.addEventListener("click", () => completeGoal(goal, doneButton));
         els.goalsList.appendChild(card);
+      });
+      renderCompletedGoals();
+    }
+
+    function renderCompletedGoals() {
+      if (!state.completedGoals.length) return;
+      const title = document.createElement("article");
+      title.className = "goal-card";
+      title.innerHTML = `
+        <span class="pill">conquistas</span>
+        <strong>Metas concluídas</strong>
+        <p class="muted">Essas metas saíram da lista ativa, mas continuam como evidência de evolução.</p>
+      `;
+      els.completedGoalsList.appendChild(title);
+
+      state.completedGoals.slice(0, 6).forEach((goal) => {
+        const card = document.createElement("article");
+        card.className = "goal-card";
+        card.innerHTML = `
+          <span class="pill">${areaLabel(goal.area)}</span>
+          <strong>${escapeHtml(goal.title)}</strong>
+          <p class="small">Concluída em ${formatDate(goal.updated_at || goal.created_at)}.</p>
+        `;
+        els.completedGoalsList.appendChild(card);
       });
     }
 
@@ -1555,6 +1586,7 @@
         return `${formatDate(event.occurred_at || event.created_at)} - ${serviceName(event.service)}: ${summary || event.title || "atividade registrada"}`;
       });
       const goals = state.goals.map((goal) => `${areaLabel(goal.area)}: ${goal.title}`);
+      const completedGoals = state.completedGoals.map((goal) => `${areaLabel(goal.area)}: ${goal.title} (${formatDate(goal.updated_at || goal.created_at)})`);
       const areaCounts = time.areaCounts.map((item) => `${areaLabel(item.area)}: ${item.count} registro${item.count === 1 ? "" : "s"} nos últimos 28 dias`);
 
       return `
@@ -1587,6 +1619,10 @@
         <section class="report-block">
           <h3>Metas ativas</h3>
           ${reportList(goals)}
+        </section>
+        <section class="report-block">
+          <h3>Metas concluídas</h3>
+          ${reportList(completedGoals)}
         </section>
         <section class="report-block">
           <h3>Registros recentes</h3>
@@ -1705,6 +1741,7 @@
       const child = activeChild();
       if (!child) {
         state.goals = [];
+        state.completedGoals = [];
         return;
       }
       const { data, error } = await state.supabase
@@ -1716,6 +1753,16 @@
         .limit(20);
       state.goals = error ? [] : data || [];
       if (error) message(`Metas ainda não disponíveis: ${error.message}`, true);
+
+      const { data: doneData, error: doneError } = await state.supabase
+        .from("learning_goals")
+        .select("*")
+        .eq("child_id", child.id)
+        .eq("status", "done")
+        .order("updated_at", { ascending: false })
+        .limit(10);
+      state.completedGoals = doneError ? [] : doneData || [];
+      if (doneError) message(`Metas concluídas ainda não disponíveis: ${doneError.message}`, true);
     }
 
     async function loadChildData() {
@@ -1755,6 +1802,7 @@
         } else {
           state.children = [];
           state.goals = [];
+          state.completedGoals = [];
           state.events = [];
           render();
         }
