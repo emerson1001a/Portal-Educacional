@@ -1376,6 +1376,34 @@
       };
     }
 
+    function currentSnapshotPayload() {
+      const child = activeChild();
+      const feedback = buildGeneralFeedback();
+      const time = buildTimeEvolution();
+      const review = currentReviewPayload();
+      return {
+        child_id: child.id,
+        owner_id: state.session.user.id,
+        period_start: review.period_start,
+        period_end: review.period_end,
+        summary: {
+          status: feedback.status,
+          confidence: review.confidence,
+          total_events: state.events.length,
+          active_goals: state.goals.length,
+          completed_goals: state.completedGoals.length,
+          active_weeks_last_28_days: time.activeWeeks,
+          areas_last_28_days: time.areaCounts.reduce((acc, item) => {
+            acc[item.area] = item.count;
+            return acc;
+          }, {}),
+          markers: feedback.markers || [],
+          attention: feedback.attention,
+          saved_from: "learning_review"
+        }
+      };
+    }
+
     function escapeHtml(text) {
       return String(text || "")
         .replaceAll("&", "&amp;")
@@ -2207,7 +2235,13 @@
           message(error.message, true);
           return;
         }
-        message("Leitura do momento salva. Ela ficará no histórico para comparação futura.");
+        const { error: snapshotError } = await state.supabase.from("progress_snapshots").insert(currentSnapshotPayload());
+        message(
+          snapshotError
+            ? `Leitura salva, mas o snapshot numérico ainda não foi gravado: ${snapshotError.message}`
+            : "Leitura do momento e snapshot numérico salvos para comparação futura.",
+          Boolean(snapshotError)
+        );
         await loadReviews();
         renderReviews();
       } finally {
