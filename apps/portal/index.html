@@ -1361,9 +1361,29 @@
             <span class="small">${evidences.length} evidência${evidences.length === 1 ? "" : "s"} relacionada${evidences.length === 1 ? "" : "s"}</span>
             <span class="pill">${goal.status === "done" ? "concluída" : "ativa"}</span>
           </div>
+          <button class="button ghost" type="button" data-goal-done="${goal.id}">Concluir meta</button>
         `;
+        const doneButton = card.querySelector("[data-goal-done]");
+        doneButton.addEventListener("click", () => completeGoal(goal, doneButton));
         els.goalsList.appendChild(card);
       });
+    }
+
+    async function completeGoal(goal, button) {
+      if (!goal?.id) return;
+      setButtonBusy(button, true, "Concluindo...");
+      const { error } = await state.supabase
+        .from("learning_goals")
+        .update({ status: "done", updated_at: new Date().toISOString() })
+        .eq("id", goal.id);
+      if (error) {
+        setButtonBusy(button, false);
+        message(`Não consegui concluir a meta: ${error.message}`, true);
+        return;
+      }
+      message("Meta concluída. Ótimo: agora o acompanhamento fica mais limpo e focado.");
+      await loadGoals();
+      render();
     }
 
     async function activityToken(module) {
