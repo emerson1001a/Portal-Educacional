@@ -431,6 +431,44 @@
       box-shadow: var(--shadow);
     }
 
+    .report-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(16,32,51,.42);
+    }
+    .report-sheet {
+      width: min(880px, 100%);
+      max-height: calc(100svh - 44px);
+      overflow: auto;
+      padding: 24px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+    .report-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .report-content {
+      display: grid;
+      gap: 16px;
+    }
+    .report-content h2 { font-size: 28px; }
+    .report-block {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+    .report-block ul { margin: 10px 0 0; padding-left: 20px; }
+
     .child-title {
       margin: 0;
       font-size: clamp(28px, 4vw, 48px);
@@ -487,6 +525,25 @@
       .hero-copy { min-height: 420px; padding: 28px; }
       h1 { font-size: 38px; }
       .row .button { width: 100%; }
+    }
+
+    @media print {
+      body { background: white; }
+      .topbar, .shell, .report-actions { display: none !important; }
+      .report-overlay {
+        position: static;
+        display: block;
+        padding: 0;
+        background: white;
+      }
+      .report-sheet {
+        width: 100%;
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+        box-shadow: none;
+      }
+      .report-block { break-inside: avoid; }
     }
   </style>
 </head>
@@ -582,6 +639,7 @@
             </div>
             <div class="row">
               <button class="button" id="openChildModeButton" type="button">Abrir área da criança</button>
+              <button class="button secondary" id="openReportButton" type="button">Relatório rápido</button>
               <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
             </div>
           </div>
@@ -749,6 +807,16 @@
     </div>
   </section>
 
+  <section class="report-overlay hidden" id="reportOverlay" aria-label="Relatório rápido">
+    <div class="report-sheet">
+      <div class="report-actions">
+        <button class="button ghost" id="closeReportButton" type="button">Fechar</button>
+        <button class="button blue" id="printReportButton" type="button">Imprimir ou salvar PDF</button>
+      </div>
+      <div class="report-content" id="reportContent"></div>
+    </div>
+  </section>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const state = {
@@ -788,6 +856,7 @@
       welcomeTitle: document.querySelector("#welcomeTitle"),
       welcomeCopy: document.querySelector("#welcomeCopy"),
       openChildModeButton: document.querySelector("#openChildModeButton"),
+      openReportButton: document.querySelector("#openReportButton"),
       refreshButton: document.querySelector("#refreshButton"),
       metricActivities: document.querySelector("#metricActivities"),
       metricGoals: document.querySelector("#metricGoals"),
@@ -808,7 +877,11 @@
       closeChildModeButton: document.querySelector("#closeChildModeButton"),
       childModeTitle: document.querySelector("#childModeTitle"),
       childModeCopy: document.querySelector("#childModeCopy"),
-      childModulesGrid: document.querySelector("#childModulesGrid")
+      childModulesGrid: document.querySelector("#childModulesGrid"),
+      reportOverlay: document.querySelector("#reportOverlay"),
+      closeReportButton: document.querySelector("#closeReportButton"),
+      printReportButton: document.querySelector("#printReportButton"),
+      reportContent: document.querySelector("#reportContent")
     };
 
     function message(text, isError = false) {
@@ -1439,6 +1512,80 @@
       });
     }
 
+    function reportList(items) {
+      return items.length
+        ? `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+        : '<p class="muted">Ainda não há itens registrados.</p>';
+    }
+
+    function buildReportHtml() {
+      const child = activeChild();
+      if (!child) {
+        return `
+          <h2>Relatório rápido</h2>
+          <p class="muted">Selecione uma criança para gerar o relatório.</p>
+        `;
+      }
+
+      const feedback = buildGeneralFeedback();
+      const plan = buildPracticePlan();
+      const time = buildTimeEvolution();
+      const recent = state.events.slice(0, 6).map((event) => {
+        const summary = eventAdultSummary(event);
+        return `${formatDate(event.occurred_at || event.created_at)} - ${serviceName(event.service)}: ${summary || event.title || "atividade registrada"}`;
+      });
+      const goals = state.goals.map((goal) => `${areaLabel(goal.area)}: ${goal.title}`);
+      const areaCounts = time.areaCounts.map((item) => `${areaLabel(item.area)}: ${item.count} registro${item.count === 1 ? "" : "s"} nos últimos 28 dias`);
+
+      return `
+        <div>
+          <span class="pill">relatório rápido</span>
+          <h2>${escapeHtml(child.full_name)}</h2>
+          <p class="muted">Gerado em ${new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date())}</p>
+        </div>
+        <section class="report-block">
+          <h3>Leitura geral</h3>
+          <p><strong>${escapeHtml(feedback.status)}</strong></p>
+          <p class="muted">${escapeHtml(feedback.summary)}</p>
+          <p><strong>Próximo foco:</strong> ${escapeHtml(feedback.attention)}</p>
+        </section>
+        <section class="report-block">
+          <h3>Receita para o adulto</h3>
+          ${reportList(feedback.recipe || [])}
+          ${feedback.avoid?.length ? `<p class="small"><strong>Evite dizer:</strong> ${escapeHtml(feedback.avoid.join(" / "))}</p>` : ""}
+        </section>
+        <section class="report-block">
+          <h3>Plano dos próximos 7 dias</h3>
+          ${reportList(plan.map((step) => `${step.when}: ${step.title}. ${step.detail} Fala sugerida: "${step.phrase}"`))}
+        </section>
+        <section class="report-block">
+          <h3>Evolução no tempo</h3>
+          <p class="muted">${escapeHtml(time.continuity)}</p>
+          <p><strong>${time.activeWeeks} de 4 semanas</strong> tiveram prática registrada.</p>
+          ${reportList(areaCounts)}
+        </section>
+        <section class="report-block">
+          <h3>Metas ativas</h3>
+          ${reportList(goals)}
+        </section>
+        <section class="report-block">
+          <h3>Registros recentes</h3>
+          ${reportList(recent)}
+        </section>
+      `;
+    }
+
+    function openReport() {
+      els.reportContent.innerHTML = buildReportHtml();
+      els.reportOverlay.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeReport() {
+      els.reportOverlay.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+
     async function consumePortalReturn() {
       const params = new URLSearchParams(window.location.search);
       const status = params.get("portal_status");
@@ -1602,6 +1749,9 @@
     els.refreshButton.addEventListener("click", refreshAll);
     els.openChildModeButton.addEventListener("click", openChildMode);
     els.closeChildModeButton.addEventListener("click", closeChildMode);
+    els.openReportButton.addEventListener("click", openReport);
+    els.closeReportButton.addEventListener("click", closeReport);
+    els.printReportButton.addEventListener("click", () => window.print());
     els.logoutButton.addEventListener("click", async () => state.supabase.auth.signOut());
 
     els.authForm.addEventListener("submit", async (event) => {
