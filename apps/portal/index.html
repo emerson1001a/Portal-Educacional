@@ -755,13 +755,13 @@
                   O que você percebeu?
                   <textarea id="perceptionInput" placeholder="Ex.: Ele lê o texto, mas responde sem olhar as pistas."></textarea>
                 </label>
-                <p class="muted small">A IA ajuda a organizar a percepção. Ela não faz diagnóstico e não salva nada sem sua confirmação.</p>
+                <p class="muted small">A IA ajuda a organizar a percepção. Ela também considera o campo de observação abaixo, não faz diagnóstico e não salva nada sem sua confirmação.</p>
                 <button class="button secondary" id="organizePerceptionButton" type="button">Organizar percepção</button>
                 <div class="suggestion-list" id="perceptionSuggestions"></div>
               </div>
               <label>
-                Observação
-                <textarea id="goalDescriptionInput" placeholder="O que você percebeu? Em que situações aparece?"></textarea>
+                Observação da meta
+                <textarea id="goalDescriptionInput" placeholder="Complete aqui os detalhes que serão salvos com a meta."></textarea>
               </label>
               <button class="button blue" type="submit">Salvar meta pedagógica</button>
             </form>
@@ -1487,16 +1487,24 @@
         message("Selecione uma criança antes de organizar a percepção.", true);
         return;
       }
-      const perception = els.perceptionInput.value.trim();
+      const perceptionBase = els.perceptionInput.value.trim();
+      const goalObservation = els.goalDescriptionInput.value.trim();
+      const perception = [
+        perceptionBase,
+        goalObservation ? `Complemento escrito no campo Observação da meta:\n${goalObservation}` : ""
+      ].filter(Boolean).join("\n\n");
       if (perception.length < 12) {
         message("Escreva um pouco mais sobre o que você percebeu.", true);
         return;
       }
       setButtonBusy(els.organizePerceptionButton, true, "Organizando...");
       els.perceptionSuggestions.innerHTML = '<div class="notice">Organizando com cuidado, sem diagnóstico...</div>';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 35000);
       try {
         const response = await fetch("/api/suggest-goal", {
           method: "POST",
+          signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${state.session.access_token}`
@@ -1507,13 +1515,24 @@
             area_hint: els.goalAreaInput.value
           })
         });
-        const data = await response.json();
+        const text = await response.text();
+        let data = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch {
+          throw new Error("O servidor respondeu, mas não devolveu uma orientação em formato válido.");
+        }
         if (!response.ok || !data.ok) throw new Error(data.message || "Não foi possível organizar a percepção.");
         renderPerceptionSuggestion(data.suggestion);
+        message("Percepção organizada. Leia a devolutiva abaixo antes de decidir se quer salvar uma meta.");
       } catch (error) {
-        els.perceptionSuggestions.innerHTML = "";
-        message(error.message, true);
+        const errorMessage = error.name === "AbortError"
+          ? "A IA demorou mais do que o esperado. Tente novamente com uma descrição um pouco mais curta."
+          : error.message;
+        els.perceptionSuggestions.innerHTML = `<div class="notice error">${escapeHtml(errorMessage)}</div>`;
+        message(errorMessage, true);
       } finally {
+        clearTimeout(timeoutId);
         setButtonBusy(els.organizePerceptionButton, false);
       }
     }

@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 const allowedAreas = new Set(["leitura", "escrita", "matematica", "organizacao", "outro"]);
 const allowedTypes = new Set(["meta", "observar", "apoio"]);
 
+export const maxDuration = 30;
+
 function json(res, status, body) {
   return res.status(status).json(body);
 }
@@ -43,8 +45,11 @@ function normalizeSuggestion(value) {
 }
 
 async function callOpenAI({ perception, areaHint, child }) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 22000);
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
+    signal: controller.signal,
     headers: {
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       "Content-Type": "application/json"
@@ -87,7 +92,7 @@ async function callOpenAI({ perception, areaHint, child }) {
         }
       ]
     })
-  });
+  }).finally(() => clearTimeout(timeoutId));
 
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error?.message || `OpenAI HTTP ${response.status}`);
