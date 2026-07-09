@@ -147,5 +147,6 @@ Antes:
 
 1. revisar o SQL;
 2. rodar no Supabase SQL Editor;
-3. testar os cenarios acima;
-4. so depois adaptar endpoints e interface.
+3. executar `supabase/tests/20260709_access_control_smoke.sql`;
+4. testar os cenarios acima;
+5. so depois adaptar endpoints e interface.

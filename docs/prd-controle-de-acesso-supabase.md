@@ -549,6 +549,18 @@ Arquivo proposto:
 supabase/migrations/20260709_access_control_foundation.sql
 ```
 
+Roteiro de execucao:
+
+```text
+supabase/EXECUCAO-MIGRACAO-ETAPA-2.md
+```
+
+Smoke test estrutural:
+
+```text
+supabase/tests/20260709_access_control_smoke.sql
+```
+
 ### Passo 3: Compatibilidade
 
 Manter:
@@ -588,6 +600,8 @@ Testar manualmente no Supabase:
 - [x] Plano de migracao sem quebrar o portal atual definido.
 - [x] Checklist de testes de permissao definido.
 - [x] Migracao SQL incremental criada para revisao.
+- [x] Roteiro de execucao da migracao criado.
+- [x] Smoke test estrutural criado.
 - [ ] Saida pronta para Etapa 5: implementacao de banco.
 
 ## Decisoes em aberto

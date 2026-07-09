@@ -38,6 +38,8 @@ Entrega esperada:
 Entrega tecnica em revisao:
 
 - `supabase/migrations/20260709_access_control_foundation.sql`
+- `supabase/EXECUCAO-MIGRACAO-ETAPA-2.md`
+- `supabase/tests/20260709_access_control_smoke.sql`
 - `docs/analise-schema-etapa-2.md`
 
 Antes de rodar no Supabase:

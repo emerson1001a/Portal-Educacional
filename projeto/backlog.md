@@ -5,6 +5,7 @@
 - Fechar PRD de controle de acesso e Supabase.
 - Decidir expiracao e escopo do token infantil.
 - Revisar migracao `supabase/migrations/20260709_access_control_foundation.sql`.
+- Executar smoke test `supabase/tests/20260709_access_control_smoke.sql` apos rodar a migracao.
 - Rodar migracao no Supabase SQL Editor depois de revisada.
 
 ## Proximo

@@ -12,6 +12,14 @@ Esta pasta guarda migracoes incrementais e revisaveis.
 
 - `20260709_access_control_foundation.sql`: fundacao da Etapa 2 para multiplos papeis, professor/turma, tarefas, tokens infantis e evidencias.
 
+## Teste relacionado
+
+Depois de rodar a migracao, execute:
+
+```text
+supabase/tests/20260709_access_control_smoke.sql
+```
+
 ## Observacao
 
 O arquivo `supabase/schema.sql` continua sendo a base inicial. As migracoes desta pasta evoluem essa base sem apagar o que ja funciona.
