@@ -15,6 +15,7 @@ O portal não é apenas uma página com links. Ele deve ajudar o adulto a respon
 
 ```text
 PortalEducacional/
+  projeto/              # Painel de acompanhamento do trabalho
   apps/
     portal/              # Portal web principal
   docs/                  # Decisões de produto e arquitetura
@@ -24,10 +25,13 @@ PortalEducacional/
 
 ## Documentação do projeto
 
+A pasta `projeto/` funciona como painel de acompanhamento: etapa atual, roadmap, backlog e decisões.
+
 A documentação oficial fica em `docs/`.
 
 Comece por:
 
+- `projeto/README.md`: estado atual do trabalho e como retomar uma nova janela do Codex;
 - `docs/README.md`: índice da documentação e regra de decisão entre documentos;
 - `docs/documento-do-projeto.md`: documento mestre do produto;
 - `docs/arquitetura-de-papeis.md`: papéis, permissões e fronteiras entre adulto, professor e criança;

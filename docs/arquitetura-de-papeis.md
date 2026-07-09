@@ -92,6 +92,10 @@ Nao deve:
 
 ## Matriz resumida
 
+A matriz completa e fechada da Etapa 1 esta em `prd-matriz-de-papeis.md`.
+
+Esta secao resume as permissoes principais para leitura rapida.
+
 | Acao | Responsavel | Professor | Crianca | Admin |
 |---|---:|---:|---:|---:|
 | Entrar com e-mail e senha | Sim | Sim | Nao no inicio | Sim |
@@ -175,8 +179,9 @@ O produto pode apoiar persistencia, confianca, rotina, tolerancia a erro e autoe
 
 ## Proximos PRDs derivados
 
+- `prd-matriz-de-papeis.md` (fechado na Etapa 1)
+- `prd-controle-de-acesso-supabase.md`
 - `prd-portal-crianca.md`
 - `prd-metas-e-tarefas.md`
 - `prd-turma-e-professor.md`
 - `prd-relatorio-longitudinal.md`
-- `prd-controle-de-acesso.md`

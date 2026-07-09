@@ -8,6 +8,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 
 - `documento-do-projeto.md`: visao consolidada do produto, publico, promessa, modulos, dados, seguranca e roadmap.
 - `arquitetura-de-papeis.md`: papeis, permissoes, fronteiras entre adulto, professor e crianca.
+- `prd-matriz-de-papeis.md`: PRD fechado da Etapa 1, com matriz de permissoes, bloqueios e criterios de aceite.
 - `product-vision.md`: visao curta do produto e principios centrais.
 - `guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback, limites pedagogicos e material para revisao profissional.
 - `deployment-plan.md`: plano de GitHub, Vercel e Supabase.
@@ -23,6 +24,7 @@ Padrao recomendado:
 docs/
   prd-portal-adulto.md
   prd-portal-crianca.md
+  prd-matriz-de-papeis.md
   prd-metas-e-tarefas.md
   prd-relatorio-longitudinal.md
   prd-integracao-modulos.md
@@ -36,8 +38,9 @@ Quando houver conflito entre documentos:
 1. seguranca e privacidade da crianca prevalecem;
 2. `guia-de-orientacao-pedagogica.md` prevalece para linguagem e limites de feedback;
 3. `arquitetura-de-papeis.md` prevalece para permissoes;
-4. `documento-do-projeto.md` prevalece para direcao geral do produto;
-5. PRDs prevalecem apenas dentro do escopo funcional especifico.
+4. `prd-matriz-de-papeis.md` prevalece para a matriz fechada da Etapa 1;
+5. `documento-do-projeto.md` prevalece para direcao geral do produto;
+6. PRDs prevalecem apenas dentro do escopo funcional especifico.
 
 ## Principio permanente
 

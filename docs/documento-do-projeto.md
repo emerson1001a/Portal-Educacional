@@ -226,6 +226,16 @@ Para professores, o relatorio deve ajudar reunioes com pais com linguagem tecnic
 - revisar frases da IA;
 - documentar limites eticos e pedagogicos.
 
+### Fase 6: Unificacao visual e logica dos modulos
+
+- alinhar Redacao, Leitura e Tabuada ao mesmo visual;
+- padronizar entrada da crianca;
+- padronizar retorno ao portal;
+- padronizar feedback infantil e feedback adulto;
+- padronizar contrato de evidencias;
+- garantir que todos os modulos respondam a tarefas atribuidas pelo adulto;
+- fazer os modulos parecerem partes de uma plataforma unica.
+
 ## Decisoes em aberto
 
 - Crianca deve acessar por codigo, link, PIN ou conta propria?
