@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 
 const allowedServices = new Set(["redacao", "interpretacao", "tabuada"]);
@@ -6,8 +6,12 @@ const allowedServices = new Set(["redacao", "interpretacao", "tabuada"]);
 function json(res, status, body) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Portal-Activity-Token");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Portal-Activity-Token, X-Portal-Child-Token");
   return res.status(status).json(body);
+}
+
+function hashToken(token) {
+  return createHash("sha256").update(String(token)).digest("hex");
 }
 
 function verifyActivityToken(token, secret) {
@@ -25,6 +29,31 @@ function verifyActivityToken(token, secret) {
   if (!data.exp || data.exp < Math.floor(Date.now() / 1000)) return null;
   if (!data.child_id || !data.owner_id || !allowedServices.has(data.service)) return null;
   return data;
+}
+
+async function verifyChildToken(admin, token, body) {
+  if (!token) return null;
+  const { data: access, error } = await admin
+    .from("child_access_tokens")
+    .select("id, child_id, created_by, assignment_id, expires_at, revoked_at")
+    .eq("token_hash", hashToken(token))
+    .maybeSingle();
+
+  if (error) return { error: error.message, status: 500 };
+  if (!access) return { error: "Acesso infantil invalido.", status: 401 };
+  if (access.revoked_at) return { error: "Acesso infantil revogado.", status: 401 };
+  if (new Date(access.expires_at).getTime() <= Date.now()) {
+    return { error: "Acesso infantil expirado.", status: 401 };
+  }
+  if (body.child_id && body.child_id !== access.child_id) {
+    return { error: "Acesso infantil nao pertence a esta crianca.", status: 403 };
+  }
+
+  return {
+    child_id: access.child_id,
+    owner_id: access.created_by,
+    assignment_id: access.assignment_id || body.assignment_id || null
+  };
 }
 
 function normalizeFeedback(feedback) {
@@ -49,7 +78,7 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Portal-Activity-Token");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Portal-Activity-Token, X-Portal-Child-Token");
     return res.status(204).end();
   }
 
@@ -69,11 +98,15 @@ export default async function handler(req, res) {
 
   const body = req.body || {};
   const portalToken = req.headers["x-portal-activity-token"] || body.portal_event_token;
+  const childToken = req.headers["x-portal-child-token"] || body.portal_child_token;
   const bearer = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
 
   let childId = body.child_id;
   let service = body.service;
   let ownerId = "";
+  let assignmentId = body.assignment_id || null;
+  let skipGuardianCheck = false;
+  const admin = createClient(url, serviceRoleKey, { auth: { persistSession: false } });
 
   if (portalToken) {
     const tokenData = verifyActivityToken(portalToken, tokenSecret);
@@ -81,6 +114,15 @@ export default async function handler(req, res) {
     childId = tokenData.child_id;
     service = tokenData.service;
     ownerId = tokenData.owner_id;
+  } else if (childToken) {
+    const tokenData = await verifyChildToken(admin, childToken, body);
+    if (!tokenData || tokenData.error) {
+      return json(res, tokenData?.status || 401, { ok: false, message: tokenData?.error || "Acesso infantil invalido." });
+    }
+    childId = tokenData.child_id;
+    ownerId = tokenData.owner_id;
+    assignmentId = tokenData.assignment_id;
+    skipGuardianCheck = true;
   } else {
     if (!bearer) return json(res, 401, { ok: false, message: "Sessão não informada." });
     const userClient = createClient(url, anonKey, {
@@ -96,8 +138,8 @@ export default async function handler(req, res) {
     return json(res, 400, { ok: false, message: "Informe child_id e service válido." });
   }
 
-  const admin = createClient(url, serviceRoleKey, { auth: { persistSession: false } });
-  const { data: link, error: linkError } = await admin
+  if (!skipGuardianCheck) {
+    const { data: link, error: linkError } = await admin
     .from("child_guardians")
     .select("child_id")
     .eq("child_id", childId)
@@ -107,10 +149,14 @@ export default async function handler(req, res) {
   if (linkError) return json(res, 500, { ok: false, message: linkError.message });
   if (!link) return json(res, 403, { ok: false, message: "Criança não vinculada a esta conta." });
 
+  }
+
   const event = {
     child_id: childId,
     owner_id: ownerId,
     service,
+    assignment_id: assignmentId,
+    assignment_item_id: body.assignment_item_id || null,
     activity_type: body.activity_type || null,
     title: body.title || null,
     occurred_at: body.occurred_at || new Date().toISOString(),
