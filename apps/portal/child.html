@@ -117,23 +117,6 @@
       background: linear-gradient(135deg, rgba(1, 28, 38, .72), rgba(4, 73, 77, .1));
     }
 
-    .welcome::after {
-      content: "";
-      position: absolute;
-      right: clamp(18px, 4vw, 42px);
-      bottom: clamp(18px, 4vw, 42px);
-      width: min(260px, 42%);
-      aspect-ratio: 1.2;
-      border: 1px solid rgba(255, 255, 255, .36);
-      border-radius: 8px;
-      background:
-        linear-gradient(#ffffff 0 0) 22% 28% / 34% 10% no-repeat,
-        linear-gradient(#ffffff 0 0) 22% 48% / 50% 10% no-repeat,
-        linear-gradient(#ffffff 0 0) 22% 68% / 42% 10% no-repeat,
-        linear-gradient(135deg, rgba(255, 255, 255, .25), rgba(255, 255, 255, .08));
-      opacity: .72;
-    }
-
     .welcome > * {
       position: relative;
       z-index: 1;
@@ -258,6 +241,22 @@
     .module-icon.math { background: var(--sun); color: var(--ink); }
     .module-icon.reading { background: var(--teal); }
 
+    .free-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .free-card {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid #dce7f0;
+      border-radius: 8px;
+      background: #f8fbfd;
+    }
+
     .button {
       min-height: 44px;
       display: inline-flex;
@@ -303,6 +302,8 @@
       .topbar, .panel-header { align-items: stretch; flex-direction: column; }
       .item { grid-template-columns: 42px minmax(0, 1fr); }
       .item .button { grid-column: 1 / -1; width: 100%; }
+      .free-card { grid-template-columns: 42px minmax(0, 1fr); }
+      .free-card .button { grid-column: 1 / -1; width: 100%; }
       h1 { font-size: 38px; }
     }
   </style>
@@ -348,7 +349,8 @@
     const state = {
       token: new URLSearchParams(window.location.search).get("token") || "",
       child: null,
-      assignments: []
+      assignments: [],
+      freeModules: []
     };
 
     const els = {
@@ -385,6 +387,16 @@
       return `${module.url}?${params.toString()}`;
     }
 
+    function freeModuleUrl(module) {
+      if (!module.url) return "";
+      const params = new URLSearchParams();
+      params.set("child_id", state.child?.id || "");
+      params.set("child_name", state.child?.full_name || "");
+      params.set("portal_child_token", state.token);
+      params.set("portal_return_url", window.location.href);
+      return `${module.url}?${params.toString()}`;
+    }
+
     function render() {
       els.assignments.innerHTML = "";
 
@@ -394,9 +406,48 @@
       }
 
       if (!state.assignments.length) {
-        els.statusTitle.textContent = "Nenhuma atividade liberada agora.";
-        els.statusCopy.textContent = "Quando houver uma missão, ela aparecerá aqui.";
-        els.assignments.innerHTML = '<div class="notice">Nenhuma missão disponível no momento.</div>';
+        if (!state.freeModules.length) {
+          els.statusTitle.textContent = "Nenhuma atividade liberada agora.";
+          els.statusCopy.textContent = "Quando houver uma missão, ela aparecerá aqui.";
+          els.assignments.innerHTML = '<div class="notice">Nenhuma missão disponível no momento.</div>';
+          return;
+        }
+
+        els.statusTitle.textContent = "Atividades livres disponíveis.";
+        els.statusCopy.textContent = "Escolha uma atividade curta para praticar agora.";
+        els.assignments.innerHTML = `
+          <div>
+            <span class="pill">atividades livres</span>
+            <p class="muted">O adulto ainda não montou uma missão específica. Você pode praticar uma destas atividades.</p>
+          </div>
+          <div class="free-list"></div>
+        `;
+
+        const list = els.assignments.querySelector(".free-list");
+        state.freeModules.forEach((module) => {
+          const card = document.createElement("article");
+          card.className = "free-card";
+          card.innerHTML = `
+            <div class="module-icon ${module.accent || "reading"}">${module.icon || "A"}</div>
+            <div>
+              <strong>${module.short_name || module.name}</strong>
+              <div class="muted small">${module.description || "Atividade para praticar."}</div>
+            </div>
+            <button class="button" type="button">Começar</button>
+          `;
+          const button = card.querySelector("button");
+          button.addEventListener("click", () => {
+            const url = freeModuleUrl(module);
+            if (!url) {
+              showMessage("Esta atividade ainda não está disponível.", true);
+              return;
+            }
+            button.disabled = true;
+            button.textContent = "Abrindo...";
+            window.location.href = url;
+          });
+          list.appendChild(card);
+        });
         return;
       }
 
@@ -475,9 +526,11 @@
         }
         state.child = data.child;
         state.assignments = Array.isArray(data.assignments) ? data.assignments : [];
+        state.freeModules = Array.isArray(data.free_modules) ? data.free_modules : [];
         render();
       } catch (error) {
         state.assignments = [];
+        state.freeModules = [];
         els.statusTitle.textContent = "Não foi possível carregar.";
         els.statusCopy.textContent = "Peça ajuda para um adulto.";
         showMessage(error.message || "Não foi possível carregar as atividades.", true);

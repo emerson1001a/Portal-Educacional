@@ -97,3 +97,17 @@ Motivo:
 - o adulto continua controlando quando passa o bastao;
 - a crianca acessa apenas a area infantil, sem ver percepcoes privadas;
 - o fluxo serve tanto para casa quanto para professor enviando atividade em outro aparelho.
+
+### Missao simples antes do planejador completo
+
+Decisao:
+
+- criar no painel adulto uma forma simples de liberar missao com titulo, orientacao e modulos;
+- gravar a missao como `released` para aparecer imediatamente no link infantil;
+- deixar prazo, metas vinculadas, status por item e recomendacao automatica para uma evolucao posterior.
+
+Motivo:
+
+- permitir teste real com crianca sem esperar o planejador completo;
+- manter o caminho pedagogico correto: adulto escolhe o foco, crianca recebe apenas a tarefa;
+- reduzir risco de misturar percepcao adulta com a experiencia infantil.

@@ -10,17 +10,18 @@
 - Validar APIs de token infantil depois que a migracao estiver aplicada.
 - Validar `child.html` com token real depois que a migracao estiver aplicada.
 - Validar geracao do link infantil no painel adulto depois que a migracao estiver aplicada.
+- Validar criacao de missao simples no painel adulto e exibicao no link infantil.
 
 ## Proximo
 
 - Definir modelo de compartilhamento entre responsavel e professor.
 - Definir se crianca maior tambem tera codigo curto alem do link infantil.
+- Evoluir missao simples para plano de tarefas com metas, prazo e status por item.
 
 ## Mais tarde
 
 - PRD do Portal da Crianca.
 - PRD de metas e tarefas.
-- Interface adulta para atribuicao de tarefas.
 - Interface infantil para receber tarefas.
 - Relatorio longitudinal.
 - Unificacao visual e logica dos modulos.

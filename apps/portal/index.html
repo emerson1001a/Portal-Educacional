@@ -246,6 +246,23 @@
     .suggestion-card.apoio { border-color: rgba(239,123,91,.32); background: #fff7f2; }
     .suggestion-card strong { display: block; margin: 8px 0 5px; }
     .suggestion-card ul { margin: 8px 0 0; padding-left: 19px; color: var(--muted); }
+    .module-choice-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+    }
+    .module-choice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      font-weight: 800;
+    }
+    .module-choice input { width: auto; min-height: auto; }
     .child-button {
       width: 100%;
       min-height: 48px;
@@ -765,6 +782,31 @@
           <div class="practice-plan" id="practicePlan"></div>
         </section>
 
+        <section class="card">
+          <div class="row between">
+            <div>
+              <h2>Missões para a criança</h2>
+              <p class="muted">Monte uma tarefa curta. Ela aparece no link infantil sem mostrar a área do adulto.</p>
+            </div>
+          </div>
+          <form class="stack" id="assignmentForm">
+            <label>
+              Nome da missão
+              <input id="assignmentTitleInput" placeholder="Ex.: treino de leitura de hoje" required>
+            </label>
+            <label>
+              Orientação para a criança
+              <textarea id="assignmentInstructionsInput" placeholder="Ex.: escolha uma atividade, faça com calma e me chame quando terminar."></textarea>
+            </label>
+            <div class="perception-tools">
+              <strong>Módulos desta missão</strong>
+              <div class="module-choice-list" id="assignmentModuleChoices"></div>
+            </div>
+            <button class="button blue" type="submit">Liberar missão</button>
+          </form>
+          <div class="goal-list" id="assignmentsList"></div>
+        </section>
+
         <details class="card topic">
           <summary>
             <div class="topic-title">
@@ -951,6 +993,7 @@
       completedGoals: [],
       reviews: [],
       snapshots: [],
+      assignments: [],
       modules: [],
       events: [],
       activeChildId: localStorage.getItem("portal.activeChildId") || ""
@@ -1011,6 +1054,11 @@
       perceptionSuggestions: document.querySelector("#perceptionSuggestions"),
       goalsList: document.querySelector("#goalsList"),
       completedGoalsList: document.querySelector("#completedGoalsList"),
+      assignmentForm: document.querySelector("#assignmentForm"),
+      assignmentTitleInput: document.querySelector("#assignmentTitleInput"),
+      assignmentInstructionsInput: document.querySelector("#assignmentInstructionsInput"),
+      assignmentModuleChoices: document.querySelector("#assignmentModuleChoices"),
+      assignmentsList: document.querySelector("#assignmentsList"),
       modulesGrid: document.querySelector("#modulesGrid"),
       timeline: document.querySelector("#timeline"),
       childOverlay: document.querySelector("#childOverlay"),
@@ -1710,6 +1758,52 @@
       });
     }
 
+    function renderAssignmentModuleChoices() {
+      const availableModules = state.modules.filter((module) => module.status === "available" && module.url);
+      if (!availableModules.length) {
+        els.assignmentModuleChoices.innerHTML = '<div class="notice">Nenhum módulo disponível para montar missão.</div>';
+        return;
+      }
+      els.assignmentModuleChoices.innerHTML = availableModules.map((module, index) => `
+        <label class="module-choice">
+          <input type="checkbox" name="assignmentModule" value="${escapeHtml(module.id)}" ${index === 0 ? "checked" : ""}>
+          <span>${escapeHtml(module.short_name || module.name)}</span>
+        </label>
+      `).join("");
+    }
+
+    function renderAssignments() {
+      const child = activeChild();
+      els.assignmentsList.innerHTML = "";
+      if (!child) {
+        els.assignmentsList.innerHTML = '<div class="notice">Selecione uma criança para liberar missões.</div>';
+        return;
+      }
+      if (!state.assignments.length) {
+        els.assignmentsList.innerHTML = '<div class="notice">Ainda não há missões liberadas para esta criança.</div>';
+        return;
+      }
+      state.assignments.forEach((assignment) => {
+        const itemNames = (assignment.items || [])
+          .map((item) => serviceName(item.module_id))
+          .filter(Boolean)
+          .join(", ");
+        const card = document.createElement("article");
+        card.className = "goal-card";
+        card.innerHTML = `
+          <span class="pill">missão liberada</span>
+          <strong>${escapeHtml(assignment.child_title || assignment.title)}</strong>
+          <p class="muted">${escapeHtml(assignment.child_instructions || "Sem orientação adicional.")}</p>
+          <p class="small"><strong>Módulos:</strong> ${escapeHtml(itemNames || "nenhum módulo vinculado")}</p>
+          <div class="row between">
+            <span class="small">Criada em ${formatDate(assignment.created_at)}</span>
+            <span class="pill">${escapeHtml(assignment.status)}</span>
+          </div>
+        `;
+        els.assignmentsList.appendChild(card);
+      });
+    }
+
     function renderTimeEvolution() {
       const child = activeChild();
       if (!child) {
@@ -2334,6 +2428,8 @@
       renderReviews();
       renderSnapshots();
       renderPracticePlan();
+      renderAssignmentModuleChoices();
+      renderAssignments();
       renderTimeEvolution();
       renderEvolution();
       renderGoals();
@@ -2455,11 +2551,54 @@
       if (error) message(`Marcos numéricos ainda não disponíveis: ${error.message}`, true);
     }
 
+    async function loadAssignments() {
+      const child = activeChild();
+      if (!child) {
+        state.assignments = [];
+        return;
+      }
+      const { data, error } = await state.supabase
+        .from("assignments")
+        .select("id, title, child_title, child_instructions, status, due_at, created_at")
+        .eq("child_id", child.id)
+        .in("status", ["released", "in_progress"])
+        .order("created_at", { ascending: false })
+        .limit(12);
+
+      if (error) {
+        state.assignments = [];
+        message(`Missões ainda não disponíveis: ${error.message}`, true);
+        return;
+      }
+
+      const assignments = data || [];
+      const assignmentIds = assignments.map((assignment) => assignment.id);
+      let items = [];
+      if (assignmentIds.length) {
+        const { data: itemRows, error: itemsError } = await state.supabase
+          .from("assignment_items")
+          .select("assignment_id, module_id, title, status, sort_order")
+          .in("assignment_id", assignmentIds)
+          .order("sort_order", { ascending: true });
+        if (itemsError) {
+          message(`Itens das missões ainda não disponíveis: ${itemsError.message}`, true);
+        } else {
+          items = itemRows || [];
+        }
+      }
+
+      state.assignments = assignments.map((assignment) => ({
+        ...assignment,
+        items: items.filter((item) => item.assignment_id === assignment.id)
+      }));
+    }
+
     async function loadChildData() {
       await loadEvents();
       await loadGoals();
       await loadReviews();
       await loadSnapshots();
+      await loadAssignments();
     }
 
     async function refreshAll() {
@@ -2497,6 +2636,7 @@
           state.completedGoals = [];
           state.reviews = [];
           state.snapshots = [];
+          state.assignments = [];
           state.events = [];
           render();
         }
@@ -2662,6 +2802,75 @@
         message("Meta pedagógica salva e vinculada ao aluno selecionado.");
         await loadGoals();
         render();
+      } finally {
+        setButtonBusy(submitButton, false);
+      }
+    });
+
+    els.assignmentForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessage();
+      const child = activeChild();
+      if (!child) {
+        message("Selecione uma criança antes de liberar uma missão.", true);
+        return;
+      }
+      const selectedModules = Array.from(els.assignmentModuleChoices.querySelectorAll('input[name="assignmentModule"]:checked'))
+        .map((input) => input.value);
+      if (!selectedModules.length) {
+        message("Escolha pelo menos um módulo para a missão.", true);
+        return;
+      }
+
+      const title = els.assignmentTitleInput.value.trim();
+      const instructions = els.assignmentInstructionsInput.value.trim();
+      const submitButton = els.assignmentForm.querySelector('button[type="submit"]');
+      setButtonBusy(submitButton, true, "Liberando...");
+      try {
+        const { data: assignment, error } = await state.supabase
+          .from("assignments")
+          .insert({
+            child_id: child.id,
+            created_by: state.session.user.id,
+            created_by_role: "guardian",
+            title,
+            child_title: title,
+            child_instructions: instructions || "Faça uma atividade por vez, com calma.",
+            status: "released"
+          })
+          .select("id")
+          .single();
+
+        if (error) {
+          message(error.message, true);
+          return;
+        }
+
+        const items = selectedModules.map((moduleId, index) => {
+          const module = state.modules.find((item) => item.id === moduleId) || {};
+          return {
+            assignment_id: assignment.id,
+            module_id: moduleId,
+            activity_type: module.area || "atividade",
+            title: module.short_name || module.name || "Atividade",
+            child_instructions: module.description || "Comece por esta atividade.",
+            sort_order: index,
+            required: true,
+            status: "pending"
+          };
+        });
+
+        const { error: itemsError } = await state.supabase.from("assignment_items").insert(items);
+        if (itemsError) {
+          message(`Missão criada, mas os módulos não foram vinculados: ${itemsError.message}`, true);
+          return;
+        }
+
+        els.assignmentForm.reset();
+        renderAssignmentModuleChoices();
+        await loadAssignments();
+        renderAssignments();
+        message("Missão liberada. Abra ou atualize o link infantil para a criança ver.");
       } finally {
         setButtonBusy(submitButton, false);
       }

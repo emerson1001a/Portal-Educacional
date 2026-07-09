@@ -1,5 +1,5 @@
 import { adminClient, hashToken, json, requiredConfig } from "../lib/portal-api.js";
-import { moduleById } from "../lib/modules.js";
+import { moduleById, readModulesFromEnv } from "../lib/modules.js";
 
 function allowCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -108,6 +108,7 @@ export default async function handler(req, res) {
       purpose: access.purpose,
       expires_at: access.expires_at
     },
-    assignments: (assignments || []).map((assignment) => safeAssignment(assignment, grouped.get(assignment.id) || []))
+    assignments: (assignments || []).map((assignment) => safeAssignment(assignment, grouped.get(assignment.id) || [])),
+    free_modules: readModulesFromEnv().filter((module) => module.status === "available" && module.url)
   });
 }
