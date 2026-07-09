@@ -1,0 +1,90 @@
+import { randomBytes } from "node:crypto";
+import {
+  adminClient,
+  authenticatedUser,
+  bearerFrom,
+  canManageChild,
+  hashToken,
+  json,
+  publicOrigin,
+  requiredConfig
+} from "../lib/portal-api.js";
+
+const MAX_EXPIRES_IN_HOURS = 72;
+const DEFAULT_EXPIRES_IN_HOURS = 24;
+const purposes = new Set(["child_area", "assignment"]);
+
+function normalizeHours(value) {
+  const hours = Number(value || DEFAULT_EXPIRES_IN_HOURS);
+  if (!Number.isFinite(hours) || hours <= 0) return DEFAULT_EXPIRES_IN_HOURS;
+  return Math.min(Math.ceil(hours), MAX_EXPIRES_IN_HOURS);
+}
+
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return json(res, 405, { ok: false, message: "Metodo nao permitido." });
+  }
+
+  const config = requiredConfig();
+  if (config.error) return json(res, 500, { ok: false, message: config.error });
+
+  const auth = await authenticatedUser(config, bearerFrom(req));
+  if (auth.error) return json(res, auth.status, { ok: false, message: auth.error });
+
+  const body = req.body || {};
+  const childId = body.child_id;
+  const assignmentId = body.assignment_id || null;
+  const purpose = body.purpose || (assignmentId ? "assignment" : "child_area");
+  if (!childId || !purposes.has(purpose)) {
+    return json(res, 400, { ok: false, message: "Informe child_id e purpose valido." });
+  }
+
+  const admin = adminClient(config);
+  const access = await canManageChild(admin, childId, auth.user.id);
+  if (access.error) return json(res, 500, { ok: false, message: access.error });
+  if (!access.allowed) {
+    return json(res, 403, { ok: false, message: "Adulto sem permissao para liberar acesso infantil." });
+  }
+
+  if (assignmentId) {
+    const { data: assignment, error: assignmentError } = await admin
+      .from("assignments")
+      .select("id, child_id, status")
+      .eq("id", assignmentId)
+      .eq("child_id", childId)
+      .maybeSingle();
+
+    if (assignmentError) return json(res, 500, { ok: false, message: assignmentError.message });
+    if (!assignment) return json(res, 404, { ok: false, message: "Tarefa nao encontrada para esta crianca." });
+  }
+
+  const rawToken = randomBytes(32).toString("base64url");
+  const expiresInHours = normalizeHours(body.expires_in_hours);
+  const expiresAt = new Date(Date.now() + expiresInHours * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await admin
+    .from("child_access_tokens")
+    .insert({
+      child_id: childId,
+      created_by: auth.user.id,
+      token_hash: hashToken(rawToken),
+      purpose,
+      assignment_id: assignmentId,
+      expires_at: expiresAt
+    })
+    .select("id, child_id, purpose, assignment_id, expires_at, created_at")
+    .single();
+
+  if (error) return json(res, 500, { ok: false, message: error.message });
+
+  const origin = publicOrigin(req);
+  const childUrl = origin ? `${origin}/child.html?token=${encodeURIComponent(rawToken)}` : "";
+
+  return json(res, 200, {
+    ok: true,
+    token: rawToken,
+    child_url: childUrl,
+    access: data
+  });
+}

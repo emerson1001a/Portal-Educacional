@@ -60,3 +60,15 @@ Motivo:
 
 - se houver vazamento de banco, o link/codigo infantil nao fica exposto diretamente;
 - a validacao do token deve acontecer em endpoint server-side.
+
+### APIs infantis antes da tela
+
+Decisao:
+
+- criar primeiro `/api/child-access-token` e `/api/child-session`;
+- deixar a interface infantil para uma etapa seguinte.
+
+Motivo:
+
+- a tela infantil depende da migracao no Supabase;
+- os endpoints permitem testar seguranca e escopo antes de mexer na experiencia visual.

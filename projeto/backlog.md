@@ -7,12 +7,14 @@
 - Revisar migracao `supabase/migrations/20260709_access_control_foundation.sql`.
 - Executar smoke test `supabase/tests/20260709_access_control_smoke.sql` apos rodar a migracao.
 - Rodar migracao no Supabase SQL Editor depois de revisada.
+- Validar APIs de token infantil depois que a migracao estiver aplicada.
 
 ## Proximo
 
 - Definir como funcionara link/codigo infantil.
 - Definir modelo de compartilhamento entre responsavel e professor.
-- Adaptar endpoints do portal para assignments e token infantil.
+- Adaptar interface do portal para gerar link infantil.
+- Criar pagina infantil `child.html`.
 
 ## Mais tarde
 

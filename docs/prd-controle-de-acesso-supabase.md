@@ -514,6 +514,19 @@ POST /api/child/activity-session
 POST /api/child/activity-event
 ```
 
+Implementacao inicial preparada:
+
+```text
+POST /api/child-access-token
+GET /api/child-session?token=...
+```
+
+Observacao:
+
+- `/api/child-access-token` e chamado por adulto autenticado para criar um token infantil.
+- `/api/child-session` resolve o token infantil e devolve apenas dados seguros: crianca, acesso e tarefas liberadas.
+- A tela infantil ainda sera criada em etapa posterior.
+
 ### Modulos
 
 ```text
