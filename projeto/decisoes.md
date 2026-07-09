@@ -36,3 +36,27 @@ Motivo:
 
 - o schema atual funciona para o portal inicial, mas ainda nao cobre professor, turma, token infantil, classificacao de informacao e compartilhamento;
 - mudar banco sem PRD aumentaria risco de quebrar o portal atual.
+
+### Migracao incremental em vez de reescrever schema
+
+Decisao:
+
+- criar `supabase/migrations/20260709_access_control_foundation.sql`;
+- manter `supabase/schema.sql` como base inicial por enquanto.
+
+Motivo:
+
+- evitar quebrar o portal ja publicado;
+- permitir revisar e rodar a migracao manualmente no Supabase;
+- preservar dados existentes.
+
+### Token infantil com hash
+
+Decisao:
+
+- a tabela `child_access_tokens` guarda `token_hash`, nao o token puro.
+
+Motivo:
+
+- se houver vazamento de banco, o link/codigo infantil nao fica exposto diretamente;
+- a validacao do token deve acontecer em endpoint server-side.

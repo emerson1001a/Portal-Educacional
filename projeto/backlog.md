@@ -2,15 +2,16 @@
 
 ## Agora
 
-- Revisar schema atual contra a matriz de papeis.
 - Fechar PRD de controle de acesso e Supabase.
 - Decidir expiracao e escopo do token infantil.
+- Revisar migracao `supabase/migrations/20260709_access_control_foundation.sql`.
+- Rodar migracao no Supabase SQL Editor depois de revisada.
 
 ## Proximo
 
 - Definir como funcionara link/codigo infantil.
 - Definir modelo de compartilhamento entre responsavel e professor.
-- Criar proposta de migracao do `supabase/schema.sql`.
+- Adaptar endpoints do portal para assignments e token infantil.
 
 ## Mais tarde
 

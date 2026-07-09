@@ -10,7 +10,7 @@ Ela nao substitui `docs/`. A diferenca e:
 ## Estado atual
 
 Etapa atual: Etapa 2 - Controle de acesso e Supabase
-Status: em desenho
+Status: migracao proposta para revisao
 Documento principal: `docs/prd-controle-de-acesso-supabase.md`
 
 ## Como retomar em uma nova janela do Codex
@@ -34,6 +34,18 @@ Entrega esperada:
 - politicas RLS previstas;
 - funcoes seguras;
 - criterios de teste.
+
+Entrega tecnica em revisao:
+
+- `supabase/migrations/20260709_access_control_foundation.sql`
+- `docs/analise-schema-etapa-2.md`
+
+Antes de rodar no Supabase:
+
+1. revisar a migracao;
+2. rodar no SQL Editor;
+3. testar permissoes basicas;
+4. depois adaptar endpoints e telas.
 
 ## Regra de trabalho
 

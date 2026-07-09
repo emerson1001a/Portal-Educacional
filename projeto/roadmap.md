@@ -17,7 +17,7 @@ Documento:
 
 ## Etapa 2: Controle de acesso e Supabase
 
-Status: em desenho
+Status: migracao proposta para revisao
 
 Objetivo:
 

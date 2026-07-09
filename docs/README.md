@@ -10,6 +10,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `arquitetura-de-papeis.md`: papeis, permissoes, fronteiras entre adulto, professor e crianca.
 - `prd-matriz-de-papeis.md`: PRD fechado da Etapa 1, com matriz de permissoes, bloqueios e criterios de aceite.
 - `prd-controle-de-acesso-supabase.md`: desenho da Etapa 2 para tabelas, vinculos, RLS e token infantil.
+- `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
 - `product-vision.md`: visao curta do produto e principios centrais.
 - `guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback, limites pedagogicos e material para revisao profissional.
 - `deployment-plan.md`: plano de GitHub, Vercel e Supabase.

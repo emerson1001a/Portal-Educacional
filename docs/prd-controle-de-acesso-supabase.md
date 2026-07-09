@@ -1,9 +1,9 @@
 # PRD: Controle de Acesso e Supabase
 
-Status: em desenho  
+Status: desenho tecnico com migracao proposta
 Data: 2026-07-09  
 Origem: `docs/prd-matriz-de-papeis.md`  
-Proxima saida esperada: proposta de schema e policies RLS
+Proxima saida esperada: revisao e execucao controlada da migracao
 
 ## Objetivo
 
@@ -410,6 +410,16 @@ is_valid_child_token(token text, child_id uuid)
 
 Preferencialmente essa validacao deve ficar em endpoint server-side, usando `SUPABASE_SERVICE_ROLE_KEY`, para comparar hash com seguranca.
 
+### Observacao sobre RLS
+
+As funcoes auxiliares usadas dentro de policies devem ser `security definer` com `search_path` fixo.
+
+Motivo:
+
+- reduzir risco de recursao entre policies;
+- permitir checagens de vinculo de forma centralizada;
+- evitar que uma policy dependa de outra policy da mesma tabela.
+
 ## Politicas RLS por tabela
 
 ### profiles
@@ -533,6 +543,12 @@ Adicionar:
 - `child_access_tokens`;
 - `activity_sessions`.
 
+Arquivo proposto:
+
+```text
+supabase/migrations/20260709_access_control_foundation.sql
+```
+
 ### Passo 3: Compatibilidade
 
 Manter:
@@ -563,14 +579,15 @@ Testar manualmente no Supabase:
 
 ## Criterios de aceite da Etapa 2
 
-- [ ] PRD de controle de acesso criado.
-- [ ] Schema atual analisado contra matriz de papeis.
-- [ ] Tabelas novas propostas.
-- [ ] Funcoes auxiliares propostas.
-- [ ] Policies por tabela propostas.
-- [ ] Modelo de token infantil definido.
-- [ ] Plano de migracao sem quebrar o portal atual definido.
-- [ ] Checklist de testes de permissao definido.
+- [x] PRD de controle de acesso criado.
+- [x] Schema atual analisado contra matriz de papeis.
+- [x] Tabelas novas propostas.
+- [x] Funcoes auxiliares propostas.
+- [x] Policies por tabela propostas.
+- [x] Modelo de token infantil definido.
+- [x] Plano de migracao sem quebrar o portal atual definido.
+- [x] Checklist de testes de permissao definido.
+- [x] Migracao SQL incremental criada para revisao.
 - [ ] Saida pronta para Etapa 5: implementacao de banco.
 
 ## Decisoes em aberto
