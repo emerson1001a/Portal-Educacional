@@ -72,3 +72,14 @@ Motivo:
 
 - a tela infantil depende da migracao no Supabase;
 - os endpoints permitem testar seguranca e escopo antes de mexer na experiencia visual.
+
+### Primeira area infantil separada
+
+Decisao:
+
+- criar `apps/portal/child.html` como primeira tela infantil independente do painel adulto.
+
+Motivo:
+
+- a crianca deve acessar apenas tarefas liberadas por token;
+- a tela nao deve consultar nem exibir percepcoes privadas, feedback adulto ou relatorio tecnico.

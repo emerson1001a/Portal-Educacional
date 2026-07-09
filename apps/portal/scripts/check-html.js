@@ -1,10 +1,13 @@
 import fs from "node:fs";
 
-const html = fs.readFileSync("index.html", "utf8");
-const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+const files = ["index.html", "child.html"].filter((file) => fs.existsSync(file));
+let totalScripts = 0;
 
-for (const script of scripts) {
-  new Function(script[1]);
+for (const file of files) {
+  const html = fs.readFileSync(file, "utf8");
+  const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  scripts.forEach((script) => new Function(script[1]));
+  totalScripts += scripts.length;
 }
 
-console.log(`inline script ok: ${scripts.length}`);
+console.log(`inline script ok: ${totalScripts}`);

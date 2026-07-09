@@ -8,13 +8,14 @@
 - Executar smoke test `supabase/tests/20260709_access_control_smoke.sql` apos rodar a migracao.
 - Rodar migracao no Supabase SQL Editor depois de revisada.
 - Validar APIs de token infantil depois que a migracao estiver aplicada.
+- Validar `child.html` com token real depois que a migracao estiver aplicada.
 
 ## Proximo
 
 - Definir como funcionara link/codigo infantil.
 - Definir modelo de compartilhamento entre responsavel e professor.
 - Adaptar interface do portal para gerar link infantil.
-- Criar pagina infantil `child.html`.
+- Ligar botao adulto ao endpoint `/api/child-access-token`.
 
 ## Mais tarde
 
