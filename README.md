@@ -22,6 +22,17 @@ PortalEducacional/
   modules/               # Contratos e futuros módulos plugáveis
 ```
 
+## Documentação do projeto
+
+A documentação oficial fica em `docs/`.
+
+Comece por:
+
+- `docs/README.md`: índice da documentação e regra de decisão entre documentos;
+- `docs/documento-do-projeto.md`: documento mestre do produto;
+- `docs/arquitetura-de-papeis.md`: papéis, permissões e fronteiras entre adulto, professor e criança;
+- `docs/guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback e limites pedagógicos.
+
 ## Princípios pedagógicos
 
 - Feedback para a criança deve ser curto, positivo e acionável.

@@ -1,0 +1,44 @@
+# Documentacao do Projeto
+
+Esta pasta e a fonte oficial de decisoes, definicoes, PRDs e regras de produto do Portal Educacional.
+
+O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arquivos soltos ou memoria informal. Sempre que o produto mudar de direcao, a decisao deve virar documento aqui.
+
+## Como usar esta pasta
+
+- `documento-do-projeto.md`: visao consolidada do produto, publico, promessa, modulos, dados, seguranca e roadmap.
+- `arquitetura-de-papeis.md`: papeis, permissoes, fronteiras entre adulto, professor e crianca.
+- `product-vision.md`: visao curta do produto e principios centrais.
+- `guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback, limites pedagogicos e material para revisao profissional.
+- `deployment-plan.md`: plano de GitHub, Vercel e Supabase.
+- `external-setup.md`: configuracoes externas ja usadas no projeto.
+
+## Onde ficam os PRDs
+
+PRDs devem ficar nesta mesma pasta, com nomes iniciados por `prd-`.
+
+Padrao recomendado:
+
+```text
+docs/
+  prd-portal-adulto.md
+  prd-portal-crianca.md
+  prd-metas-e-tarefas.md
+  prd-relatorio-longitudinal.md
+  prd-integracao-modulos.md
+  prd-turma-e-professor.md
+```
+
+## Regra de decisao
+
+Quando houver conflito entre documentos:
+
+1. seguranca e privacidade da crianca prevalecem;
+2. `guia-de-orientacao-pedagogica.md` prevalece para linguagem e limites de feedback;
+3. `arquitetura-de-papeis.md` prevalece para permissoes;
+4. `documento-do-projeto.md` prevalece para direcao geral do produto;
+5. PRDs prevalecem apenas dentro do escopo funcional especifico.
+
+## Principio permanente
+
+O portal deve ajudar adultos a apoiarem criancas com mais clareza, calma e evidencia, sem transformar dificuldade em rotulo, medo ou culpa.
