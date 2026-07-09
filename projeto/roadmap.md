@@ -17,7 +17,7 @@ Documento:
 
 ## Etapa 2: Controle de acesso e Supabase
 
-Status: proxima etapa
+Status: em desenho
 
 Objetivo:
 

@@ -25,3 +25,14 @@ Motivo:
 
 - a matriz precisa virar base da Etapa 2;
 - permissoes devem ser decididas antes de banco, telas e endpoints.
+
+### Etapa 2 começa por PRD tecnico
+
+Decisao:
+
+- antes de alterar `supabase/schema.sql`, criar `docs/prd-controle-de-acesso-supabase.md`.
+
+Motivo:
+
+- o schema atual funciona para o portal inicial, mas ainda nao cobre professor, turma, token infantil, classificacao de informacao e compartilhamento;
+- mudar banco sem PRD aumentaria risco de quebrar o portal atual.

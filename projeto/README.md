@@ -9,9 +9,9 @@ Ela nao substitui `docs/`. A diferenca e:
 
 ## Estado atual
 
-Etapa atual: Etapa 2 - Controle de acesso e Supabase  
-Status: proxima etapa  
-Documento principal: `docs/prd-matriz-de-papeis.md`
+Etapa atual: Etapa 2 - Controle de acesso e Supabase
+Status: em desenho
+Documento principal: `docs/prd-controle-de-acesso-supabase.md`
 
 ## Como retomar em uma nova janela do Codex
 
@@ -23,7 +23,7 @@ Quando o trabalho for retomado, comece por:
 4. ler o PRD indicado;
 5. checar `git status`.
 
-## Proxima etapa prevista
+## Etapa em andamento
 
 Etapa 2: Controle de acesso e Supabase.
 

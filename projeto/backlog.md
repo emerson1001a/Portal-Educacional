@@ -2,13 +2,15 @@
 
 ## Agora
 
-- Criar PRD de controle de acesso e Supabase.
 - Revisar schema atual contra a matriz de papeis.
+- Fechar PRD de controle de acesso e Supabase.
+- Decidir expiracao e escopo do token infantil.
 
 ## Proximo
 
 - Definir como funcionara link/codigo infantil.
 - Definir modelo de compartilhamento entre responsavel e professor.
+- Criar proposta de migracao do `supabase/schema.sql`.
 
 ## Mais tarde
 
