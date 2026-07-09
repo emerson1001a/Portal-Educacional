@@ -20,6 +20,14 @@ function normalizeHours(value) {
   return Math.min(Math.ceil(hours), MAX_EXPIRES_IN_HOURS);
 }
 
+function databaseMessage(error) {
+  const text = String(error?.message || error || "");
+  if (/child_access_tokens|assignments|schema cache|does not exist|Could not find/i.test(text)) {
+    return "A migracao de controle de acesso ainda precisa ser aplicada no Supabase.";
+  }
+  return text || "Nao foi possivel gerar o acesso infantil.";
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -55,7 +63,7 @@ export default async function handler(req, res) {
       .eq("child_id", childId)
       .maybeSingle();
 
-    if (assignmentError) return json(res, 500, { ok: false, message: assignmentError.message });
+    if (assignmentError) return json(res, 500, { ok: false, message: databaseMessage(assignmentError) });
     if (!assignment) return json(res, 404, { ok: false, message: "Tarefa nao encontrada para esta crianca." });
   }
 
@@ -76,7 +84,7 @@ export default async function handler(req, res) {
     .select("id, child_id, purpose, assignment_id, expires_at, created_at")
     .single();
 
-  if (error) return json(res, 500, { ok: false, message: error.message });
+  if (error) return json(res, 500, { ok: false, message: databaseMessage(error) });
 
   const origin = publicOrigin(req);
   const childUrl = origin ? `${origin}/child.html?token=${encodeURIComponent(rawToken)}` : "";

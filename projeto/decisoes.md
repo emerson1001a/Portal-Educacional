@@ -83,3 +83,17 @@ Motivo:
 
 - a crianca deve acessar apenas tarefas liberadas por token;
 - a tela nao deve consultar nem exibir percepcoes privadas, feedback adulto ou relatorio tecnico.
+
+### Link infantil gerado pelo adulto
+
+Decisao:
+
+- adicionar no painel adulto um botao para gerar link infantil temporario;
+- manter o modo infantil embutido como apoio para criancas pequenas no mesmo aparelho;
+- tratar codigo curto ou login proprio da crianca como evolucao posterior.
+
+Motivo:
+
+- o adulto continua controlando quando passa o bastao;
+- a crianca acessa apenas a area infantil, sem ver percepcoes privadas;
+- o fluxo serve tanto para casa quanto para professor enviando atividade em outro aparelho.

@@ -263,6 +263,24 @@
     }
     .child-button.active { border-color: rgba(11,143,134,.42); background: #e9f8f6; }
 
+    .child-access-panel {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid rgba(11,143,134,.28);
+      border-radius: 8px;
+      background: #f0fbf9;
+    }
+    .child-access-panel input {
+      width: 100%;
+      min-height: 42px;
+      font-size: 14px;
+      color: var(--ink);
+      background: white;
+    }
+    .child-access-panel .row { align-items: stretch; }
+
     .metrics, .evolution-grid, .services {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -686,8 +704,19 @@
             </div>
             <div class="row">
               <button class="button" id="openChildModeButton" type="button">Abrir área da criança</button>
+              <button class="button blue" id="generateChildLinkButton" type="button">Gerar link infantil</button>
               <button class="button secondary" id="openReportButton" type="button">Relatório rápido</button>
               <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
+            </div>
+          </div>
+          <div class="child-access-panel hidden" id="childAccessPanel">
+            <span class="pill">acesso da criança</span>
+            <strong id="childAccessTitle">Link infantil pronto</strong>
+            <p class="muted small" id="childAccessCopy">Este link abre somente a área infantil e não mostra percepções, relatórios ou orientações do adulto.</p>
+            <input id="childAccessLink" readonly aria-label="Link infantil">
+            <div class="row">
+              <button class="button secondary" id="copyChildLinkButton" type="button">Copiar link</button>
+              <a class="button ghost" id="openChildLinkButton" href="#" target="_blank" rel="noopener">Abrir em nova aba</a>
             </div>
           </div>
         </section>
@@ -953,6 +982,13 @@
       welcomeTitle: document.querySelector("#welcomeTitle"),
       welcomeCopy: document.querySelector("#welcomeCopy"),
       openChildModeButton: document.querySelector("#openChildModeButton"),
+      generateChildLinkButton: document.querySelector("#generateChildLinkButton"),
+      childAccessPanel: document.querySelector("#childAccessPanel"),
+      childAccessTitle: document.querySelector("#childAccessTitle"),
+      childAccessCopy: document.querySelector("#childAccessCopy"),
+      childAccessLink: document.querySelector("#childAccessLink"),
+      copyChildLinkButton: document.querySelector("#copyChildLinkButton"),
+      openChildLinkButton: document.querySelector("#openChildLinkButton"),
       openReportButton: document.querySelector("#openReportButton"),
       refreshButton: document.querySelector("#refreshButton"),
       metricActivities: document.querySelector("#metricActivities"),
@@ -1522,6 +1558,7 @@
         button.addEventListener("click", async () => {
           state.activeChildId = item.id;
           localStorage.setItem("portal.activeChildId", item.id);
+          clearChildAccessPanel();
           await loadChildData();
           render();
         });
@@ -1945,6 +1982,83 @@
       params.set("portal_return_url", window.location.origin);
       if (token) params.set("portal_event_token", token);
       return `${module.url}?${params.toString()}`;
+    }
+
+    function childAccessErrorMessage(error) {
+      const text = String(error?.message || error || "");
+      if (/child_access_tokens|assignments|schema cache|does not exist|Could not find/i.test(text)) {
+        return "A migração de controle de acesso ainda precisa ser aplicada no Supabase.";
+      }
+      return text || "Não foi possível gerar o link infantil agora.";
+    }
+
+    function clearChildAccessPanel() {
+      els.childAccessPanel.classList.add("hidden");
+      els.childAccessLink.value = "";
+      els.openChildLinkButton.href = "#";
+    }
+
+    function showChildAccessPanel(link, child) {
+      els.childAccessTitle.textContent = `Link infantil de ${child.full_name}`;
+      els.childAccessCopy.textContent = "Envie este link apenas para a criança ou abra em outro aparelho. Ele é temporário e não libera a área do adulto.";
+      els.childAccessLink.value = link;
+      els.openChildLinkButton.href = link;
+      els.childAccessPanel.classList.remove("hidden");
+    }
+
+    async function generateChildAccessLink() {
+      clearMessage();
+      const child = activeChild();
+      if (!child) {
+        message("Selecione uma criança antes de gerar o link infantil.", true);
+        return;
+      }
+      if (!state.session?.access_token) {
+        message("Sessão do adulto não encontrada. Entre novamente no portal.", true);
+        return;
+      }
+
+      setButtonBusy(els.generateChildLinkButton, true, "Gerando...");
+      try {
+        const response = await fetch("/api/child-access-token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.session.access_token}`
+          },
+          body: JSON.stringify({
+            child_id: child.id,
+            purpose: "child_area",
+            expires_in_hours: 24
+          })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.child_url) {
+          throw new Error(data.message || "Não foi possível gerar o link infantil.");
+        }
+        showChildAccessPanel(data.child_url, child);
+        message("Link infantil gerado. Ele abre somente a área da criança.");
+      } catch (error) {
+        message(childAccessErrorMessage(error), true);
+      } finally {
+        setButtonBusy(els.generateChildLinkButton, false);
+      }
+    }
+
+    async function copyChildAccessLink() {
+      const link = els.childAccessLink.value;
+      if (!link) {
+        message("Gere um link infantil antes de copiar.", true);
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(link);
+        message("Link infantil copiado.");
+      } catch {
+        els.childAccessLink.focus();
+        els.childAccessLink.select();
+        message("Selecione e copie o link infantil destacado.");
+      }
     }
 
     function renderModules() {
@@ -2397,6 +2511,8 @@
     els.refreshButton.addEventListener("click", refreshAll);
     els.organizePerceptionButton.addEventListener("click", organizePerception);
     els.openChildModeButton.addEventListener("click", openChildMode);
+    els.generateChildLinkButton.addEventListener("click", generateChildAccessLink);
+    els.copyChildLinkButton.addEventListener("click", copyChildAccessLink);
     els.closeChildModeButton.addEventListener("click", closeChildMode);
     els.cancelAdultConfirmButton.addEventListener("click", hideAdultConfirm);
     els.openReportButton.addEventListener("click", openReport);

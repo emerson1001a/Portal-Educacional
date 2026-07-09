@@ -9,13 +9,12 @@
 - Rodar migracao no Supabase SQL Editor depois de revisada.
 - Validar APIs de token infantil depois que a migracao estiver aplicada.
 - Validar `child.html` com token real depois que a migracao estiver aplicada.
+- Validar geracao do link infantil no painel adulto depois que a migracao estiver aplicada.
 
 ## Proximo
 
-- Definir como funcionara link/codigo infantil.
 - Definir modelo de compartilhamento entre responsavel e professor.
-- Adaptar interface do portal para gerar link infantil.
-- Ligar botao adulto ao endpoint `/api/child-access-token`.
+- Definir se crianca maior tambem tera codigo curto alem do link infantil.
 
 ## Mais tarde
 
