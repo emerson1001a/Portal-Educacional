@@ -14,6 +14,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `prd-metas-e-tarefas.md`: fluxo de percepcao adulta, meta pedagogica, tarefa, missao infantil e evidencias.
 - `prd-modulos-plugaveis.md`: arquitetura de modulos, jornadas de apoio e base para futura habilitacao comercial.
 - `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
+- `analise-schema-etapa-5.md`: comparacao entre PRD de metas/tarefas e o schema/migracoes existentes.
 - `product-vision.md`: visao curta do produto e principios centrais.
 - `guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback, limites pedagogicos e material para revisao profissional.
 - `deployment-plan.md`: plano de GitHub, Vercel e Supabase.

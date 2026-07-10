@@ -159,3 +159,20 @@ Motivo:
 - a crianca precisa receber apenas uma instrucao curta, positiva e executavel;
 - o historico longitudinal depende de evidencias conectadas a metas e tarefas;
 - o proximo passo tecnico deve revisar schema e interface contra esse PRD.
+
+### Migracao incremental da Etapa 5
+
+Decisao:
+
+- criar `docs/analise-schema-etapa-5.md`;
+- criar `supabase/migrations/20260710_goals_assignments_alignment.sql`;
+- criar `supabase/tests/20260710_goals_assignments_smoke.sql`;
+- preservar `owner_id` em `learning_goals` por compatibilidade com o app atual;
+- ampliar status e metadados sem reescrever tabelas existentes.
+
+Motivo:
+
+- a fundacao de acesso ja criou tarefas e itens;
+- o PRD de metas e tarefas pede refinamentos, nao uma reescrita;
+- migracao pequena reduz risco de quebrar o portal publicado;
+- os testes manuais no Supabase precisam indicar claramente o que deve aparecer como `ok`.

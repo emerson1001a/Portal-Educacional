@@ -58,13 +58,19 @@ Documento:
 
 ## Etapa 5: Banco de dados
 
-Status: proxima
+Status: migracao proposta para revisao
 
 Objetivo:
 
 - implementar schema;
 - aplicar policies;
 - testar permissoes.
+
+Documentos:
+
+- `docs/analise-schema-etapa-5.md`
+- `supabase/migrations/20260710_goals_assignments_alignment.sql`
+- `supabase/tests/20260710_goals_assignments_smoke.sql`
 
 ## Etapa 6: Interface do adulto
 

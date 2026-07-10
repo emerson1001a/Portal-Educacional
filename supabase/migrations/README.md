@@ -11,6 +11,7 @@ Esta pasta guarda migracoes incrementais e revisaveis.
 ## Migracoes
 
 - `20260709_access_control_foundation.sql`: fundacao da Etapa 2 para multiplos papeis, professor/turma, tarefas, tokens infantis e evidencias.
+- `20260710_goals_assignments_alignment.sql`: alinhamento da Etapa 5 para metas, tarefas, status e revisao futura.
 
 ## Teste relacionado
 
@@ -18,6 +19,7 @@ Depois de rodar a migracao, execute:
 
 ```text
 supabase/tests/20260709_access_control_smoke.sql
+supabase/tests/20260710_goals_assignments_smoke.sql
 ```
 
 ## Observacao
