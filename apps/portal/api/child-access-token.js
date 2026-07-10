@@ -10,14 +10,17 @@ import {
   requiredConfig
 } from "../lib/portal-api.js";
 
-const MAX_EXPIRES_IN_HOURS = 72;
-const DEFAULT_EXPIRES_IN_HOURS = 24;
+const EXPIRATION_BY_PURPOSE = {
+  child_area: { defaultHours: 24, maxHours: 72 },
+  assignment: { defaultHours: 72, maxHours: 168 }
+};
 const purposes = new Set(["child_area", "assignment"]);
 
-function normalizeHours(value) {
-  const hours = Number(value || DEFAULT_EXPIRES_IN_HOURS);
-  if (!Number.isFinite(hours) || hours <= 0) return DEFAULT_EXPIRES_IN_HOURS;
-  return Math.min(Math.ceil(hours), MAX_EXPIRES_IN_HOURS);
+function normalizeHours(value, purpose) {
+  const rule = EXPIRATION_BY_PURPOSE[purpose] || EXPIRATION_BY_PURPOSE.child_area;
+  const hours = Number(value || rule.defaultHours);
+  if (!Number.isFinite(hours) || hours <= 0) return rule.defaultHours;
+  return Math.min(Math.ceil(hours), rule.maxHours);
 }
 
 function databaseMessage(error) {
@@ -43,7 +46,7 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const childId = body.child_id;
   const assignmentId = body.assignment_id || null;
-  const purpose = body.purpose || (assignmentId ? "assignment" : "child_area");
+  const purpose = assignmentId ? "assignment" : (body.purpose || "child_area");
   if (!childId || !purposes.has(purpose)) {
     return json(res, 400, { ok: false, message: "Informe child_id e purpose valido." });
   }
@@ -68,7 +71,7 @@ export default async function handler(req, res) {
   }
 
   const rawToken = randomBytes(32).toString("base64url");
-  const expiresInHours = normalizeHours(body.expires_in_hours);
+  const expiresInHours = normalizeHours(body.expires_in_hours, purpose);
   const expiresAt = new Date(Date.now() + expiresInHours * 60 * 60 * 1000).toISOString();
 
   const { data, error } = await admin

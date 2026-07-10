@@ -335,6 +335,14 @@ Regra:
 - token nao concede acesso adulto;
 - token so permite buscar tarefas liberadas e registrar execucao permitida.
 
+Decisao atual:
+
+- `child_area`: 24 horas por padrao, maximo de 72 horas;
+- `assignment`: 72 horas por padrao, maximo de 7 dias;
+- `module_return`: escopo tecnico futuro, recomendado em 2 horas.
+
+Detalhes em `docs/decisao-token-infantil.md`.
+
 ## Evidencias
 
 Tabela atual `activity_events` deve continuar, mas precisa ser ligada a tarefas:

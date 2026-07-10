@@ -19,6 +19,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback, limites pedagogicos e material para revisao profissional.
 - `deployment-plan.md`: plano de GitHub, Vercel e Supabase.
 - `external-setup.md`: configuracoes externas ja usadas no projeto.
+- `decisao-token-infantil.md`: escopos, expiracao e limites do link infantil.
 
 ## Onde ficam os PRDs
 

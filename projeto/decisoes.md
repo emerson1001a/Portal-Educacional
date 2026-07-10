@@ -176,3 +176,19 @@ Motivo:
 - o PRD de metas e tarefas pede refinamentos, nao uma reescrita;
 - migracao pequena reduz risco de quebrar o portal publicado;
 - os testes manuais no Supabase precisam indicar claramente o que deve aparecer como `ok`.
+
+### Expiracao e escopo do token infantil
+
+Decisao:
+
+- `child_area` expira em 24 horas por padrao, com maximo de 72 horas;
+- `assignment` expira em 72 horas por padrao, com maximo de 7 dias;
+- `module_return` fica como escopo tecnico futuro recomendado em 2 horas;
+- token infantil continua sem acesso adulto e com hash salvo no banco.
+
+Motivo:
+
+- link geral infantil deve ser curto porque abre a area da crianca;
+- link de missao precisa caber em rotina familiar ou escolar durante a semana;
+- retorno tecnico de modulo deve ser curto e invisivel para a crianca;
+- a decisao esta documentada em `docs/decisao-token-infantil.md`.

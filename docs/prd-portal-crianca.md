@@ -80,6 +80,16 @@ O token:
 - pode representar area infantil geral ou uma tarefa especifica;
 - deve ser validado server-side.
 
+Decisao de expiracao:
+
+- `child_area`: 24 horas por padrao, maximo de 72 horas;
+- `assignment`: 72 horas por padrao, maximo de 7 dias;
+- `module_return`: escopo tecnico futuro, recomendado em 2 horas.
+
+Documento de referencia:
+
+- `docs/decisao-token-infantil.md`.
+
 ### Decisao futura
 
 Ainda esta pendente decidir se criancas maiores tambem usarao:
