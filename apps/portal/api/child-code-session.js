@@ -1,4 +1,5 @@
-import { adminClient, hashAccessCode, json, requiredConfig } from "../lib/portal-api.js";
+import { randomBytes } from "node:crypto";
+import { adminClient, hashAccessCode, hashToken, json, publicOrigin, requiredConfig } from "../lib/portal-api.js";
 import { moduleById, readModulesFromEnv } from "../lib/modules.js";
 
 function allowCors(res) {
@@ -37,6 +38,13 @@ function safeAssignment(assignment, items) {
   };
 }
 
+function sessionExpiresAt(accessExpiresAt) {
+  const accessTime = new Date(accessExpiresAt).getTime();
+  const twoHours = Date.now() + 2 * 60 * 60 * 1000;
+  const expiresAt = Math.min(accessTime, twoHours);
+  return new Date(expiresAt).toISOString();
+}
+
 export default async function handler(req, res) {
   allowCors(res);
 
@@ -55,7 +63,7 @@ export default async function handler(req, res) {
   const admin = adminClient(config);
   const { data: access, error: accessError } = await admin
     .from("child_access_tokens")
-    .select("id, child_id, purpose, assignment_id, expires_at, revoked_at")
+    .select("id, child_id, created_by, purpose, assignment_id, expires_at, revoked_at")
     .eq("access_code_hash", hashAccessCode(code))
     .maybeSingle();
 
@@ -74,6 +82,21 @@ export default async function handler(req, res) {
 
   if (childError) return json(res, 500, { ok: false, message: childError.message });
   if (!child) return json(res, 404, { ok: false, message: "Crianca nao encontrada." });
+
+  const rawToken = randomBytes(32).toString("base64url");
+  const childSessionExpiresAt = sessionExpiresAt(access.expires_at);
+  const { error: tokenError } = await admin
+    .from("child_access_tokens")
+    .insert({
+      child_id: access.child_id,
+      created_by: access.created_by,
+      token_hash: hashToken(rawToken),
+      purpose: access.purpose,
+      assignment_id: access.assignment_id,
+      expires_at: childSessionExpiresAt
+    });
+
+  if (tokenError) return json(res, 500, { ok: false, message: databaseMessage(tokenError) });
 
   let assignmentsQuery = admin
     .from("assignments")
@@ -110,11 +133,14 @@ export default async function handler(req, res) {
 
   return json(res, 200, {
     ok: true,
+    token: rawToken,
+    child_url: `${publicOrigin(req)}/child.html?token=${encodeURIComponent(rawToken)}`,
     child,
     access: {
       id: access.id,
       purpose: access.purpose,
-      expires_at: access.expires_at
+      expires_at: access.expires_at,
+      session_expires_at: childSessionExpiresAt
     },
     assignments: (assignments || []).map((assignment) => safeAssignment(assignment, grouped.get(assignment.id) || [])),
     free_modules: readModulesFromEnv().filter((module) => module.status === "available" && module.url)

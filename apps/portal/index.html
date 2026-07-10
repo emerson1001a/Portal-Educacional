@@ -944,6 +944,7 @@
             <div class="row">
               <button class="button secondary" id="copyChildLinkButton" type="button">Copiar link</button>
               <button class="button secondary hidden" id="copyChildCodeButton" type="button">Copiar código</button>
+              <a class="button ghost hidden" id="openChildCodeEntryButton" href="/entrar" target="_blank" rel="noopener">Abrir entrada por código</a>
               <a class="button ghost" id="openChildLinkButton" href="#" target="_blank" rel="noopener">Abrir em nova aba</a>
             </div>
           </div>
@@ -1262,6 +1263,7 @@
       childAccessCode: document.querySelector("#childAccessCode"),
       copyChildLinkButton: document.querySelector("#copyChildLinkButton"),
       copyChildCodeButton: document.querySelector("#copyChildCodeButton"),
+      openChildCodeEntryButton: document.querySelector("#openChildCodeEntryButton"),
       openChildLinkButton: document.querySelector("#openChildLinkButton"),
       openReportButton: document.querySelector("#openReportButton"),
       refreshButton: document.querySelector("#refreshButton"),
@@ -2343,6 +2345,7 @@
       els.childAccessCode.value = "";
       els.childAccessCodeWrap.classList.add("hidden");
       els.copyChildCodeButton.classList.add("hidden");
+      els.openChildCodeEntryButton.classList.add("hidden");
       els.openChildLinkButton.href = "#";
     }
 
@@ -2362,10 +2365,12 @@
         els.childAccessCode.value = accessCode;
         els.childAccessCodeWrap.classList.remove("hidden");
         els.copyChildCodeButton.classList.remove("hidden");
+        els.openChildCodeEntryButton.classList.remove("hidden");
       } else {
         els.childAccessCode.value = "";
         els.childAccessCodeWrap.classList.add("hidden");
         els.copyChildCodeButton.classList.add("hidden");
+        els.openChildCodeEntryButton.classList.add("hidden");
       }
       els.childAccessPanel.classList.remove("hidden");
     }

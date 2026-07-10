@@ -1,6 +1,6 @@
 import fs from "node:fs";
 
-const files = ["index.html", "child.html"].filter((file) => fs.existsSync(file));
+const files = ["index.html", "child.html", "entrar.html"].filter((file) => fs.existsSync(file));
 let totalScripts = 0;
 
 for (const file of files) {

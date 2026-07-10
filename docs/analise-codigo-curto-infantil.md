@@ -91,7 +91,12 @@ Saida:
 - dados seguros da crianca;
 - missao liberada;
 - modulos livres permitidos;
-- mesma estrutura segura do fluxo por token.
+- token tecnico temporario;
+- `child_url` apontando para `child.html?token=...`.
+
+Ponderacao:
+
+A pagina por codigo nao deve abrir modulos diretamente com o codigo curto. Ela deve trocar o codigo por um token tecnico curto e redirecionar para `child.html`, porque os modulos ja usam `portal_child_token` para devolver evidencias ao portal.
 
 ## Regras de seguranca
 
@@ -115,6 +120,7 @@ Mesmo sendo um produto educacional, codigo infantil pode circular em grupo, cade
 - `apps/portal/api/child-code-session.js`
 - `apps/portal/api/child-access-token.js`
 - `apps/portal/index.html`
+- `apps/portal/entrar.html`
 
 ## Criterios de aceite da preparacao
 
@@ -123,3 +129,4 @@ Mesmo sendo um produto educacional, codigo infantil pode circular em grupo, cade
 - Portal atual continua funcionando mesmo antes de a UI usar codigo curto.
 - Adulto ve link e codigo quando a migracao esta aplicada.
 - Adulto continua recebendo link quando a migracao ainda nao esta aplicada.
+- Crianca consegue digitar codigo em `/entrar` e ir para a area infantil.

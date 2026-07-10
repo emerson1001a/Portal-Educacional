@@ -250,3 +250,18 @@ Motivo:
 - evita publicar uma interface quebrada antes da migracao;
 - permite testar em producao de forma incremental;
 - preserva o fluxo atual por link, que ja funciona.
+
+### Entrada infantil por codigo redireciona para a area infantil
+
+Decisao:
+
+- criar `apps/portal/entrar.html` como pagina simples para a crianca digitar o codigo;
+- resolver o codigo em `/api/child-code-session`;
+- gerar um token tecnico temporario e redirecionar para `child.html?token=...`;
+- manter a execucao das missoes no `child.html`.
+
+Motivo:
+
+- os modulos ja esperam `portal_child_token`;
+- o codigo curto nao deve circular dentro dos modulos;
+- reaproveitar `child.html` evita duplicar logica infantil e reduz risco de divergencia.
