@@ -87,6 +87,11 @@ Status: planejada
 Objetivo:
 
 - criar ambiente infantil real, separado e seguro.
+- incluir entrada por link e por codigo curto temporario.
+
+Documento de apoio:
+
+- `docs/decisao-codigo-curto-infantil.md`
 
 ## Etapa 8: Relatorio longitudinal
 

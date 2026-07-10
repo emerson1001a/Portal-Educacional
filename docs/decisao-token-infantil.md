@@ -13,6 +13,12 @@ O token infantil nao concede acesso adulto. Ele serve apenas para:
 - abrir modulos com contexto da crianca;
 - permitir que modulos devolvam evidencias ao portal.
 
+O codigo curto infantil, quando implementado, sera apenas uma forma humana de chegar ao mesmo tipo de acesso limitado. Ele nao cria permissao mais ampla nem conta permanente da crianca.
+
+Documento relacionado:
+
+- `docs/decisao-codigo-curto-infantil.md`.
+
 ## Escopos
 
 ### `child_area`
@@ -87,7 +93,6 @@ A regra escolhida preserva o uso real:
 
 Ainda falta decidir:
 
-- se criancas maiores terao codigo curto alem do link;
 - se havera PIN infantil;
 - se professor podera gerar links por turma;
 - se links poderao ser revogados manualmente pela interface.

@@ -192,3 +192,19 @@ Motivo:
 - link de missao precisa caber em rotina familiar ou escolar durante a semana;
 - retorno tecnico de modulo deve ser curto e invisivel para a crianca;
 - a decisao esta documentada em `docs/decisao-token-infantil.md`.
+
+### Codigo curto infantil temporario
+
+Decisao:
+
+- manter link infantil como caminho principal;
+- adicionar codigo curto como alternativa futura para criancas maiores, sala de aula e missoes especificas;
+- tratar codigo curto como acesso temporario, nao como login infantil permanente;
+- deixar PIN infantil como decisao futura, caso a rotina real mostre necessidade.
+
+Motivo:
+
+- link atende melhor criancas pequenas e uso familiar;
+- codigo curto ajuda professor, turma e criancas que digitam sozinhas;
+- conta ou senha infantil permanente criaria complexidade de privacidade e suporte cedo demais;
+- a decisao esta documentada em `docs/decisao-codigo-curto-infantil.md`.

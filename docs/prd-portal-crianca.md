@@ -90,15 +90,33 @@ Documento de referencia:
 
 - `docs/decisao-token-infantil.md`.
 
-### Decisao futura
+### Codigo curto
+
+Decisao:
+
+- a crianca podera usar codigo curto no futuro;
+- o codigo curto sera temporario e ligado a missao, sessao ou sala;
+- o codigo curto nao sera login infantil permanente nesta fase;
+- link infantil continua sendo o caminho principal no MVP.
+
+Motivo:
+
+- link e melhor para criancas pequenas e uso em casa;
+- codigo curto e melhor para criancas maiores e sala de aula;
+- PIN infantil fica como possibilidade futura, apenas se a rotina real justificar.
+
+Documento de referencia:
+
+- `docs/decisao-codigo-curto-infantil.md`.
+
+### Decisoes futuras
 
 Ainda esta pendente decidir se criancas maiores tambem usarao:
 
-- codigo curto;
 - PIN;
 - conta propria;
-- link individual;
-- combinacao de link e codigo.
+- link individual recorrente;
+- combinacao de link, codigo e PIN.
 
 ## Informacoes permitidas para a crianca
 
@@ -256,8 +274,8 @@ Mostrar:
 ## Proximas etapas
 
 1. Revisar estados visuais do `child.html`.
-2. Decidir expiracao do token infantil.
-3. Definir se crianca maior tera codigo curto ou PIN.
+2. Projetar a entrada infantil por codigo curto.
+3. Definir se crianca maior precisara de PIN em etapa posterior.
 4. Evoluir missao simples para plano de tarefas com prazo e status por item.
 5. Especificar primeira camada de gamificacao leve.
 6. Unificar visual infantil entre portal, redacao, leitura e tabuada.

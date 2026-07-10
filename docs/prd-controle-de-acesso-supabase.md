@@ -343,6 +343,14 @@ Decisao atual:
 
 Detalhes em `docs/decisao-token-infantil.md`.
 
+Codigo curto infantil:
+
+- sera um alias temporario para acesso limitado;
+- deve resolver server-side para o mesmo modelo de token/escopo;
+- nao deve virar login infantil permanente nesta fase.
+
+Detalhes em `docs/decisao-codigo-curto-infantil.md`.
+
 ## Evidencias
 
 Tabela atual `activity_events` deve continuar, mas precisa ser ligada a tarefas:
@@ -627,9 +635,8 @@ Testar manualmente no Supabase:
 
 ## Decisoes em aberto
 
-1. Token infantil deve expirar por tempo, por tarefa ou pelos dois?
-2. Codigo infantil sera digitavel pela crianca ou apenas link?
-3. Professor podera criar crianca sozinho ou apenas receber crianca compartilhada?
-4. Responsavel podera revogar acesso do professor?
-5. Admin tera painel proprio ou apenas operacao tecnica no inicio?
-6. Activity events de modulos antigos devem ser convertidos para assignments retroativamente?
+1. PIN infantil sera necessario para criancas maiores?
+2. Professor podera criar crianca sozinho ou apenas receber crianca compartilhada?
+3. Responsavel podera revogar acesso do professor?
+4. Admin tera painel proprio ou apenas operacao tecnica no inicio?
+5. Activity events de modulos antigos devem ser convertidos para assignments retroativamente?
