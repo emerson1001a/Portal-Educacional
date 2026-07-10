@@ -404,6 +404,39 @@
       font-size: 14px;
       line-height: 1.45;
     }
+    details.feedback-card {
+      overflow: hidden;
+      padding: 0;
+    }
+    details.feedback-card > summary {
+      min-height: 128px;
+      padding: 14px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    details.feedback-card > summary::-webkit-details-marker { display: none; }
+    details.feedback-card > summary::after {
+      content: "Abrir detalhes";
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.78);
+      color: #22556a;
+      font-size: 12px;
+      font-weight: 850;
+    }
+    details.feedback-card[open] > summary::after {
+      content: "Recolher";
+      background: #e9f8f6;
+      color: #0b6f68;
+    }
+    .feedback-body {
+      padding: 0 14px 14px;
+      border-top: 1px solid var(--line);
+    }
+    .feedback-body p:first-child { margin-top: 12px; }
     .practice-plan {
       display: grid;
       gap: 10px;
@@ -529,9 +562,71 @@
 
     .event {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+    }
+    .event-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .event-details {
+      display: grid;
+      gap: 8px;
+    }
+    .event-details details {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+    .event-details summary {
+      padding: 10px 12px;
+      cursor: pointer;
+      color: #22556a;
+      font-weight: 850;
+      list-style: none;
+      user-select: none;
+    }
+    .event-details summary::-webkit-details-marker { display: none; }
+    .event-details summary::after {
+      content: "Abrir";
+      float: right;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .event-details details[open] summary::after { content: "Recolher"; }
+    .event-detail-body {
+      padding: 0 12px 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .artifact-text {
+      max-height: 320px;
+      overflow: auto;
+      white-space: pre-wrap;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f7fafc;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .question-list {
+      display: grid;
       gap: 10px;
-      align-items: center;
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .question-list li {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
     }
 
     .child-overlay {
@@ -1702,27 +1797,47 @@
     function renderGeneralFeedback() {
       const feedback = buildGeneralFeedback();
       els.generalFeedback.innerHTML = `
-        <article class="feedback-card primary">
-          <span class="pill">leitura geral</span>
-          <strong>${escapeHtml(feedback.status)}</strong>
-          <p class="muted">${escapeHtml(feedback.summary)}</p>
-        </article>
-        <article class="feedback-card attention">
-          <span class="pill">atenção</span>
-          <strong>Próximo foco</strong>
-          <p class="muted">${escapeHtml(feedback.attention)}</p>
-        </article>
-        <article class="feedback-card">
-          <span class="pill">receita</span>
-          <strong>O que fazer agora</strong>
-          ${listItems(feedback.recipe || [])}
-          ${feedback.avoid?.length ? `<p class="small"><strong>Evite dizer:</strong> ${escapeHtml(feedback.avoid.join(" / "))}</p>` : ""}
-        </article>
-        <article class="feedback-card milestone">
-          <span class="pill">evolução</span>
-          <strong>Sinais observáveis</strong>
-          ${listItems(feedback.markers || [])}
-        </article>
+        <details class="feedback-card primary">
+          <summary>
+            <span class="pill">leitura geral</span>
+            <strong>${escapeHtml(feedback.status)}</strong>
+            <p class="muted">${escapeHtml(feedback.summary)}</p>
+          </summary>
+          <div class="feedback-body">
+            <p class="small">Use esta leitura como ponto de partida. A comparação principal é sempre com o próprio percurso da criança.</p>
+          </div>
+        </details>
+        <details class="feedback-card attention">
+          <summary>
+            <span class="pill">atenção</span>
+            <strong>Próximo foco</strong>
+            <p class="muted">${escapeHtml(feedback.attention)}</p>
+          </summary>
+          <div class="feedback-body">
+            <p class="small">Escolha uma coisa por vez para observar. Quando o adulto reduz a cobrança, a criança costuma aceitar melhor a prática.</p>
+          </div>
+        </details>
+        <details class="feedback-card">
+          <summary>
+            <span class="pill">receita</span>
+            <strong>O que fazer agora</strong>
+            <p class="muted">${escapeHtml((feedback.recipe || [])[0] || "Abra para ver uma orientação prática.")}</p>
+          </summary>
+          <div class="feedback-body">
+            ${listItems(feedback.recipe || [])}
+            ${feedback.avoid?.length ? `<p class="small"><strong>Evite dizer:</strong> ${escapeHtml(feedback.avoid.join(" / "))}</p>` : ""}
+          </div>
+        </details>
+        <details class="feedback-card milestone">
+          <summary>
+            <span class="pill">evolução</span>
+            <strong>Sinais observáveis</strong>
+            <p class="muted">${escapeHtml((feedback.markers || [])[0] || "Abra para ver os sinais de evolução.")}</p>
+          </summary>
+          <div class="feedback-body">
+            ${listItems(feedback.markers || [])}
+          </div>
+        </details>
       `;
     }
 
@@ -2353,6 +2468,91 @@
       els.adultConfirmMessage.classList.remove("hidden");
     }
 
+    function detailBlock(title, bodyHtml) {
+      if (!bodyHtml) return "";
+      return `
+        <details>
+          <summary>${escapeHtml(title)}</summary>
+          <div class="event-detail-body">${bodyHtml}</div>
+        </details>
+      `;
+    }
+
+    function eventFeedbackDetails(event) {
+      const feedback = event.feedback && typeof event.feedback === "object" ? event.feedback : {};
+      const adult = feedback.adult && typeof feedback.adult === "object" ? feedback.adult : {};
+      const child = feedback.child && typeof feedback.child === "object" ? feedback.child : {};
+      const blocks = [];
+
+      if (adult.summary) {
+        blocks.push(`<p><strong>Orientação para o adulto:</strong> ${escapeHtml(adult.summary)}</p>`);
+      }
+      if (child.message) {
+        blocks.push(`<p><strong>Mensagem recebida pela criança:</strong> ${escapeHtml(child.message)}</p>`);
+      }
+      if (Array.isArray(adult.recipe) && adult.recipe.length) {
+        blocks.push(`<p><strong>Receita prática:</strong></p>${listItems(adult.recipe)}`);
+      }
+      if (Array.isArray(adult.attention_points) && adult.attention_points.length) {
+        blocks.push(`<p><strong>Pontos de atenção:</strong></p>${listItems(adult.attention_points)}`);
+      }
+      if (Array.isArray(adult.avoid_saying) && adult.avoid_saying.length) {
+        blocks.push(`<p><strong>Evite dizer:</strong> ${escapeHtml(adult.avoid_saying.join(" / "))}</p>`);
+      }
+
+      return detailBlock("Feedback completo", blocks.join(""));
+    }
+
+    function textArtifactTitle(event) {
+      if (event.service === "redacao") return "Redação em texto";
+      if (event.service === "interpretacao") return "Texto da interpretação";
+      return "Texto da atividade";
+    }
+
+    function eventArtifactDetails(event) {
+      const artifacts = event.artifacts && typeof event.artifacts === "object" ? event.artifacts : {};
+      if (!artifacts.text) return "";
+      const meta = [];
+      if (artifacts.title) meta.push(`Título: ${artifacts.title}`);
+      if (artifacts.theme) meta.push(`Tema: ${artifacts.theme}`);
+      if (artifacts.type) meta.push(`Tipo: ${artifacts.type}`);
+      const body = `
+        ${meta.length ? `<p class="small">${escapeHtml(meta.join(" | "))}</p>` : ""}
+        <div class="artifact-text">${escapeHtml(artifacts.text)}</div>
+      `;
+      return detailBlock(textArtifactTitle(event), body);
+    }
+
+    function readableAnswer(answer) {
+      if (answer === null || answer === undefined) return "";
+      if (typeof answer === "string" || typeof answer === "number" || typeof answer === "boolean") return String(answer);
+      if (typeof answer !== "object") return "";
+      return answer.answer || answer.resposta || answer.value || answer.text || answer.selected || answer.choice || "";
+    }
+
+    function eventQuestionDetails(event) {
+      const artifacts = event.artifacts && typeof event.artifacts === "object" ? event.artifacts : {};
+      const questions = Array.isArray(artifacts.questions) ? artifacts.questions : [];
+      const answers = Array.isArray(artifacts.answers) ? artifacts.answers : [];
+      if (!questions.length && !answers.length) return "";
+
+      const total = Math.max(questions.length, answers.length);
+      const items = Array.from({ length: total }).map((_, index) => {
+        const question = questions[index] || {};
+        const answer = answers[index];
+        const prompt = typeof question === "string" ? question : (question.prompt || question.question || question.text || "");
+        const response = readableAnswer(answer);
+        return `
+          <li>
+            <strong>${index + 1}. ${escapeHtml(prompt || "Questão registrada")}</strong>
+            ${response ? `<p class="small"><strong>Resposta:</strong> ${escapeHtml(response)}</p>` : ""}
+          </li>
+        `;
+      }).join("");
+
+      return detailBlock("Perguntas e respostas", `<ul class="question-list">${items}</ul>`);
+    }
+
     function renderTimeline() {
       const child = activeChild();
       els.timeline.innerHTML = "";
@@ -2368,13 +2568,21 @@
         const item = document.createElement("article");
         item.className = "event";
         const adultSummary = eventAdultSummary(event);
+        const details = [
+          eventFeedbackDetails(event),
+          eventArtifactDetails(event),
+          eventQuestionDetails(event)
+        ].join("");
         item.innerHTML = `
-          <div>
-            <strong>${escapeHtml(event.title || serviceName(event.service))}</strong>
-            <div class="muted small">${escapeHtml(serviceName(event.service))} - ${escapeHtml(event.activity_type || "atividade")}</div>
-            ${adultSummary ? `<p class="muted small">${escapeHtml(adultSummary)}</p>` : ""}
+          <div class="event-head">
+            <div>
+              <strong>${escapeHtml(event.title || serviceName(event.service))}</strong>
+              <div class="muted small">${escapeHtml(serviceName(event.service))} - ${escapeHtml(event.activity_type || "atividade")}</div>
+              ${adultSummary ? `<p class="muted small">${escapeHtml(adultSummary)}</p>` : ""}
+            </div>
+            <span class="pill">${formatDate(event.occurred_at || event.created_at)}</span>
           </div>
-          <span class="pill">${formatDate(event.occurred_at || event.created_at)}</span>
+          ${details ? `<div class="event-details">${details}</div>` : ""}
         `;
         els.timeline.appendChild(item);
       });
