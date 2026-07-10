@@ -127,3 +127,19 @@ Motivo:
 - manter o historico longitudinal como centro de valor;
 - abrir caminho para habilitacao ou venda por modulo no futuro;
 - evitar que o produto rotule a crianca ou venda medo ao adulto.
+
+## 2026-07-10
+
+### PRD do Portal da Crianca
+
+Decisao:
+
+- fechar `docs/prd-portal-crianca.md`;
+- manter a area infantil como ambiente separado, positivo e sem conteudo sensivel adulto;
+- tratar gamificacao como camada futura de progresso pessoal, nao como ranking ou pressao por desempenho.
+
+Motivo:
+
+- a area infantil ja existe em MVP e precisa de criterio formal para evoluir;
+- a crianca deve receber apenas missoes e instrucoes adequadas;
+- o adulto continua sendo quem organiza metas, interpreta evidencias e recebe orientacao completa.

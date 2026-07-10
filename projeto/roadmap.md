@@ -29,7 +29,7 @@ Documento planejado:
 
 ## Etapa 3: PRD do Portal da Crianca
 
-Status: planejada
+Status: fechada em PRD
 
 Objetivo:
 
@@ -38,9 +38,13 @@ Objetivo:
 - definir feedback seguro;
 - definir retorno ao portal adulto.
 
+Documento:
+
+- `docs/prd-portal-crianca.md`
+
 ## Etapa 4: PRD de metas e tarefas
 
-Status: planejada
+Status: proxima
 
 Objetivo:
 
