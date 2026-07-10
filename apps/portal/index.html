@@ -374,6 +374,29 @@
       background: white;
     }
     .child-access-panel .row { align-items: stretch; }
+    .child-access-fields {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: minmax(0, 1fr) minmax(160px, 220px);
+      align-items: end;
+    }
+    .child-access-fields label {
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    .child-access-code input {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      background: #fff8dc;
+      border-color: #e2b547;
+    }
 
     .metrics, .evolution-grid, .services {
       display: grid;
@@ -784,6 +807,7 @@
       .hero-copy { min-height: 420px; padding: 28px; }
       h1 { font-size: 38px; }
       .row .button { width: 100%; }
+      .child-access-fields { grid-template-columns: 1fr; }
     }
 
     @media print {
@@ -907,9 +931,19 @@
             <span class="pill">acesso da criança</span>
             <strong id="childAccessTitle">Link infantil pronto</strong>
             <p class="muted small" id="childAccessCopy">Este link abre somente a área infantil e não mostra percepções, relatórios ou orientações do adulto.</p>
-            <input id="childAccessLink" readonly aria-label="Link infantil">
+            <div class="child-access-fields">
+              <label>
+                Link infantil
+                <input id="childAccessLink" readonly aria-label="Link infantil">
+              </label>
+              <label class="child-access-code hidden" id="childAccessCodeWrap">
+                Código curto
+                <input id="childAccessCode" readonly aria-label="Código curto infantil">
+              </label>
+            </div>
             <div class="row">
               <button class="button secondary" id="copyChildLinkButton" type="button">Copiar link</button>
+              <button class="button secondary hidden" id="copyChildCodeButton" type="button">Copiar código</button>
               <a class="button ghost" id="openChildLinkButton" href="#" target="_blank" rel="noopener">Abrir em nova aba</a>
             </div>
           </div>
@@ -1224,7 +1258,10 @@
       childAccessTitle: document.querySelector("#childAccessTitle"),
       childAccessCopy: document.querySelector("#childAccessCopy"),
       childAccessLink: document.querySelector("#childAccessLink"),
+      childAccessCodeWrap: document.querySelector("#childAccessCodeWrap"),
+      childAccessCode: document.querySelector("#childAccessCode"),
       copyChildLinkButton: document.querySelector("#copyChildLinkButton"),
+      copyChildCodeButton: document.querySelector("#copyChildCodeButton"),
       openChildLinkButton: document.querySelector("#openChildLinkButton"),
       openReportButton: document.querySelector("#openReportButton"),
       refreshButton: document.querySelector("#refreshButton"),
@@ -2303,14 +2340,33 @@
     function clearChildAccessPanel() {
       els.childAccessPanel.classList.add("hidden");
       els.childAccessLink.value = "";
+      els.childAccessCode.value = "";
+      els.childAccessCodeWrap.classList.add("hidden");
+      els.copyChildCodeButton.classList.add("hidden");
       els.openChildLinkButton.href = "#";
     }
 
-    function showChildAccessPanel(link, child) {
-      els.childAccessTitle.textContent = `Link infantil de ${child.full_name}`;
-      els.childAccessCopy.textContent = "Envie este link apenas para a criança ou abra em outro aparelho. Ele é temporário e não libera a área do adulto.";
+    function showChildAccessPanel(link, child, accessCode = "", codeUnavailable = false) {
+      els.childAccessTitle.textContent = accessCode
+        ? `Link e código infantil de ${child.full_name}`
+        : `Link infantil de ${child.full_name}`;
+      els.childAccessCopy.textContent = accessCode
+        ? "Envie o link ou passe o código para a criança. Este acesso é temporário e não libera a área do adulto."
+        : "Envie este link apenas para a criança ou abra em outro aparelho. Ele é temporário e não libera a área do adulto.";
+      if (codeUnavailable) {
+        els.childAccessCopy.textContent += " O código curto ficará disponível depois da migração no Supabase.";
+      }
       els.childAccessLink.value = link;
       els.openChildLinkButton.href = link;
+      if (accessCode) {
+        els.childAccessCode.value = accessCode;
+        els.childAccessCodeWrap.classList.remove("hidden");
+        els.copyChildCodeButton.classList.remove("hidden");
+      } else {
+        els.childAccessCode.value = "";
+        els.childAccessCodeWrap.classList.add("hidden");
+        els.copyChildCodeButton.classList.add("hidden");
+      }
       els.childAccessPanel.classList.remove("hidden");
     }
 
@@ -2337,15 +2393,22 @@
           body: JSON.stringify({
             child_id: child.id,
             purpose: "child_area",
-            expires_in_hours: 24
+            expires_in_hours: 24,
+            include_access_code: true
           })
         });
         const data = await response.json();
         if (!response.ok || !data.child_url) {
           throw new Error(data.message || "Não foi possível gerar o link infantil.");
         }
-        showChildAccessPanel(data.child_url, child);
-        message("Link infantil gerado. Ele abre somente a área da criança.");
+        showChildAccessPanel(data.child_url, child, data.access_code || "", data.access_code_unavailable);
+        if (data.access_code) {
+          message("Link e código infantil gerados. Eles abrem somente a área da criança.");
+        } else if (data.access_code_unavailable) {
+          message("Link infantil gerado. O código curto depende da migração no Supabase.");
+        } else {
+          message("Link infantil gerado. Ele abre somente a área da criança.");
+        }
       } catch (error) {
         message(childAccessErrorMessage(error), true);
       } finally {
@@ -2366,6 +2429,22 @@
         els.childAccessLink.focus();
         els.childAccessLink.select();
         message("Selecione e copie o link infantil destacado.");
+      }
+    }
+
+    async function copyChildAccessCode() {
+      const code = els.childAccessCode.value;
+      if (!code) {
+        message("Gere um código infantil antes de copiar.", true);
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(code);
+        message("Código infantil copiado.");
+      } catch {
+        els.childAccessCode.focus();
+        els.childAccessCode.select();
+        message("Selecione e copie o código infantil destacado.");
       }
     }
 
@@ -2960,6 +3039,7 @@
     els.openChildModeButton.addEventListener("click", openChildMode);
     els.generateChildLinkButton.addEventListener("click", generateChildAccessLink);
     els.copyChildLinkButton.addEventListener("click", copyChildAccessLink);
+    els.copyChildCodeButton.addEventListener("click", copyChildAccessCode);
     els.closeChildModeButton.addEventListener("click", closeChildMode);
     els.cancelAdultConfirmButton.addEventListener("click", hideAdultConfirm);
     els.openReportButton.addEventListener("click", openReport);

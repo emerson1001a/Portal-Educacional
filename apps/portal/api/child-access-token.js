@@ -26,10 +26,17 @@ function normalizeHours(value, purpose) {
 
 function databaseMessage(error) {
   const text = String(error?.message || error || "");
-  if (/child_access_tokens|assignments|access_code|schema cache|does not exist|Could not find/i.test(text)) {
+  if (/access_code/i.test(text)) {
+    return "A migracao de codigo curto infantil ainda precisa ser aplicada no Supabase.";
+  }
+  if (/child_access_tokens|assignments|schema cache|does not exist|Could not find/i.test(text)) {
     return "A migracao de controle de acesso ainda precisa ser aplicada no Supabase.";
   }
   return text || "Nao foi possivel gerar o acesso infantil.";
+}
+
+function isAccessCodeSchemaError(error) {
+  return /access_code|schema cache|column .* does not exist/i.test(String(error?.message || error || ""));
 }
 
 function normalizePrefix(value, purpose) {
@@ -110,7 +117,8 @@ export default async function handler(req, res) {
     insertPayload.access_code_created_at = new Date().toISOString();
   }
 
-  const { data, error } = await admin
+  let accessCodeUnavailable = false;
+  let insertResult = await admin
     .from("child_access_tokens")
     .insert(insertPayload)
     .select(
@@ -120,6 +128,20 @@ export default async function handler(req, res) {
     )
     .single();
 
+  if (insertResult.error && accessCode && isAccessCodeSchemaError(insertResult.error)) {
+    accessCodeUnavailable = true;
+    delete insertPayload.access_code_hash;
+    delete insertPayload.access_code_prefix;
+    delete insertPayload.access_code_created_at;
+
+    insertResult = await admin
+      .from("child_access_tokens")
+      .insert(insertPayload)
+      .select("id, child_id, purpose, assignment_id, expires_at, created_at")
+      .single();
+  }
+
+  const { data, error } = insertResult;
   if (error) return json(res, 500, { ok: false, message: databaseMessage(error) });
 
   const origin = publicOrigin(req);
@@ -129,7 +151,8 @@ export default async function handler(req, res) {
     ok: true,
     token: rawToken,
     child_url: childUrl,
-    access_code: accessCode,
+    access_code: accessCodeUnavailable ? null : accessCode,
+    access_code_unavailable: accessCodeUnavailable,
     access: data
   });
 }

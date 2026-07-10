@@ -9,7 +9,8 @@
 - Revisar migracao `supabase/migrations/20260710_child_short_codes.sql`.
 - Rodar migracao de codigo curto no Supabase SQL Editor depois de revisada.
 - Executar smoke test `supabase/tests/20260710_child_short_codes_smoke.sql` depois da migracao.
-- Testar API de codigo curto depois da migracao no Supabase.
+- Testar geracao de link + codigo curto no painel adulto depois da migracao no Supabase.
+- Testar API de entrada por codigo depois da migracao no Supabase.
 - Projetar pagina de entrada infantil por codigo.
 - Evoluir missao simples para plano de tarefas com metas, prazo e status por item.
 

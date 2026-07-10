@@ -48,12 +48,13 @@ Endpoint atual:
 POST /api/child-access-token
 ```
 
-Evolucao futura:
+Implementacao preparada:
 
 - gerar token longo;
-- opcionalmente gerar codigo curto;
+- gerar codigo curto quando `include_access_code` for solicitado;
 - salvar `token_hash` e `access_code_hash`;
 - devolver `child_url` e `access_code` ao adulto.
+- se a migracao de codigo curto ainda nao existir, gerar link normalmente e retornar `access_code_unavailable`.
 
 Resposta futura esperada:
 
@@ -112,10 +113,13 @@ Mesmo sendo um produto educacional, codigo infantil pode circular em grupo, cade
 - `supabase/migrations/20260710_child_short_codes.sql`
 - `supabase/tests/20260710_child_short_codes_smoke.sql`
 - `apps/portal/api/child-code-session.js`
+- `apps/portal/api/child-access-token.js`
+- `apps/portal/index.html`
 
 ## Criterios de aceite da preparacao
 
 - Migração adiciona campos sem apagar dados existentes.
 - Smoke test retorna `ok` para colunas e indices esperados.
 - Portal atual continua funcionando mesmo antes de a UI usar codigo curto.
-- Implementacao futura pode gerar link e codigo para a mesma missao.
+- Adulto ve link e codigo quando a migracao esta aplicada.
+- Adulto continua recebendo link quando a migracao ainda nao esta aplicada.

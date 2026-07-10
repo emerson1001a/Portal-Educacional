@@ -236,3 +236,17 @@ Motivo:
 - o portal publicado nao deve quebrar se a coluna nova ainda nao existir;
 - codigo curto depende de migracao no Supabase;
 - a entrada por codigo deve devolver apenas dados seguros da area infantil.
+
+### Painel adulto com link e codigo curto progressivo
+
+Decisao:
+
+- o botao adulto de acesso infantil solicita link e codigo curto;
+- quando a migracao esta aplicada, o adulto ve os dois;
+- quando a migracao ainda nao esta aplicada, o adulto recebe o link e uma mensagem informando que o codigo curto depende do Supabase.
+
+Motivo:
+
+- evita publicar uma interface quebrada antes da migracao;
+- permite testar em producao de forma incremental;
+- preserva o fluxo atual por link, que ja funciona.
