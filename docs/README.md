@@ -11,6 +11,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `prd-matriz-de-papeis.md`: PRD fechado da Etapa 1, com matriz de permissoes, bloqueios e criterios de aceite.
 - `prd-controle-de-acesso-supabase.md`: desenho da Etapa 2 para tabelas, vinculos, RLS e token infantil.
 - `prd-portal-crianca.md`: experiencia infantil, token, missoes, limites de informacao e gamificacao futura.
+- `prd-metas-e-tarefas.md`: fluxo de percepcao adulta, meta pedagogica, tarefa, missao infantil e evidencias.
 - `prd-modulos-plugaveis.md`: arquitetura de modulos, jornadas de apoio e base para futura habilitacao comercial.
 - `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
 - `product-vision.md`: visao curta do produto e principios centrais.

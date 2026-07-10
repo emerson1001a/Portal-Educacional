@@ -44,7 +44,7 @@ Documento:
 
 ## Etapa 4: PRD de metas e tarefas
 
-Status: proxima
+Status: fechada em PRD
 
 Objetivo:
 
@@ -52,9 +52,13 @@ Objetivo:
 - transformar meta em tarefa;
 - liberar tarefa para modulos.
 
+Documento:
+
+- `docs/prd-metas-e-tarefas.md`
+
 ## Etapa 5: Banco de dados
 
-Status: planejada
+Status: proxima
 
 Objetivo:
 

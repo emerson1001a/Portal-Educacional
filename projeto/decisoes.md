@@ -143,3 +143,19 @@ Motivo:
 - a area infantil ja existe em MVP e precisa de criterio formal para evoluir;
 - a crianca deve receber apenas missoes e instrucoes adequadas;
 - o adulto continua sendo quem organiza metas, interpreta evidencias e recebe orientacao completa.
+
+### PRD de metas e tarefas
+
+Decisao:
+
+- fechar `docs/prd-metas-e-tarefas.md`;
+- separar meta adulta, tarefa e missao infantil;
+- manter a percepcao original e notas adultas fora da area da crianca;
+- usar tarefas como ponte entre metas, modulos e evidencias longitudinais.
+
+Motivo:
+
+- meta e ferramenta do adulto, nao cobranca para a crianca;
+- a crianca precisa receber apenas uma instrucao curta, positiva e executavel;
+- o historico longitudinal depende de evidencias conectadas a metas e tarefas;
+- o proximo passo tecnico deve revisar schema e interface contra esse PRD.
