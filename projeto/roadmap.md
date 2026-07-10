@@ -71,6 +71,9 @@ Documentos:
 - `docs/analise-schema-etapa-5.md`
 - `supabase/migrations/20260710_goals_assignments_alignment.sql`
 - `supabase/tests/20260710_goals_assignments_smoke.sql`
+- `docs/analise-codigo-curto-infantil.md`
+- `supabase/migrations/20260710_child_short_codes.sql`
+- `supabase/tests/20260710_child_short_codes_smoke.sql`
 
 ## Etapa 6: Interface do adulto
 
@@ -92,6 +95,7 @@ Objetivo:
 Documento de apoio:
 
 - `docs/decisao-codigo-curto-infantil.md`
+- `docs/analise-codigo-curto-infantil.md`
 
 ## Etapa 8: Relatorio longitudinal
 

@@ -208,3 +208,17 @@ Motivo:
 - codigo curto ajuda professor, turma e criancas que digitam sozinhas;
 - conta ou senha infantil permanente criaria complexidade de privacidade e suporte cedo demais;
 - a decisao esta documentada em `docs/decisao-codigo-curto-infantil.md`.
+
+### Preparacao de banco para codigo curto
+
+Decisao:
+
+- reutilizar `child_access_tokens` para codigo curto;
+- adicionar `access_code_hash` e campos auxiliares, sem salvar o codigo puro;
+- manter a validade e revogacao no mesmo modelo do token infantil.
+
+Motivo:
+
+- codigo curto deve ser alias humano de um acesso limitado;
+- criar outra tabela de permissao aumentaria risco de divergencia;
+- a preparacao tecnica esta documentada em `docs/analise-codigo-curto-infantil.md`.

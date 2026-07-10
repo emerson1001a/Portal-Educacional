@@ -6,7 +6,10 @@
 - Revisar migracao `supabase/migrations/20260710_goals_assignments_alignment.sql`.
 - Rodar migracao da Etapa 5 no Supabase SQL Editor depois de revisada.
 - Executar smoke test `supabase/tests/20260710_goals_assignments_smoke.sql` depois da migracao.
-- Projetar schema e API para codigo curto infantil temporario.
+- Revisar migracao `supabase/migrations/20260710_child_short_codes.sql`.
+- Rodar migracao de codigo curto no Supabase SQL Editor depois de revisada.
+- Executar smoke test `supabase/tests/20260710_child_short_codes_smoke.sql` depois da migracao.
+- Projetar API para gerar e resolver codigo curto infantil temporario.
 - Projetar pagina de entrada infantil por codigo.
 - Evoluir missao simples para plano de tarefas com metas, prazo e status por item.
 
