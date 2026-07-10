@@ -4,6 +4,7 @@ import {
   authenticatedUser,
   bearerFrom,
   canManageChild,
+  hashAccessCode,
   hashToken,
   json,
   publicOrigin,
@@ -25,10 +26,28 @@ function normalizeHours(value, purpose) {
 
 function databaseMessage(error) {
   const text = String(error?.message || error || "");
-  if (/child_access_tokens|assignments|schema cache|does not exist|Could not find/i.test(text)) {
+  if (/child_access_tokens|assignments|access_code|schema cache|does not exist|Could not find/i.test(text)) {
     return "A migracao de controle de acesso ainda precisa ser aplicada no Supabase.";
   }
   return text || "Nao foi possivel gerar o acesso infantil.";
+}
+
+function normalizePrefix(value, purpose) {
+  const fallback = purpose === "assignment" ? "MIS" : "CRI";
+  const prefix = String(value || fallback)
+    .toUpperCase()
+    .replace(/[^A-Z]/g, "")
+    .slice(0, 3);
+  return prefix || fallback;
+}
+
+function generateAccessCode(prefix) {
+  const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+  let suffix = "";
+  while (suffix.length < 4) {
+    suffix += alphabet[randomBytes(1)[0] % alphabet.length];
+  }
+  return `${prefix}-${suffix}`;
 }
 
 export default async function handler(req, res) {
@@ -73,18 +92,32 @@ export default async function handler(req, res) {
   const rawToken = randomBytes(32).toString("base64url");
   const expiresInHours = normalizeHours(body.expires_in_hours, purpose);
   const expiresAt = new Date(Date.now() + expiresInHours * 60 * 60 * 1000).toISOString();
+  const includeAccessCode = body.include_access_code === true || body.include_access_code === "true";
+  const accessCode = includeAccessCode ? generateAccessCode(normalizePrefix(body.access_code_prefix, purpose)) : null;
+
+  const insertPayload = {
+    child_id: childId,
+    created_by: auth.user.id,
+    token_hash: hashToken(rawToken),
+    purpose,
+    assignment_id: assignmentId,
+    expires_at: expiresAt
+  };
+
+  if (accessCode) {
+    insertPayload.access_code_hash = hashAccessCode(accessCode);
+    insertPayload.access_code_prefix = accessCode.split("-")[0];
+    insertPayload.access_code_created_at = new Date().toISOString();
+  }
 
   const { data, error } = await admin
     .from("child_access_tokens")
-    .insert({
-      child_id: childId,
-      created_by: auth.user.id,
-      token_hash: hashToken(rawToken),
-      purpose,
-      assignment_id: assignmentId,
-      expires_at: expiresAt
-    })
-    .select("id, child_id, purpose, assignment_id, expires_at, created_at")
+    .insert(insertPayload)
+    .select(
+      accessCode
+        ? "id, child_id, purpose, assignment_id, expires_at, created_at, access_code_prefix"
+        : "id, child_id, purpose, assignment_id, expires_at, created_at"
+    )
     .single();
 
   if (error) return json(res, 500, { ok: false, message: databaseMessage(error) });
@@ -96,6 +129,7 @@ export default async function handler(req, res) {
     ok: true,
     token: rawToken,
     child_url: childUrl,
+    access_code: accessCode,
     access: data
   });
 }

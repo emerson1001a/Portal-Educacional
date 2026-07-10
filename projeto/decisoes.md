@@ -222,3 +222,17 @@ Motivo:
 - codigo curto deve ser alias humano de um acesso limitado;
 - criar outra tabela de permissao aumentaria risco de divergencia;
 - a preparacao tecnica esta documentada em `docs/analise-codigo-curto-infantil.md`.
+
+### API de codigo curto sem quebrar link atual
+
+Decisao:
+
+- evoluir `/api/child-access-token` para gerar codigo curto apenas quando solicitado;
+- criar `/api/child-code-session` para resolver codigo curto;
+- manter o fluxo atual por link intacto antes da migracao ser aplicada.
+
+Motivo:
+
+- o portal publicado nao deve quebrar se a coluna nova ainda nao existir;
+- codigo curto depende de migracao no Supabase;
+- a entrada por codigo deve devolver apenas dados seguros da area infantil.

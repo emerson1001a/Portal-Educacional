@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node scripts/check-html.js && node --check api/activity-events.js && node --check api/activity-token.js && node --check api/child-access-token.js && node --check api/child-session.js && node --check api/modules.js && node --check api/public-config.js && node --check api/suggest-goal.js && node --check api/supabase-status.js && node --check lib/modules.js && node --check lib/portal-api.js",
+    "check": "node scripts/check-html.js && node --check api/activity-events.js && node --check api/activity-token.js && node --check api/child-access-token.js && node --check api/child-code-session.js && node --check api/child-session.js && node --check api/modules.js && node --check api/public-config.js && node --check api/suggest-goal.js && node --check api/supabase-status.js && node --check lib/modules.js && node --check lib/portal-api.js",
     "start": "vercel dev"
   },
   "dependencies": {

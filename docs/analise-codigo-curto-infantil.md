@@ -71,7 +71,7 @@ Resposta futura esperada:
 
 ### Entrada por codigo
 
-Endpoint futuro:
+Endpoint preparado:
 
 ```text
 POST /api/child-code-session
@@ -89,7 +89,8 @@ Saida:
 
 - dados seguros da crianca;
 - missao liberada;
-- token de sessao ou redirecionamento para `child.html`.
+- modulos livres permitidos;
+- mesma estrutura segura do fluxo por token.
 
 ## Regras de seguranca
 
@@ -110,6 +111,7 @@ Mesmo sendo um produto educacional, codigo infantil pode circular em grupo, cade
 
 - `supabase/migrations/20260710_child_short_codes.sql`
 - `supabase/tests/20260710_child_short_codes_smoke.sql`
+- `apps/portal/api/child-code-session.js`
 
 ## Criterios de aceite da preparacao
 

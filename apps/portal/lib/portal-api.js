@@ -44,6 +44,16 @@ export function hashToken(token) {
   return createHash("sha256").update(String(token)).digest("hex");
 }
 
+export function normalizeAccessCode(code) {
+  return String(code || "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+}
+
+export function hashAccessCode(code) {
+  return hashToken(normalizeAccessCode(code));
+}
+
 export async function canManageChild(admin, childId, userId) {
   const { data: guardian, error: guardianError } = await admin
     .from("child_guardians")
