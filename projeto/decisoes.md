@@ -111,3 +111,19 @@ Motivo:
 - permitir teste real com crianca sem esperar o planejador completo;
 - manter o caminho pedagogico correto: adulto escolhe o foco, crianca recebe apenas a tarefa;
 - reduzir risco de misturar percepcao adulta com a experiencia infantil.
+
+### Plataforma com modulos plugaveis
+
+Decisao:
+
+- tratar o Portal Educacional como plataforma de evolucao educacional com modulos plugaveis;
+- registrar `docs/prd-modulos-plugaveis.md` como referencia para catalogo, jornadas e futuro modelo comercial;
+- considerar Ingles e outros dominios como modulos futuros, sem implementar agora;
+- priorizar a linguagem de jornadas de apoio em vez de "pacotes de dificuldade".
+
+Motivo:
+
+- permitir crescimento futuro sem refazer a arquitetura;
+- manter o historico longitudinal como centro de valor;
+- abrir caminho para habilitacao ou venda por modulo no futuro;
+- evitar que o produto rotule a crianca ou venda medo ao adulto.

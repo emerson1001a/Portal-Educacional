@@ -91,3 +91,14 @@ Status: planejada
 Objetivo:
 
 - alinhar Redacao, Leitura e Tabuada como partes de uma plataforma unica.
+
+## Etapa 10: Catalogo de modulos plugaveis
+
+Status: planejada
+
+Objetivo:
+
+- consolidar o contrato de modulos;
+- organizar modulos por jornadas de apoio;
+- preparar campos para habilitacao futura por conta, turma ou crianca;
+- considerar Ingles e outros dominios como modulos futuros sem antecipar sua implementacao.

@@ -17,6 +17,20 @@ Cada módulo deve ter:
 }
 ```
 
+Campos recomendados para a arquitetura plugável:
+
+- `short_name`: nome curto para botoes e cartoes;
+- `area`: dominio amplo, como `leitura`, `escrita`, `matematica`, `idiomas` ou `organizacao`;
+- `journey`: jornada de apoio relacionada, como `leitura_e_interpretacao` ou `ingles_inicial`;
+- `skills`: habilidades pedagogicas observaveis que o modulo pode alimentar;
+- `commercial_key`: chave futura para habilitacao por modulo, pacote ou plano;
+- `status`: `available`, `planned`, `internal` ou `disabled`;
+- `accent` e `icon`: apoio visual no portal.
+
+Regra importante:
+
+O modulo pode ser vendido, habilitado ou escondido no futuro, mas a crianca deve ver apenas atividades liberadas. A experiencia infantil nao deve exibir bloqueios comerciais.
+
 ## Abertura a partir do portal
 
 O portal pode abrir o módulo com parâmetros:
@@ -46,6 +60,7 @@ Regra importante:
 - o portal fala sobre evolução ao longo do tempo;
 - o portal não deve concluir algo amplo quando há pouca evidência;
 - feedback geral precisa citar evidências por área.
+- novos dominios, como Ingles, devem seguir o mesmo contrato em vez de virar excecao.
 
 Com o token no corpo:
 

@@ -132,6 +132,18 @@ Nao deve exibir:
 
 Cada modulo deve produzir feedback pontual da atividade. O portal consolida os sinais ao longo do tempo.
 
+## Modulos plugaveis e jornadas
+
+O Portal Educacional deve ser estruturado como plataforma de evolucao educacional com modulos plugaveis.
+
+Um modulo pode representar uma atividade ou dominio especifico, como redacao, interpretacao, tabuada ou futuro Ingles. Uma jornada organiza esses modulos em torno de uma necessidade do adulto, como melhorar leitura, ganhar confianca na escrita, fortalecer matematica fundamental ou construir vocabulario inicial.
+
+Essa estrutura permite, no futuro, habilitar ou comercializar modulos por conta, escola, turma ou crianca. Mesmo assim, a linguagem do produto deve continuar centrada em apoio positivo, personalizacao e evidencias, nao em pacotes que rotulem a crianca.
+
+Documento de referencia:
+
+- `docs/prd-modulos-plugaveis.md`.
+
 ## Dados centrais
 
 Entidades principais previstas:
@@ -235,6 +247,14 @@ Para professores, o relatorio deve ajudar reunioes com pais com linguagem tecnic
 - padronizar contrato de evidencias;
 - garantir que todos os modulos respondam a tarefas atribuidas pelo adulto;
 - fazer os modulos parecerem partes de uma plataforma unica.
+
+### Fase 7: Catalogo de modulos e jornadas
+
+- consolidar catalogo de modulos;
+- definir jornadas de apoio;
+- preparar habilitacao por conta, turma ou crianca;
+- manter a crianca protegida de mensagens comerciais;
+- deixar Ingles e outros modulos futuros prontos para entrar sem refazer a arquitetura.
 
 ## Decisoes em aberto
 

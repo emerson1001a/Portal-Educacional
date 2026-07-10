@@ -32,6 +32,14 @@ Transformar observações soltas em acompanhamento pedagógico simples:
 4. O sistema registra evidências.
 5. O adulto recebe leitura clara e receita do que fazer depois.
 
+## Modulos plugaveis
+
+O portal deve ser uma plataforma de evolucao educacional, nao apenas um conjunto de aplicativos soltos.
+
+Novos modulos podem ser adicionados no futuro, como Ingles inicial, organizacao de estudos ou outras areas. A arquitetura deve permitir que cada modulo envie evidencias ao historico central e alimente a leitura longitudinal.
+
+Para o adulto, os modulos devem ser apresentados como jornadas de apoio e desenvolvimento, nao como rotulos de dificuldade. Para a crianca, devem aparecer apenas atividades liberadas, com linguagem simples e positiva.
+
 ## Norte pedagógico
 
 A evolução deve ser observada principalmente em relação ao percurso da própria criança, e não por comparação com outras crianças. O portal usa habilidades pedagógicas como referência, mas evita transformar dificuldade em rótulo.

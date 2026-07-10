@@ -10,6 +10,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `arquitetura-de-papeis.md`: papeis, permissoes, fronteiras entre adulto, professor e crianca.
 - `prd-matriz-de-papeis.md`: PRD fechado da Etapa 1, com matriz de permissoes, bloqueios e criterios de aceite.
 - `prd-controle-de-acesso-supabase.md`: desenho da Etapa 2 para tabelas, vinculos, RLS e token infantil.
+- `prd-modulos-plugaveis.md`: arquitetura de modulos, jornadas de apoio e base para futura habilitacao comercial.
 - `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
 - `product-vision.md`: visao curta do produto e principios centrais.
 - `guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback, limites pedagogicos e material para revisao profissional.
@@ -31,6 +32,7 @@ docs/
   prd-metas-e-tarefas.md
   prd-relatorio-longitudinal.md
   prd-integracao-modulos.md
+  prd-modulos-plugaveis.md
   prd-turma-e-professor.md
 ```
 

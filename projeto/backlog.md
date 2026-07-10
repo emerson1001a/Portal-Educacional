@@ -25,6 +25,8 @@
 - Interface infantil para receber tarefas.
 - Relatorio longitudinal.
 - Unificacao visual e logica dos modulos.
+- Catalogo de modulos plugaveis e jornadas de apoio.
+- Preparar habilitacao futura por modulo, sem expor bloqueios comerciais para a crianca.
 
 ## Pendente de decisao
 
@@ -33,3 +35,5 @@
 - Professor podera convidar responsavel por e-mail?
 - Responsavel podera compartilhar relatorio com professor por link?
 - Admin tera tela propria ou apenas acesso operacional inicial?
+- Quais jornadas iniciais fazem sentido: leitura, escrita, matematica, idiomas, organizacao?
+- A habilitacao comercial futura sera por conta, crianca, turma, escola ou pacote?
