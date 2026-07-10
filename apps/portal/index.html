@@ -230,6 +230,7 @@
 
     .info-tip {
       position: relative;
+      z-index: 60;
       width: 24px;
       height: 24px;
       display: inline-flex;
@@ -251,7 +252,7 @@
       position: absolute;
       left: 50%;
       bottom: calc(100% + 10px);
-      z-index: 30;
+      z-index: 80;
       width: min(320px, 78vw);
       padding: 10px 12px;
       border: 1px solid rgba(16, 32, 51, .12);
@@ -275,7 +276,7 @@
       position: absolute;
       left: 50%;
       bottom: calc(100% + 4px);
-      z-index: 31;
+      z-index: 81;
       width: 10px;
       height: 10px;
       background: #102033;
@@ -500,8 +501,13 @@
     .bar-fill.writing { background: var(--coral); }
     .bar-fill.math { background: var(--gold); }
     .topic {
-      overflow: hidden;
+      position: relative;
+      overflow: visible;
       padding: 0;
+    }
+    .topic:hover,
+    .topic:focus-within {
+      z-index: 20;
     }
     .topic > summary {
       min-height: 68px;
