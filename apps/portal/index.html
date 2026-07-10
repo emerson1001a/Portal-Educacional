@@ -909,9 +909,15 @@
           </div>
         </section>
 
-        <section class="card">
-          <h2 class="title-with-help">Resumo do desenvolvimento <span class="info-tip" tabindex="0" data-tip="Mostra uma leitura geral do aluno selecionado, usando atividades concluídas, metas e evidências registradas no histórico.">?</span></h2>
-          <p class="muted">Aqui o adulto vê o que foi praticado, em quais áreas há evidências e o que fazer em seguida.</p>
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2 class="title-with-help">Resumo do desenvolvimento <span class="info-tip" tabindex="0" data-tip="Mostra uma leitura geral do aluno selecionado, usando atividades concluídas, metas e evidências registradas no histórico.">?</span></h2>
+              <p class="muted">Aqui o adulto vê o que foi praticado, em quais áreas há evidências e o que fazer em seguida.</p>
+            </div>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
           <div class="metrics">
             <div class="metric">
               <span class="muted small">Atividades salvas</span>
@@ -945,21 +951,31 @@
             </div>
           </div>
           <div class="snapshot-list" id="snapshotsList"></div>
-        </section>
+          </div>
+        </details>
 
-        <section class="card">
-          <h2 class="title-with-help">Plano dos próximos 7 dias <span class="info-tip" tabindex="0" data-tip="Sugere uma rotina curta para o adulto praticar com a criança. É uma orientação de apoio, não uma obrigação rígida.">?</span></h2>
-          <p class="muted">Uma rotina curta para transformar feedback em prática, sem pressão e sem excesso de tarefas.</p>
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2 class="title-with-help">Plano dos próximos 7 dias <span class="info-tip" tabindex="0" data-tip="Sugere uma rotina curta para o adulto praticar com a criança. É uma orientação de apoio, não uma obrigação rígida.">?</span></h2>
+              <p class="muted">Uma rotina curta para transformar feedback em prática, sem pressão e sem excesso de tarefas.</p>
+            </div>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
           <div class="practice-plan" id="practicePlan"></div>
-        </section>
+          </div>
+        </details>
 
-        <section class="card">
-          <div class="row between">
-            <div>
-              <h2 class="title-with-help">Missões para a criança <span class="info-tip" tabindex="0" data-tip="Aqui o adulto libera tarefas que aparecem no link infantil. A criança vê apenas a missão e os módulos escolhidos, sem acessar a área do adulto.">?</span></h2>
+        <details class="card topic">
+          <summary>
+            <div class="topic-title">
+              <h2 class="title-with-help">Missões para as crianças <span class="info-tip" tabindex="0" data-tip="Aqui o adulto libera tarefas que aparecem no link infantil. A criança vê apenas a missão e os módulos escolhidos, sem acessar a área do adulto.">?</span></h2>
               <p class="muted">Monte uma tarefa curta. Ela aparece no link infantil sem mostrar a área do adulto.</p>
             </div>
-          </div>
+            <span class="topic-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="topic-body">
           <form class="stack" id="assignmentForm">
             <label>
               <span class="title-with-help">Nome da missão <span class="info-tip" tabindex="0" data-tip="Use um nome simples e positivo, como treino de leitura de hoje. Esse texto aparece para a criança.">?</span></span>
@@ -976,7 +992,8 @@
             <button class="button blue" type="submit">Liberar missão</button>
           </form>
           <div class="goal-list" id="assignmentsList"></div>
-        </section>
+          </div>
+        </details>
 
         <details class="card topic">
           <summary>
