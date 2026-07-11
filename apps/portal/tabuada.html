@@ -32,7 +32,7 @@
   <div class="shell">
     <header class="topbar">
       <div class="brand"><div class="mark">×</div><div><h1>Tabuada Inteligente</h1><div class="muted">Treino adaptativo para praticar tabuada com leveza e progresso visível.</div></div></div>
-      <div class="rolebar"><span class="pill">Modo</span><button id="roleStudent" class="role-active">Aluno</button><button id="roleTeacher">Professor</button><button id="returnPortalBtn" class="secondary" style="display:none;">Entregar para o adulto</button></div>
+      <div class="rolebar"><span class="pill">Modo</span><button id="roleStudent" class="role-active">Aluno</button><button id="roleTeacher">Professor</button><button id="returnPortalBtn" class="secondary" style="display:none;">Retornar à missão</button></div>
     </header>
     <div id="roleHint" class="muted" style="margin-bottom:12px;">Aluno: treino leve, com incentivo.</div>
     <main class="hero">
@@ -1220,14 +1220,14 @@
   returnPortalBtn.addEventListener("click", async () => {
     const student = getStudent();
     returnPortalBtn.disabled = true;
-    returnPortalBtn.textContent = "Salvando...";
+    returnPortalBtn.textContent = "Voltando...";
     try {
-      await sendPortalEventIfNeeded(student, true);
-      returnToPortal("activity_saved");
+      const saved = await sendPortalEventIfNeeded(student, true);
+      returnToPortal(saved ? "activity_saved" : "activity_pending");
     } catch (err) {
       console.warn("Falha ao entregar treino ao Portal:", err);
       returnPortalBtn.disabled = false;
-      returnPortalBtn.textContent = "Entregar para o adulto";
+      returnPortalBtn.textContent = "Retornar à missão";
       alert("Não consegui salvar no Portal agora. Confira a conexão e tente novamente.");
     }
   });
