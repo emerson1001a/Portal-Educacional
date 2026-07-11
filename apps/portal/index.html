@@ -953,7 +953,7 @@
         <details class="card topic">
           <summary>
             <div class="topic-title">
-              <h2 class="title-with-help">Resumo do desenvolvimento <span class="info-tip" tabindex="0" data-tip="Mostra uma leitura geral do aluno selecionado, usando atividades concluídas, metas e evidências registradas no histórico.">?</span></h2>
+              <h2 class="title-with-help">Resumo do desenvolvimento <span class="info-tip" tabindex="0" data-tip="Mostra uma síntese geral do aluno selecionado, usando atividades concluídas, metas e evidências registradas no histórico.">?</span></h2>
               <p class="muted">Aqui o adulto vê o que foi praticado, em quais áreas há evidências e o que fazer em seguida.</p>
             </div>
             <span class="topic-toggle" aria-hidden="true"></span>
@@ -979,16 +979,16 @@
           <div class="adult-feedback" id="generalFeedback"></div>
           <div class="row between" style="margin-top:18px">
             <div>
-              <h3 class="title-with-help">Leituras salvas <span class="info-tip" tabindex="0" data-tip="São sínteses manuais salvas pelo adulto sobre o momento do aluno. Não é a lista de atividades de leitura feitas pela criança.">?</span></h3>
-              <p class="muted small">Guarde marcos do acompanhamento para comparar a evolução ao longo do tempo.</p>
+              <h3 class="title-with-help">Registros de percepção <span class="info-tip" tabindex="0" data-tip="São observações salvas pelo adulto sobre o momento do aluno. Não é a lista de atividades feitas pela criança, e sim uma fotografia pedagógica para comparar evolução.">?</span></h3>
+              <p class="muted small">Registre observações do momento para comparar a evolução ao longo do tempo.</p>
             </div>
-            <button class="button secondary" id="saveReviewButton" type="button">Salvar leitura do momento</button>
+            <button class="button secondary" id="saveReviewButton" type="button">Salvar percepção</button>
           </div>
           <div class="review-list" id="reviewsList"></div>
           <div class="row between" style="margin-top:18px">
             <div>
-              <h3 class="title-with-help">Marcos numéricos <span class="info-tip" tabindex="0" data-tip="Guarda números de acompanhamento para comparar evolução ao longo do tempo, como quantidade de atividades, metas e áreas praticadas.">?</span></h3>
-              <p class="muted small">Números simples salvos junto das leituras para apoiar comparações futuras.</p>
+              <h3 class="title-with-help">Indicadores do momento <span class="info-tip" tabindex="0" data-tip="Guarda números simples de acompanhamento para comparar evolução ao longo do tempo, como quantidade de atividades, metas e áreas praticadas.">?</span></h3>
+              <p class="muted small">Números simples salvos junto das percepções para apoiar comparações futuras.</p>
             </div>
           </div>
           <div class="snapshot-list" id="snapshotsList"></div>
@@ -1721,10 +1721,10 @@
     function buildReviewComparison() {
       const child = activeChild();
       if (!child) {
-        return ["Selecione uma criança para comparar leituras salvas."];
+        return ["Selecione uma criança para comparar percepções salvas."];
       }
       if (state.reviews.length < 2) {
-        return ["Salve pelo menos duas leituras em momentos diferentes para gerar um comparativo longitudinal."];
+        return ["Salve pelo menos duas percepções em momentos diferentes para gerar um comparativo longitudinal."];
       }
 
       const [latest, previous] = state.reviews;
@@ -1745,11 +1745,11 @@
       ];
 
       if (latestEvidence > previousEvidence) {
-        comparison.push(`Há mais evidências vinculadas nesta leitura (${latestEvidence} agora, ${previousEvidence} antes).`);
+        comparison.push(`Há mais evidências vinculadas nesta percepção (${latestEvidence} agora, ${previousEvidence} antes).`);
       } else if (latestEvidence === previousEvidence) {
         comparison.push("A quantidade de evidências ficou estável; observe qualidade, autonomia e continuidade.");
       } else {
-        comparison.push("Esta leitura usa menos evidências recentes; vale gerar novas práticas antes de concluir mudança.");
+        comparison.push("Esta percepção usa menos evidências recentes; vale gerar novas práticas antes de concluir mudança.");
       }
 
       if (confidenceDelta > 0) {
@@ -1831,17 +1831,17 @@
     function buildSnapshotComparison() {
       const child = activeChild();
       if (!child) {
-        return ["Selecione uma criança para acompanhar marcos numéricos."];
+        return ["Selecione uma criança para acompanhar indicadores do momento."];
       }
       if (!state.snapshots.length) {
-        return ["Ainda não há snapshot salvo. Salve uma leitura do momento para registrar o primeiro marco numérico."];
+        return ["Ainda não há indicador salvo. Salve uma percepção para registrar o primeiro marco de comparação."];
       }
 
       const latest = snapshotSummary(state.snapshots[0]);
       if (state.snapshots.length < 2) {
         return [
           `Último marco: ${latest.total_events || 0} evidência${latest.total_events === 1 ? "" : "s"}, ${latest.active_goals || 0} meta${latest.active_goals === 1 ? "" : "s"} ativa${latest.active_goals === 1 ? "" : "s"} e ${latest.active_weeks_last_28_days || 0} semana${latest.active_weeks_last_28_days === 1 ? "" : "s"} com prática.`,
-          "Salve outra leitura depois de novas práticas para comparar evolução numérica."
+          "Salve outra percepção depois de novas práticas para comparar evolução numérica."
         ];
       }
 
@@ -1904,12 +1904,12 @@
       els.generalFeedback.innerHTML = `
         <details class="feedback-card primary">
           <summary>
-            <span class="pill">leitura geral</span>
+            <span class="pill">síntese geral</span>
             <strong>${escapeHtml(feedback.status)}</strong>
             <p class="muted">${escapeHtml(feedback.summary)}</p>
           </summary>
           <div class="feedback-body">
-            <p class="small">Use esta leitura como ponto de partida. A comparação principal é sempre com o próprio percurso da criança.</p>
+            <p class="small">Use esta síntese como ponto de partida. A comparação principal é sempre com o próprio percurso da criança.</p>
           </div>
         </details>
         <details class="feedback-card attention">
@@ -1951,11 +1951,11 @@
       els.reviewsList.innerHTML = "";
       els.saveReviewButton.disabled = !child;
       if (!child) {
-        els.reviewsList.innerHTML = '<div class="notice">Selecione uma criança para salvar leituras do acompanhamento.</div>';
+        els.reviewsList.innerHTML = '<div class="notice">Selecione uma criança para salvar percepções do acompanhamento.</div>';
         return;
       }
       if (!state.reviews.length) {
-        els.reviewsList.innerHTML = '<div class="notice">Ainda não há leituras salvas. Salve uma leitura depois de registrar metas ou atividades.</div>';
+        els.reviewsList.innerHTML = '<div class="notice">Ainda não há percepções salvas. Salve uma percepção depois de registrar metas ou atividades.</div>';
         return;
       }
 
@@ -1963,7 +1963,7 @@
       comparisonCard.className = "feedback-card milestone";
       comparisonCard.innerHTML = `
         <span class="pill">memória longitudinal</span>
-        <strong>Comparativo das leituras</strong>
+        <strong>Comparativo das percepções</strong>
         ${listItems(buildReviewComparison())}
       `;
       els.reviewsList.appendChild(comparisonCard);
@@ -1990,11 +1990,11 @@
       const child = activeChild();
       els.snapshotsList.innerHTML = "";
       if (!child) {
-        els.snapshotsList.innerHTML = '<div class="notice">Selecione uma criança para ver marcos numéricos.</div>';
+        els.snapshotsList.innerHTML = '<div class="notice">Selecione uma criança para ver indicadores do momento.</div>';
         return;
       }
       if (!state.snapshots.length) {
-        els.snapshotsList.innerHTML = '<div class="notice">Ainda não há marcos numéricos salvos.</div>';
+        els.snapshotsList.innerHTML = '<div class="notice">Ainda não há indicadores salvos.</div>';
         return;
       }
 
@@ -2002,7 +2002,7 @@
       comparisonCard.className = "feedback-card milestone";
       comparisonCard.innerHTML = `
         <span class="pill">números do percurso</span>
-        <strong>Comparativo numérico</strong>
+        <strong>Comparativo dos indicadores</strong>
         ${listItems(buildSnapshotComparison())}
       `;
       els.snapshotsList.appendChild(comparisonCard);
@@ -2876,7 +2876,7 @@
           <p class="muted">Gerado em ${new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date())}</p>
         </div>
         <section class="report-block">
-          <h3>Leitura geral</h3>
+          <h3>Síntese geral</h3>
           <p><strong>${escapeHtml(feedback.status)}</strong></p>
           <p class="muted">${escapeHtml(feedback.summary)}</p>
           <p><strong>Próximo foco:</strong> ${escapeHtml(feedback.attention)}</p>
@@ -3071,7 +3071,7 @@
         .order("created_at", { ascending: false })
         .limit(12);
       state.reviews = error ? [] : data || [];
-      if (error) message(`Leituras salvas ainda não disponíveis: ${error.message}`, true);
+      if (error) message(`Percepções salvas ainda não disponíveis: ${error.message}`, true);
     }
 
     async function loadSnapshots() {
@@ -3087,7 +3087,7 @@
         .order("created_at", { ascending: false })
         .limit(12);
       state.snapshots = error ? [] : data || [];
-      if (error) message(`Marcos numéricos ainda não disponíveis: ${error.message}`, true);
+      if (error) message(`Indicadores do momento ainda não disponíveis: ${error.message}`, true);
     }
 
     async function loadAssignments() {
@@ -3217,7 +3217,7 @@
       clearMessage();
       const child = activeChild();
       if (!child) {
-        message("Selecione uma criança antes de salvar uma leitura.", true);
+        message("Selecione uma criança antes de salvar uma percepção.", true);
         return;
       }
       const button = els.saveReviewButton;
@@ -3231,8 +3231,8 @@
         const { error: snapshotError } = await state.supabase.from("progress_snapshots").insert(currentSnapshotPayload());
         message(
           snapshotError
-            ? `Leitura salva, mas o snapshot numérico ainda não foi gravado: ${snapshotError.message}`
-            : "Leitura do momento e snapshot numérico salvos para comparação futura.",
+            ? `Percepção salva, mas os indicadores ainda não foram gravados: ${snapshotError.message}`
+            : "Percepção e indicadores salvos para comparação futura.",
           Boolean(snapshotError)
         );
         await loadReviews();
