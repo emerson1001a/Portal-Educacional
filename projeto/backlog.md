@@ -12,6 +12,8 @@
 - Testar geracao de link + codigo curto no painel adulto depois da migracao no Supabase.
 - Testar pagina `/entrar` com codigo real depois da migracao no Supabase.
 - Testar missao com meta vinculada, prazo, nota adulta e progresso por item.
+- Corrigir a Interpretacao de Texto para garantir consistencia entre texto gerado e perguntas, evitando perguntas com fatos que nao aparecem ou contradizem o texto.
+- Destacar o feedback final da Interpretacao de Texto, pois hoje ele fica com aparencia apagada/ghost e deveria ficar em evidencia para a crianca e para o adulto.
 
 ## Proximo
 
