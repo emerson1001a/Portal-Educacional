@@ -2136,9 +2136,9 @@
         const dueText = assignment.due_at ? `Prazo: ${formatDate(assignment.due_at)}` : "Sem prazo definido";
         const effectiveStatus = assignment.resolved_status || assignment.status;
         const itemRows = (assignment.items || []).map((item) => `
-          <div class="row between">
-            <span class="small">${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}</span>
-            <span class="pill">${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}</span>
+          <div class="small">
+            <strong>${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}:</strong>
+            ${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}
           </div>
         `).join("");
         const card = document.createElement("article");
@@ -2152,8 +2152,7 @@
           <p class="small"><strong>Progresso:</strong> ${progress.total ? `${progress.done}/${progress.total} itens concluídos` : "sem módulos vinculados"} · ${escapeHtml(dueText)}</p>
           ${itemRows ? `<div class="stack">${itemRows}</div>` : '<p class="small">Nenhum módulo vinculado.</p>'}
           <div class="row between">
-            <span class="small">Criada em ${formatDate(assignment.created_at)}</span>
-            <span class="pill">${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
+            <span class="small">Criada em ${formatDate(assignment.created_at)} · Status: ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
           </div>
           <div class="row">
             ${effectiveStatus !== "done" ? `<button class="button ghost" type="button" data-assignment-action="done">Marcar concluída</button>` : ""}
