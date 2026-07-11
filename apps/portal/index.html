@@ -1018,6 +1018,16 @@
           </summary>
           <div class="topic-body">
           <form class="stack" id="assignmentForm">
+            <div class="row">
+              <label style="flex:2 1 260px">
+                <span class="title-with-help">Meta vinculada <span class="info-tip" tabindex="0" data-tip="Opcional. Vincule a missão a uma meta adulta para comparar evolução depois. A criança não verá esta meta.">?</span></span>
+                <select id="assignmentGoalInput"></select>
+              </label>
+              <label style="flex:1 1 180px">
+                <span class="title-with-help">Prazo <span class="info-tip" tabindex="0" data-tip="Opcional. Use prazo curto para organizar a rotina, sem transformar em cobrança para a criança.">?</span></span>
+                <input id="assignmentDueInput" type="date">
+              </label>
+            </div>
             <label>
               <span class="title-with-help">Nome da missão <span class="info-tip" tabindex="0" data-tip="Use um nome simples e positivo, como treino de leitura de hoje. Esse texto aparece para a criança.">?</span></span>
               <input id="assignmentTitleInput" placeholder="Ex.: treino de leitura de hoje" required>
@@ -1025,6 +1035,10 @@
             <label>
               <span class="title-with-help">Orientação para a criança <span class="info-tip" tabindex="0" data-tip="Escreva uma instrução curta, concreta e tranquila. Evite cobranças ou comentários técnicos demais.">?</span></span>
               <textarea id="assignmentInstructionsInput" placeholder="Ex.: escolha uma atividade, faça com calma e me chame quando terminar."></textarea>
+            </label>
+            <label>
+              <span class="title-with-help">Nota para o adulto <span class="info-tip" tabindex="0" data-tip="Opcional. Use para lembrar por que esta missão foi liberada. Esta nota não aparece para a criança.">?</span></span>
+              <textarea id="assignmentAdultNotesInput" placeholder="Ex.: observar se ele volta ao texto antes de responder."></textarea>
             </label>
             <div class="perception-tools">
               <strong class="title-with-help">Módulos desta missão <span class="info-tip" tabindex="0" data-tip="Escolha quais atividades a criança receberá nesta missão. O resultado volta para o histórico adulto quando o módulo registra a conclusão.">?</span></strong>
@@ -1288,8 +1302,11 @@
       goalsList: document.querySelector("#goalsList"),
       completedGoalsList: document.querySelector("#completedGoalsList"),
       assignmentForm: document.querySelector("#assignmentForm"),
+      assignmentGoalInput: document.querySelector("#assignmentGoalInput"),
+      assignmentDueInput: document.querySelector("#assignmentDueInput"),
       assignmentTitleInput: document.querySelector("#assignmentTitleInput"),
       assignmentInstructionsInput: document.querySelector("#assignmentInstructionsInput"),
+      assignmentAdultNotesInput: document.querySelector("#assignmentAdultNotesInput"),
       assignmentModuleChoices: document.querySelector("#assignmentModuleChoices"),
       assignmentsList: document.querySelector("#assignmentsList"),
       modulesGrid: document.querySelector("#modulesGrid"),
@@ -1362,6 +1379,32 @@
 
     function areaLabel(area) {
       return { leitura: "Leitura", escrita: "Escrita", matematica: "Matemática", organizacao: "Organização", outro: "Outro" }[area] || area;
+    }
+
+    function assignmentStatusLabel(status) {
+      return {
+        draft: "rascunho",
+        released: "liberada",
+        in_progress: "em andamento",
+        done: "concluída",
+        archived: "arquivada"
+      }[status] || status || "liberada";
+    }
+
+    function itemStatusLabel(status) {
+      return {
+        pending: "pendente",
+        started: "iniciada",
+        in_progress: "em andamento",
+        done: "concluída",
+        skipped: "pulada",
+        blocked: "bloqueada"
+      }[status] || status || "pendente";
+    }
+
+    function goalById(goalId) {
+      if (!goalId) return null;
+      return [...state.goals, ...state.completedGoals].find((goal) => goal.id === goalId) || null;
     }
 
     function recipeForArea(area) {
@@ -2025,7 +2068,26 @@
       `).join("");
     }
 
-    function renderAssignments() {
+    function renderAssignmentGoalOptions() {
+      if (!els.assignmentGoalInput) return;
+      const currentValue = els.assignmentGoalInput.value;
+      const options = state.goals.map((goal) => `
+        <option value="${escapeHtml(goal.id)}">${escapeHtml(areaLabel(goal.area))}: ${escapeHtml(goal.title)}</option>
+      `).join("");
+      els.assignmentGoalInput.innerHTML = `<option value="">Sem meta vinculada</option>${options}`;
+      if (currentValue && state.goals.some((goal) => goal.id === currentValue)) {
+        els.assignmentGoalInput.value = currentValue;
+      }
+    }
+
+    function assignmentProgress(assignment) {
+      const items = assignment.items || [];
+      if (!items.length) return { done: 0, total: 0 };
+      const done = items.filter((item) => item.resolved_status === "done").length;
+      return { done, total: items.length };
+    }
+
+    function renderAssignmentsLegacyUnused() {
       const child = activeChild();
       els.assignmentsList.innerHTML = "";
       if (!child) {
@@ -2051,6 +2113,46 @@
           <div class="row between">
             <span class="small">Criada em ${formatDate(assignment.created_at)}</span>
             <span class="pill">${escapeHtml(assignment.status)}</span>
+          </div>
+        `;
+        els.assignmentsList.appendChild(card);
+      });
+    }
+
+    function renderAssignments() {
+      const child = activeChild();
+      els.assignmentsList.innerHTML = "";
+      if (!child) {
+        els.assignmentsList.innerHTML = '<div class="notice">Selecione uma criança para liberar missões.</div>';
+        return;
+      }
+      if (!state.assignments.length) {
+        els.assignmentsList.innerHTML = '<div class="notice">Ainda não há missões liberadas para esta criança.</div>';
+        return;
+      }
+      state.assignments.forEach((assignment) => {
+        const progress = assignmentProgress(assignment);
+        const linkedGoal = goalById(assignment.goal_id);
+        const dueText = assignment.due_at ? `Prazo: ${formatDate(assignment.due_at)}` : "Sem prazo definido";
+        const itemRows = (assignment.items || []).map((item) => `
+          <div class="row between">
+            <span class="small">${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}</span>
+            <span class="pill">${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}</span>
+          </div>
+        `).join("");
+        const card = document.createElement("article");
+        card.className = "goal-card";
+        card.innerHTML = `
+          <span class="pill">missão ${escapeHtml(assignmentStatusLabel(assignment.resolved_status || assignment.status))}</span>
+          <strong>${escapeHtml(assignment.child_title || assignment.title)}</strong>
+          <p class="muted">${escapeHtml(assignment.child_instructions || "Sem orientação adicional.")}</p>
+          ${linkedGoal ? `<p class="small"><strong>Meta adulta:</strong> ${escapeHtml(areaLabel(linkedGoal.area))} - ${escapeHtml(linkedGoal.title)}</p>` : ""}
+          ${assignment.adult_notes ? `<p class="small"><strong>Nota adulta:</strong> ${escapeHtml(assignment.adult_notes)}</p>` : ""}
+          <p class="small"><strong>Progresso:</strong> ${progress.total ? `${progress.done}/${progress.total} itens concluídos` : "sem módulos vinculados"} · ${escapeHtml(dueText)}</p>
+          ${itemRows ? `<div class="stack">${itemRows}</div>` : '<p class="small">Nenhum módulo vinculado.</p>'}
+          <div class="row between">
+            <span class="small">Criada em ${formatDate(assignment.created_at)}</span>
+            <span class="pill">${escapeHtml(assignmentStatusLabel(assignment.resolved_status || assignment.status))}</span>
           </div>
         `;
         els.assignmentsList.appendChild(card);
@@ -2819,6 +2921,7 @@
       renderReviews();
       renderSnapshots();
       renderPracticePlan();
+      renderAssignmentGoalOptions();
       renderAssignmentModuleChoices();
       renderAssignments();
       renderTimeEvolution();
@@ -2950,9 +3053,9 @@
       }
       const { data, error } = await state.supabase
         .from("assignments")
-        .select("id, title, child_title, child_instructions, status, due_at, created_at")
+        .select("id, title, child_title, child_instructions, adult_notes, status, due_at, goal_id, created_at, updated_at")
         .eq("child_id", child.id)
-        .in("status", ["released", "in_progress"])
+        .in("status", ["released", "in_progress", "done"])
         .order("created_at", { ascending: false })
         .limit(12);
 
@@ -2968,7 +3071,7 @@
       if (assignmentIds.length) {
         const { data: itemRows, error: itemsError } = await state.supabase
           .from("assignment_items")
-          .select("assignment_id, module_id, title, status, sort_order")
+          .select("id, assignment_id, module_id, title, status, sort_order")
           .in("assignment_id", assignmentIds)
           .order("sort_order", { ascending: true });
         if (itemsError) {
@@ -2978,10 +3081,23 @@
         }
       }
 
-      state.assignments = assignments.map((assignment) => ({
-        ...assignment,
-        items: items.filter((item) => item.assignment_id === assignment.id)
-      }));
+      state.assignments = assignments.map((assignment) => {
+        const assignmentItems = items
+          .filter((item) => item.assignment_id === assignment.id)
+          .map((item) => {
+            const hasEvidence = state.events.some((event) => event.assignment_item_id === item.id);
+            return {
+              ...item,
+              resolved_status: hasEvidence ? "done" : item.status
+            };
+          });
+        const allDone = assignmentItems.length > 0 && assignmentItems.every((item) => item.resolved_status === "done");
+        return {
+          ...assignment,
+          resolved_status: allDone ? "done" : assignment.status,
+          items: assignmentItems
+        };
+      });
     }
 
     async function loadChildData() {
@@ -3216,6 +3332,9 @@
 
       const title = els.assignmentTitleInput.value.trim();
       const instructions = els.assignmentInstructionsInput.value.trim();
+      const goalId = els.assignmentGoalInput.value || null;
+      const dueDate = els.assignmentDueInput.value ? `${els.assignmentDueInput.value}T23:59:00` : null;
+      const adultNotes = els.assignmentAdultNotesInput.value.trim();
       const submitButton = els.assignmentForm.querySelector('button[type="submit"]');
       setButtonBusy(submitButton, true, "Liberando...");
       try {
@@ -3225,10 +3344,13 @@
             child_id: child.id,
             created_by: state.session.user.id,
             created_by_role: "guardian",
+            goal_id: goalId,
             title,
+            adult_notes: adultNotes || null,
             child_title: title,
             child_instructions: instructions || "Faça uma atividade por vez, com calma.",
-            status: "released"
+            status: "released",
+            due_at: dueDate
           })
           .select("id")
           .single();
@@ -3259,6 +3381,7 @@
         }
 
         els.assignmentForm.reset();
+        renderAssignmentGoalOptions();
         renderAssignmentModuleChoices();
         await loadAssignments();
         renderAssignments();

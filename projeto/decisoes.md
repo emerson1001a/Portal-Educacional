@@ -265,3 +265,19 @@ Motivo:
 - os modulos ja esperam `portal_child_token`;
 - o codigo curto nao deve circular dentro dos modulos;
 - reaproveitar `child.html` evita duplicar logica infantil e reduz risco de divergencia.
+
+## 2026-07-11
+
+### Missao adulta com meta, prazo e progresso
+
+Decisao:
+
+- evoluir a missao simples para aceitar meta vinculada, prazo e nota adulta;
+- manter `child_title` e `child_instructions` como a unica parte visivel para a crianca;
+- mostrar no painel adulto o progresso por item, usando evidencias dos modulos quando existirem.
+
+Motivo:
+
+- o adulto precisa saber por que liberou aquela missao e o que observar;
+- a crianca nao deve ver hipotese, preocupacao ou nota adulta;
+- progresso por item aproxima a missao do historico longitudinal sem criar relatorio pesado cedo demais.

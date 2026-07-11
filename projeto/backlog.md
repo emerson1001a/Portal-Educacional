@@ -11,10 +11,11 @@
 - Executar smoke test `supabase/tests/20260710_child_short_codes_smoke.sql` depois da migracao.
 - Testar geracao de link + codigo curto no painel adulto depois da migracao no Supabase.
 - Testar pagina `/entrar` com codigo real depois da migracao no Supabase.
-- Evoluir missao simples para plano de tarefas com metas, prazo e status por item.
+- Testar missao com meta vinculada, prazo, nota adulta e progresso por item.
 
 ## Proximo
 
+- Criar acao para arquivar ou concluir missao pelo adulto.
 - Definir modelo de compartilhamento entre responsavel e professor.
 - Especificar primeira camada de gamificacao leve para a area infantil.
 - Revisar estados visuais do `child.html`.
