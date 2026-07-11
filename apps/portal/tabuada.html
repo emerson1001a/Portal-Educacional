@@ -87,9 +87,12 @@
     childId: params.get("child_id") || "",
     childName: params.get("child_name") || "",
     token: params.get("portal_event_token") || "",
+    childToken: params.get("portal_child_token") || "",
+    assignmentId: params.get("assignment_id") || "",
+    assignmentItemId: params.get("assignment_item_id") || "",
     returnUrl: params.get("portal_return_url") || ""
   };
-  portal.enabled = Boolean(portal.token && portal.returnUrl);
+  portal.enabled = Boolean((portal.token || portal.childToken) && portal.returnUrl);
   let portalLastSentTotal = 0;
 
   // =========================
@@ -217,14 +220,18 @@
       ? `Nas últimas ${summary.total} tentativas, acertou ${summary.correct} (${summary.acc}%). ${summary.hard ? `Foque um pouco em: ${summary.hard}.` : "Continue com treinos curtos."}`
       : "Ainda há poucos dados para uma leitura pedagógica.";
 
+    const headers = { "Content-Type": "application/json" };
+    if (portal.token) headers["X-Portal-Activity-Token"] = portal.token;
+    if (portal.childToken) headers["X-Portal-Child-Token"] = portal.childToken;
+
     const response = await fetch(`${returnUrl.origin}/api/activity-events`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Portal-Activity-Token": portal.token
-      },
+      headers,
       body: JSON.stringify({
         portal_event_token: portal.token,
+        portal_child_token: portal.childToken,
+        assignment_id: portal.assignmentId || null,
+        assignment_item_id: portal.assignmentItemId || null,
         service: "tabuada",
         activity_type: force ? "treino_finalizado" : "bloco_de_treino",
         title: "Treino de tabuada",
@@ -309,7 +316,10 @@
     }
   }
 
-  function getStudentId() { return (studentIdEl.value || "").trim(); }
+  function getStudentId() {
+    if (portal.enabled && portal.childId) return portal.childId;
+    return (studentIdEl.value || "").trim();
+  }
   function getStudent() {
     const sid = getStudentId();
     if (!sid) return null;
@@ -1237,8 +1247,9 @@
   if (portal.enabled) {
     roleTeacherBtn.style.display = "none";
     returnPortalBtn.style.display = "inline-flex";
-    studentIdEl.value = portal.childName || portal.childId || "aluno";
+    studentIdEl.value = portal.childName || "Aluno da missão";
     studentIdEl.readOnly = true;
+    studentIdEl.title = "Aluno definido pela missão no Portal Educacional";
     resetBtn.style.display = "none";
     exportBtn.style.display = "none";
     importBtn.style.display = "none";
