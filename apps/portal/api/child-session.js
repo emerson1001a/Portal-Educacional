@@ -17,6 +17,7 @@ function safeAssignment(assignment, items) {
     due_at: assignment.due_at,
     items: items.map((item) => ({
       id: item.id,
+      assignment_id: item.assignment_id,
       module_id: item.module_id,
       module: moduleById(item.module_id),
       activity_type: item.activity_type,
@@ -71,7 +72,7 @@ export default async function handler(req, res) {
     .from("assignments")
     .select("id, child_id, title, child_title, child_instructions, status, due_at, created_at")
     .eq("child_id", access.child_id)
-    .eq("status", "released")
+    .in("status", ["released", "in_progress", "done"])
     .order("due_at", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
 

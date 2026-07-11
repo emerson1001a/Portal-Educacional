@@ -226,6 +226,29 @@
       background: var(--wash);
     }
 
+    .item.done {
+      border-color: #bde7df;
+      background: #effaf7;
+    }
+
+    .item.done .module-icon {
+      background: #18a77f;
+    }
+
+    .item.done .button {
+      color: #095b55;
+      background: #dff4ee;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .done-line {
+      color: #095b55;
+      font-weight: 900;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
     .module-icon {
       width: 48px;
       height: 48px;
@@ -382,6 +405,7 @@
       params.set("child_id", state.child?.id || "");
       params.set("child_name", state.child?.full_name || "");
       params.set("assignment_item_id", item.id);
+      if (item.assignment_id) params.set("assignment_id", item.assignment_id);
       params.set("portal_child_token", state.token);
       params.set("portal_return_url", window.location.href);
       return `${module.url}?${params.toString()}`;
@@ -451,8 +475,15 @@
         return;
       }
 
-      els.statusTitle.textContent = `${state.assignments.length} missão em andamento`;
-      els.statusCopy.textContent = "Comece pela primeira atividade disponível.";
+      const pendingItemsCount = state.assignments.reduce((total, assignment) => {
+        return total + (assignment.items || []).filter((item) => item.status !== "done").length;
+      }, 0);
+      els.statusTitle.textContent = pendingItemsCount
+        ? `${pendingItemsCount} atividade${pendingItemsCount === 1 ? "" : "s"} para fazer`
+        : "Missões concluídas";
+      els.statusCopy.textContent = pendingItemsCount
+        ? "Comece pela primeira atividade disponível."
+        : "Tudo entregue por aqui. O adulto já pode acompanhar o progresso.";
 
       state.assignments.forEach((assignment) => {
         const card = document.createElement("article");
@@ -471,21 +502,33 @@
           items.innerHTML = '<div class="notice">Esta missão ainda não tem atividades.</div>';
         }
 
-        assignment.items.forEach((item) => {
+        const sortedItems = [...assignment.items].sort((a, b) => {
+          if (a.status === "done" && b.status !== "done") return 1;
+          if (a.status !== "done" && b.status === "done") return -1;
+          return (a.sort_order || 0) - (b.sort_order || 0);
+        });
+
+        sortedItems.forEach((item) => {
           const module = item.module || {};
+          const isDone = item.status === "done";
           const row = document.createElement("div");
-          row.className = "item";
+          row.className = `item${isDone ? " done" : ""}`;
           row.innerHTML = `
-            <div class="module-icon ${module.accent || "reading"}">${module.icon || "A"}</div>
+            <div class="module-icon ${module.accent || "reading"}">${isDone ? "✓" : module.icon || "A"}</div>
             <div>
               <strong>${item.title || module.short_name || module.name || "Atividade"}</strong>
               ${item.child_instructions ? `<div class="muted small">${item.child_instructions}</div>` : ""}
+              ${isDone ? '<div class="done-line">Feita. Bom trabalho!</div>' : ""}
             </div>
-            <button class="button" type="button">Começar</button>
+            <button class="button" type="button">${isDone ? "Feita" : "Começar"}</button>
           `;
 
           const button = row.querySelector("button");
-          button.disabled = !module.url;
+          button.disabled = isDone || !module.url;
+          if (isDone) {
+            items.appendChild(row);
+            return;
+          }
           button.addEventListener("click", () => {
             const url = moduleUrl(item);
             if (!url) {

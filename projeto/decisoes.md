@@ -281,3 +281,17 @@ Motivo:
 - o adulto precisa saber por que liberou aquela missao e o que observar;
 - a crianca nao deve ver hipotese, preocupacao ou nota adulta;
 - progresso por item aproxima a missao do historico longitudinal sem criar relatorio pesado cedo demais.
+
+### Atividade infantil concluida permanece reconhecida
+
+Decisao:
+
+- quando um modulo entrega uma evidencia com `assignment_item_id`, o portal marca o item como concluido;
+- a area infantil mostra o item concluido como "Feita" e mantem as atividades pendentes acima;
+- uma missao inteira concluida pode aparecer como concluida, em vez de continuar parecendo tarefa ativa.
+
+Motivo:
+
+- a crianca precisa perceber que terminou uma parte da missao;
+- apagar a atividade sem reconhecimento pode reduzir a sensacao de progresso;
+- manter o estado concluido ajuda o adulto a entender o caminho sem poluir a lista de pendencias.

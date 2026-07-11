@@ -74,6 +74,35 @@ function normalizeFeedback(feedback) {
   };
 }
 
+async function syncAssignmentProgress(admin, event) {
+  if (!event.assignment_id) return;
+
+  if (event.assignment_item_id) {
+    await admin
+      .from("assignment_items")
+      .update({ status: "done" })
+      .eq("id", event.assignment_item_id)
+      .eq("assignment_id", event.assignment_id);
+  }
+
+  const { data: items, error } = await admin
+    .from("assignment_items")
+    .select("id, required, status")
+    .eq("assignment_id", event.assignment_id);
+
+  if (error || !items?.length) return;
+
+  const requiredItems = items.filter((item) => item.required !== false);
+  const progressItems = requiredItems.length ? requiredItems : items;
+  const allDone = progressItems.every((item) => item.status === "done");
+
+  await admin
+    .from("assignments")
+    .update({ status: allDone ? "done" : "in_progress" })
+    .eq("id", event.assignment_id)
+    .in("status", ["released", "in_progress", "done"]);
+}
+
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -168,5 +197,6 @@ export default async function handler(req, res) {
 
   const { data, error } = await admin.from("activity_events").insert(event).select().single();
   if (error) return json(res, 500, { ok: false, message: error.message });
+  await syncAssignmentProgress(admin, event);
   return json(res, 200, { ok: true, event: data });
 }

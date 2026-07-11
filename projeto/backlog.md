@@ -18,7 +18,7 @@
 - Criar acao para arquivar ou concluir missao pelo adulto.
 - Definir modelo de compartilhamento entre responsavel e professor.
 - Especificar primeira camada de gamificacao leve para a area infantil.
-- Revisar estados visuais do `child.html`.
+- Refinar historico de missoes concluidas na area infantil depois dos testes reais.
 
 ## Mais tarde
 
