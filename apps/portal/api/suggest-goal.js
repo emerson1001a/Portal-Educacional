@@ -44,6 +44,33 @@ function normalizeSuggestion(value) {
   };
 }
 
+function fallbackSuggestion({ perception, areaHint, child }) {
+  const area = allowedAreas.has(areaHint) ? areaHint : "outro";
+  const childName = child?.full_name || "a crianca";
+  const shortPerception = String(perception || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 180);
+
+  return normalizeSuggestion({
+    type: "meta",
+    suggested_area: area,
+    reassurance: `Vamos olhar para ${childName} com calma e por evidencias pequenas.`,
+    explanation: "Organizei uma meta inicial de observacao. Ela deve ser revisada pelo adulto depois de algumas praticas, para evitar pressa ou conclusoes fortes demais.",
+    next_steps: [
+      "Fazer uma pratica curta e registrar uma evidencia simples.",
+      "Repetir em outro dia, sem comparar com outras criancas.",
+      "Ajustar a meta depois de 3 ou 4 evidencias."
+    ],
+    suggested_goal: {
+      title: "Observar evolucao em uma habilidade especifica",
+      description: shortPerception ? `Percepcao inicial: ${shortPerception}` : "Observar uma habilidade especifica em atividades curtas.",
+      measurement: "Comparar pequenas evidencias ao longo dos proximos dias, olhando autonomia, clareza e disposicao.",
+      adult_phrase: "Vamos fazer uma parte pequena e observar o que ficou mais facil hoje."
+    }
+  });
+}
+
 async function callOpenAI({ perception, areaHint, child }) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 22000);
@@ -121,10 +148,6 @@ export default async function handler(req, res) {
   if (!url || !anonKey || !serviceRoleKey) {
     return json(res, 500, { ok: false, message: "Variáveis do Supabase não configuradas." });
   }
-  if (!process.env.OPENAI_API_KEY) {
-    return json(res, 500, { ok: false, message: "OPENAI_API_KEY não configurada na Vercel." });
-  }
-
   const bearer = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!bearer) return json(res, 401, { ok: false, message: "Sessão não informada." });
 
@@ -160,9 +183,21 @@ export default async function handler(req, res) {
     .maybeSingle();
 
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return json(res, 200, {
+        ok: true,
+        fallback: true,
+        suggestion: fallbackSuggestion({ perception, areaHint, child })
+      });
+    }
     const suggestion = await callOpenAI({ perception, areaHint, child });
     return json(res, 200, { ok: true, suggestion });
   } catch (error) {
-    return json(res, 502, { ok: false, message: error.message || "Não foi possível organizar a percepção agora." });
+    console.warn("Fallback em /api/suggest-goal:", error.message);
+    return json(res, 200, {
+      ok: true,
+      fallback: true,
+      suggestion: fallbackSuggestion({ perception, areaHint, child })
+    });
   }
 }
