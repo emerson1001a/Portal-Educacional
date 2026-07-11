@@ -2134,6 +2134,7 @@
         const progress = assignmentProgress(assignment);
         const linkedGoal = goalById(assignment.goal_id);
         const dueText = assignment.due_at ? `Prazo: ${formatDate(assignment.due_at)}` : "Sem prazo definido";
+        const effectiveStatus = assignment.resolved_status || assignment.status;
         const itemRows = (assignment.items || []).map((item) => `
           <div class="row between">
             <span class="small">${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}</span>
@@ -2143,7 +2144,7 @@
         const card = document.createElement("article");
         card.className = "goal-card";
         card.innerHTML = `
-          <span class="pill">missão ${escapeHtml(assignmentStatusLabel(assignment.resolved_status || assignment.status))}</span>
+          <span class="pill">missão ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
           <strong>${escapeHtml(assignment.child_title || assignment.title)}</strong>
           <p class="muted">${escapeHtml(assignment.child_instructions || "Sem orientação adicional.")}</p>
           ${linkedGoal ? `<p class="small"><strong>Meta adulta:</strong> ${escapeHtml(areaLabel(linkedGoal.area))} - ${escapeHtml(linkedGoal.title)}</p>` : ""}
@@ -2152,9 +2153,16 @@
           ${itemRows ? `<div class="stack">${itemRows}</div>` : '<p class="small">Nenhum módulo vinculado.</p>'}
           <div class="row between">
             <span class="small">Criada em ${formatDate(assignment.created_at)}</span>
-            <span class="pill">${escapeHtml(assignmentStatusLabel(assignment.resolved_status || assignment.status))}</span>
+            <span class="pill">${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
+          </div>
+          <div class="row">
+            ${effectiveStatus !== "done" ? `<button class="button ghost" type="button" data-assignment-action="done">Marcar concluída</button>` : ""}
+            <button class="button ghost" type="button" data-assignment-action="archived">Arquivar</button>
           </div>
         `;
+        card.querySelectorAll("[data-assignment-action]").forEach((button) => {
+          button.addEventListener("click", () => updateAssignmentStatus(assignment, button.dataset.assignmentAction, button));
+        });
         els.assignmentsList.appendChild(card);
       });
     }
@@ -2403,6 +2411,44 @@
       message("Meta concluída. Ótimo: agora o acompanhamento fica mais limpo e focado.");
       await loadGoals();
       render();
+    }
+
+    async function updateAssignmentStatus(assignment, action, button) {
+      if (!assignment?.id || !["done", "archived"].includes(action)) return;
+      if (action === "archived" && !confirm("Arquivar esta missão? Ela sairá da lista da criança, mas os registros já salvos continuam no histórico.")) return;
+
+      const nextStatus = action === "done" ? "done" : "archived";
+      const busyText = action === "done" ? "Concluindo..." : "Arquivando...";
+      setButtonBusy(button, true, busyText);
+
+      if (nextStatus === "done") {
+        const { error: itemsError } = await state.supabase
+          .from("assignment_items")
+          .update({ status: "done" })
+          .eq("assignment_id", assignment.id)
+          .neq("status", "done");
+        if (itemsError) {
+          setButtonBusy(button, false);
+          message(`Não consegui concluir os itens da missão: ${itemsError.message}`, true);
+          return;
+        }
+      }
+
+      const { error } = await state.supabase
+        .from("assignments")
+        .update({ status: nextStatus, updated_at: new Date().toISOString() })
+        .eq("id", assignment.id);
+      if (error) {
+        setButtonBusy(button, false);
+        message(`Não consegui atualizar a missão: ${error.message}`, true);
+        return;
+      }
+
+      message(nextStatus === "done"
+        ? "Missão concluída. Ela sai da área infantil e continua registrada para acompanhamento."
+        : "Missão arquivada. Ela saiu da área infantil, sem apagar os registros já salvos.");
+      await loadAssignments();
+      renderAssignments();
     }
 
     async function activityToken(module) {

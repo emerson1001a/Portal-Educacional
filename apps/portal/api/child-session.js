@@ -72,7 +72,7 @@ export default async function handler(req, res) {
     .from("assignments")
     .select("id, child_id, title, child_title, child_instructions, status, due_at, created_at")
     .eq("child_id", access.child_id)
-    .in("status", ["released", "in_progress", "done"])
+    .in("status", ["released", "in_progress"])
     .order("due_at", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
 
