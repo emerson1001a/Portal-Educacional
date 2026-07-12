@@ -422,6 +422,16 @@
       background: #fff8dc;
       border-color: #e2b547;
     }
+    .quick-actions {
+      display: grid;
+      justify-items: end;
+      gap: 8px;
+    }
+    .quick-actions .muted {
+      max-width: 420px;
+      margin: 0;
+      text-align: right;
+    }
 
     .metrics, .evolution-grid, .services {
       display: grid;
@@ -1029,11 +1039,14 @@
               <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
               <p class="muted" id="welcomeCopy">Cadastre ou selecione uma criança para iniciar o acompanhamento.</p>
             </div>
-            <div class="row">
-              <button class="button" id="openChildModeButton" type="button">Abrir área da criança</button>
-              <button class="button blue" id="generateChildLinkButton" type="button">Gerar link infantil</button>
-              <button class="button secondary" id="openReportButton" type="button">Relatório longitudinal</button>
-              <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
+            <div class="quick-actions">
+              <div class="row">
+                <button class="button" id="openChildModeButton" type="button">Abrir missão infantil</button>
+                <button class="button blue" id="generateChildLinkButton" type="button">Gerar link infantil</button>
+                <button class="button secondary" id="openReportButton" type="button">Relatório longitudinal</button>
+                <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
+              </div>
+              <p class="muted small">Use “Abrir missão infantil” para testar neste computador. Use “Gerar link infantil” para enviar a missão para a criança.</p>
             </div>
           </div>
           <div class="child-access-panel hidden" id="childAccessPanel">
@@ -1128,7 +1141,7 @@
           <summary>
             <div class="topic-title">
               <h2 class="title-with-help">Missões para as crianças <span class="info-tip" tabindex="0" data-tip="Aqui o adulto libera tarefas que aparecem no link infantil. A criança vê apenas a missão e os módulos escolhidos, sem acessar a área do adulto.">?</span></h2>
-              <p class="muted">Monte uma tarefa curta. Ela aparece no link infantil sem mostrar a área do adulto.</p>
+              <p class="muted">Monte uma tarefa curta. Depois, teste neste computador ou gere o link para a criança.</p>
             </div>
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
