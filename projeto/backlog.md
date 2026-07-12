@@ -43,6 +43,7 @@
 - Painel administrativo pode ter analytics anonimo para entender quantas criancas estao evoluindo, quantas estao com dificuldade por area/modulo e onde o produto precisa melhorar, sempre com dados agregados ou pseudonimizados, tamanho minimo de amostra e protecao contra reidentificacao.
 - Qualquer consulta identificavel de crianca, adulto, turma ou escola so pode ocorrer com autorizacao explicita dos responsaveis legais ou da escola autorizada, alem de trilha de auditoria.
 - Antes de criar o painel administrativo, revisar policies, funcoes e endpoints para separar `admin_operacional` de acesso pedagogico. O admin do negocio nao deve herdar permissao para ver criancas, relatorios, percepcoes ou evidencias individuais.
+- Modelo escolar/enterprise: desenhar arquitetura com banco dedicado por escola, painel administrativo sem acesso pedagogico individual, contrato de tratamento de dados, auditoria, segregacao de ambientes e regras claras sobre quais dados podem ser usados em analytics anonimo.
 - Preparar habilitacao futura por modulo, sem expor bloqueios comerciais para a crianca.
 - Redacao: avaliar se o bloco lateral de missoes deve ser eliminado e integrado ao bloco principal, com a etapa evoluindo dentro do fluxo central.
 - Definir arquitetura comercial/funcional por modulos plugaveis, sem alterar ou excluir modulos durante o periodo inicial de testes.
