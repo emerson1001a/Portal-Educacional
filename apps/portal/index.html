@@ -2030,6 +2030,22 @@
       return snapshot?.summary && typeof snapshot.summary === "object" ? snapshot.summary : {};
     }
 
+    function snapshotAreaLines(latest, previous = null) {
+      const latestAreas = latest?.areas_last_28_days && typeof latest.areas_last_28_days === "object" ? latest.areas_last_28_days : {};
+      const previousAreas = previous?.areas_last_28_days && typeof previous.areas_last_28_days === "object" ? previous.areas_last_28_days : {};
+      const areas = uniqueList([...Object.keys(latestAreas), ...Object.keys(previousAreas), "leitura", "escrita", "matematica"], 6);
+      return areas
+        .map((area) => {
+          const current = Number(latestAreas[area] || 0);
+          const before = Number(previousAreas[area] || 0);
+          if (!current && !before) return "";
+          const delta = current - before;
+          const deltaText = previous ? ` (${delta >= 0 ? "+" : ""}${delta})` : "";
+          return `${areaLabel(area)}: ${current}${deltaText}`;
+        })
+        .filter(Boolean);
+    }
+
     function buildSnapshotComparison() {
       const child = activeChild();
       if (!child) {
@@ -2041,8 +2057,10 @@
 
       const latest = snapshotSummary(state.snapshots[0]);
       if (state.snapshots.length < 2) {
+        const areaLines = snapshotAreaLines(latest);
         return [
           `Último marco: ${latest.total_events || 0} evidência${latest.total_events === 1 ? "" : "s"}, ${latest.active_goals || 0} meta${latest.active_goals === 1 ? "" : "s"} ativa${latest.active_goals === 1 ? "" : "s"} e ${latest.active_weeks_last_28_days || 0} semana${latest.active_weeks_last_28_days === 1 ? "" : "s"} com prática.`,
+          areaLines.length ? `Áreas praticadas nos últimos 28 dias: ${areaLines.join(" / ")}.` : "Ainda não há área com prática recente neste marco.",
           "Salve outra percepção depois de novas práticas para comparar evolução numérica."
         ];
       }
@@ -2056,6 +2074,7 @@
         `Evidências: ${latest.total_events || 0} agora (${eventDelta >= 0 ? "+" : ""}${eventDelta} desde o marco anterior).`,
         `Continuidade: ${latest.active_weeks_last_28_days || 0} de 4 semanas com prática (${weekDelta >= 0 ? "+" : ""}${weekDelta}).`,
         `Metas ativas: ${latest.active_goals || 0} (${goalDelta >= 0 ? "+" : ""}${goalDelta}).`,
+        `Áreas nos últimos 28 dias: ${snapshotAreaLines(latest, previous).join(" / ") || "sem prática recente registrada"}.`,
         `Confiança registrada: ${reviewConfidenceLabel(latest.confidence)}.`
       ];
     }
