@@ -899,8 +899,8 @@
           </label>
           <div class="row">
             <label style="flex:1 1 120px">
-              Ano nasc.
-              <input id="birthYearInput" type="number" min="2008" max="2030" placeholder="2015">
+              Data de nascimento
+              <input id="birthDateInput" type="date">
             </label>
             <label style="flex:1 1 120px">
               Série
@@ -1262,7 +1262,7 @@
       appMessage: document.querySelector("#appMessage"),
       childForm: document.querySelector("#childForm"),
       childNameInput: document.querySelector("#childNameInput"),
-      birthYearInput: document.querySelector("#birthYearInput"),
+      birthDateInput: document.querySelector("#birthDateInput"),
       gradeInput: document.querySelector("#gradeInput"),
       childrenList: document.querySelector("#childrenList"),
       welcomeTitle: document.querySelector("#welcomeTitle"),
@@ -1375,6 +1375,24 @@
     function formatDate(value) {
       if (!value) return "-";
       return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(new Date(value));
+    }
+
+    function dateOnly(value) {
+      return String(value || "").slice(0, 10);
+    }
+
+    function childAge(child) {
+      const birthDate = dateOnly(child?.birth_date);
+      if (!birthDate) return null;
+      const [year, month, day] = birthDate.split("-").map(Number);
+      if (!year || !month || !day) return null;
+      const today = new Date();
+      let age = today.getFullYear() - year;
+      const hadBirthday =
+        today.getMonth() + 1 > month ||
+        (today.getMonth() + 1 === month && today.getDate() >= day);
+      if (!hadBirthday) age -= 1;
+      return age >= 0 && age < 30 ? age : null;
     }
 
     function areaLabel(area) {
@@ -1875,10 +1893,16 @@
         return;
       }
       state.children.forEach((item) => {
+        const age = childAge(item);
+        const ageLabel = age !== null ? `${age} ano${age === 1 ? "" : "s"}` : "idade não informada";
+        const badges = [item.grade, ageLabel]
+          .filter(Boolean)
+          .map((label) => `<span class="pill">${escapeHtml(label)}</span>`)
+          .join("");
         const button = document.createElement("button");
         button.type = "button";
         button.className = `child-button${item.id === child?.id ? " active" : ""}`;
-        button.innerHTML = `<span>${item.full_name}</span><span class="pill">${item.grade || "sem série"}</span>`;
+        button.innerHTML = `<span>${escapeHtml(item.full_name)}</span>${badges}`;
         button.addEventListener("click", async () => {
           state.activeChildId = item.id;
           localStorage.setItem("portal.activeChildId", item.id);
@@ -2472,6 +2496,10 @@
       if (child) {
         params.set("child_id", child.id);
         params.set("child_name", child.full_name);
+        const birthDate = dateOnly(child.birth_date);
+        const age = childAge(child);
+        if (birthDate) params.set("child_birth_date", birthDate);
+        if (age !== null) params.set("child_age", String(age));
       }
       params.set("portal_return_url", window.location.origin);
       if (token) params.set("portal_event_token", token);
@@ -3305,8 +3333,7 @@
       if (!name) return;
       const submitButton = els.childForm.querySelector('button[type="submit"]');
       setButtonBusy(submitButton, true);
-      const year = Number(els.birthYearInput.value);
-      const birthDate = Number.isFinite(year) && year > 1900 ? `${year}-01-01` : null;
+      const birthDate = dateOnly(els.birthDateInput.value) || null;
       try {
         const { data: child, error } = await state.supabase.rpc("create_child_for_current_user", {
           child_full_name: name,
