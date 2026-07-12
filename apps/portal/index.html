@@ -613,6 +613,7 @@
     .reading { background: var(--teal); }
     .writing { background: var(--coral); }
     .math { background: var(--gold); }
+    .english { background: #2f6edb; }
 
     .event {
       display: grid;
@@ -1446,7 +1447,7 @@
     }
 
     function areaLabel(area) {
-      return { leitura: "Leitura", escrita: "Escrita", matematica: "Matemática", organizacao: "Organização", outro: "Outro" }[area] || area;
+      return { leitura: "Leitura", escrita: "Escrita", matematica: "Matemática", ingles: "Inglês", organizacao: "Organização", outro: "Outro" }[area] || area;
     }
 
     function assignmentStatusLabel(status) {

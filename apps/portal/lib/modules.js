@@ -31,6 +31,20 @@ const defaultModules = [
     status: "available",
     accent: "math",
     icon: "T"
+  },
+  {
+    id: "ingles",
+    name: "Inglês Inicial",
+    short_name: "Inglês",
+    area: "ingles",
+    journey: "ingles_inicial",
+    description: "Vocabulário e frases simples com missões curtas.",
+    url: "",
+    status: "planned",
+    accent: "english",
+    icon: "I",
+    skills: ["verb_to_be", "simple_present", "present_continuous", "question_words", "vocabulary_list"],
+    commercial_key: "module_english"
   }
 ];
 
