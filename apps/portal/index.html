@@ -865,6 +865,22 @@
       gap: 16px;
     }
 
+    .child-assignment-card {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .child-assignment-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
     .child-module-card {
       min-height: 230px;
       display: flex;
@@ -2786,7 +2802,23 @@
       }
     }
 
-    function moduleUrl(module, token) {
+    function applyModuleConfigParams(params, item) {
+      const config = item?.config || {};
+      if (item?.module_id === "tabuada" && config.tabuada) {
+        const tabuada = config.tabuada;
+        if (Array.isArray(tabuada.tabs) && tabuada.tabs.length) {
+          params.set("tabuada_tabs", tabuada.tabs.join(","));
+        }
+        if (tabuada.target_attempts) {
+          params.set("target_attempts", String(tabuada.target_attempts));
+        }
+        if (tabuada.mode) {
+          params.set("training_mode", String(tabuada.mode));
+        }
+      }
+    }
+
+    function moduleUrl(module, token, options = {}) {
       const child = activeChild();
       const params = new URLSearchParams();
       if (child) {
@@ -2799,6 +2831,9 @@
       }
       params.set("portal_return_url", window.location.origin);
       if (token) params.set("portal_event_token", token);
+      if (options.assignmentItem?.id) params.set("assignment_item_id", options.assignmentItem.id);
+      if (options.assignment?.id) params.set("assignment_id", options.assignment.id);
+      applyModuleConfigParams(params, options.assignmentItem);
       return `${module.url}?${params.toString()}`;
     }
 
@@ -2972,30 +3007,69 @@
         return;
       }
 
-      const availableModules = state.modules.filter((module) => module.status === "available" && module.url);
-      if (!availableModules.length) {
-        els.childModulesGrid.innerHTML = '<div class="notice">As atividades ainda não estão disponíveis.</div>';
+      const activeAssignments = state.assignments.filter((assignment) => (assignment.resolved_status || assignment.status) !== "done");
+      const pendingItemsCount = activeAssignments.reduce((total, assignment) => {
+        return total + (assignment.items || []).filter((item) => item.resolved_status !== "done").length;
+      }, 0);
+
+      if (!activeAssignments.length || !pendingItemsCount) {
+        els.childModeCopy.textContent = state.assignments.length
+          ? "Tudo entregue por aqui. O adulto já pode acompanhar o progresso."
+          : "Peça para o adulto liberar uma missão curta para você.";
+        els.childModulesGrid.innerHTML = state.assignments.length
+          ? '<div class="notice">Todas as missões liberadas já foram concluídas. Bom trabalho!</div>'
+          : '<div class="notice">Nenhuma missão disponível no momento.</div>';
         return;
       }
 
-      availableModules.forEach((module) => {
+      els.childModeCopy.textContent = `${pendingItemsCount} atividade${pendingItemsCount === 1 ? "" : "s"} para fazer. Comece pela primeira missão disponível.`;
+
+      activeAssignments.forEach((assignment) => {
+        const items = (assignment.items || [])
+          .filter((item) => item.resolved_status !== "done")
+          .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        if (!items.length) return;
+
         const card = document.createElement("article");
-        card.className = "child-module-card";
+        card.className = "child-assignment-card";
         card.innerHTML = `
           <div>
-            <div class="service-icon ${module.accent || "reading"}">${module.icon || "M"}</div>
-            <span class="pill">${areaLabel(module.area)}</span>
-            <h3>${module.short_name || module.name}</h3>
-            <p class="muted">${module.description || "Atividade liberada pelo adulto."}</p>
+            <span class="pill">missão liberada</span>
+            <h3>${escapeHtml(assignment.child_title || assignment.title || "Missão")}</h3>
+            <p class="muted">${escapeHtml(assignment.child_instructions || "Faça uma atividade por vez, com calma.")}</p>
           </div>
-          <button class="button ${module.id === "redacao" ? "coral" : ""}" type="button">Começar</button>
+          <div class="child-assignment-items"></div>
         `;
-        const button = card.querySelector("button");
-        button.addEventListener("click", async () => {
-          button.disabled = true;
-          button.textContent = "Abrindo...";
-          window.location.href = moduleUrl(module, await activityToken(module));
+
+        const list = card.querySelector(".child-assignment-items");
+        items.forEach((item) => {
+          const module = state.modules.find((moduleItem) => moduleItem.id === item.module_id) || {};
+          const available = module.status === "available" && module.url;
+          const configSummary = assignmentConfigSummary(item);
+          const row = document.createElement("article");
+          row.className = "child-module-card";
+          row.innerHTML = `
+            <div>
+              <div class="service-icon ${module.accent || "reading"}">${module.icon || "M"}</div>
+              <span class="pill">${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}</span>
+              <h3>${escapeHtml(item.title || module.short_name || module.name || "Atividade")}</h3>
+              <p class="muted">${escapeHtml(module.description || "Atividade liberada pelo adulto.")}</p>
+              ${configSummary ? `<p class="small"><strong>Combinado:</strong> ${escapeHtml(configSummary)}</p>` : ""}
+            </div>
+            <button class="button ${module.id === "redacao" ? "coral" : module.id === "tabuada" ? "secondary" : ""}" type="button" ${available ? "" : "disabled"}>
+              ${available ? "Começar" : "Pendente"}
+            </button>
+          `;
+          const button = row.querySelector("button");
+          button.addEventListener("click", async () => {
+            if (!available) return;
+            button.disabled = true;
+            button.textContent = "Abrindo...";
+            window.location.href = moduleUrl(module, await activityToken(module), { assignment, assignmentItem: item });
+          });
+          list.appendChild(row);
         });
+
         els.childModulesGrid.appendChild(card);
       });
     }
