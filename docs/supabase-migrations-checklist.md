@@ -161,11 +161,26 @@ Depois de rodar a base e as migracoes atuais, teste no navegador:
 /api/supabase-status
 ```
 
-Resultado esperado:
+Resultado esperado para o fluxo atual:
 
 ```json
-{"ok":true,"connected":true}
+{
+  "ok": true,
+  "connected": true,
+  "status": "ready"
+}
 ```
+
+O endpoint tambem devolve:
+
+- `summary.required`: itens obrigatorios para o fluxo atual;
+- `summary.recommended`: itens recomendados, mas tolerados quando ainda faltam;
+- `checks`: lista detalhada de cada tabela ou coluna verificada;
+- `next_actions`: o que fazer se alguma migracao estiver faltando.
+
+Se `ok` vier `false`, priorize os itens em `summary.required.missing`.
+
+Se apenas `summary.recommended.missing` tiver itens, o portal pode continuar funcionando, mas alguma melhoria pode ficar limitada. Exemplo: sem `assignment_items.config`, a Tabuada pode abrir, mas nao consegue obedecer a configuracao avancada definida pelo adulto.
 
 Depois, no Portal:
 
