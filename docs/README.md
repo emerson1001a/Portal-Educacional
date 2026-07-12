@@ -13,6 +13,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `prd-portal-crianca.md`: experiencia infantil, token, missoes, limites de informacao e gamificacao futura.
 - `prd-metas-e-tarefas.md`: fluxo de percepcao adulta, meta pedagogica, tarefa, missao infantil e evidencias.
 - `prd-modulos-plugaveis.md`: arquitetura de modulos, jornadas de apoio e base para futura habilitacao comercial.
+- `prd-modulo-ingles.md`: desenho inicial do modulo futuro de Ingles, com missoes de gramatica, vocabulario e evidencias.
 - `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
 - `analise-schema-etapa-5.md`: comparacao entre PRD de metas/tarefas e o schema/migracoes existentes.
 - `analise-codigo-curto-infantil.md`: preparo tecnico para codigo curto infantil com hash, expiracao e entrada futura.
