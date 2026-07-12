@@ -548,6 +548,7 @@
     }
     .bar-fill.writing { background: var(--coral); }
     .bar-fill.math { background: var(--gold); }
+    .bar-fill.english { background: #2f6edb; }
     .topic {
       position: relative;
       overflow: visible;
@@ -1115,7 +1116,7 @@
           <summary>
             <div class="topic-title">
               <h2>Evolução por área</h2>
-              <p class="muted">Veja leitura, escrita e matemática com evidências e sinais de progresso.</p>
+              <p class="muted">Veja as áreas de aprendizagem com evidências e sinais de progresso.</p>
             </div>
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
@@ -1481,6 +1482,7 @@
         leitura: "Leia um trecho curto, peça para apontar a pista no texto e só depois responder.",
         escrita: "Escolha um foco por vez: ideia, começo/meio/fim, detalhe ou pontuação.",
         matematica: "Treine 5 minutos, pare antes do cansaço e repita em outro momento.",
+        ingles: "Treine poucas palavras ou frases, revise no dia seguinte e celebre reconhecimento antes de cobrar memória.",
         organizacao: "Use passos visuais: primeiro, depois, por fim.",
         outro: "Defina uma tarefa pequena, observe a tentativa e registre o que melhorou."
       }[area] || "Defina uma tarefa pequena, observe a tentativa e registre o que melhorou.";
@@ -1529,13 +1531,22 @@
         .slice(0, limit);
     }
 
+    function shouldIncludeEnglishArea() {
+      const module = state.modules.find((item) => item.id === "ingles");
+      return module?.status === "available"
+        || state.events.some((event) => event.service === "ingles")
+        || state.goals.some((goal) => goal.area === "ingles")
+        || state.completedGoals.some((goal) => goal.area === "ingles");
+    }
+
     function eventsForArea(area) {
       const byArea = {
         leitura: ["interpretacao"],
         escrita: ["redacao"],
         matematica: ["tabuada"],
+        ingles: ["ingles"],
         organizacao: ["redacao", "interpretacao"],
-        outro: ["redacao", "interpretacao", "tabuada"]
+        outro: ["redacao", "interpretacao", "tabuada", "ingles"]
       };
       const services = byArea[area] || [];
       return state.events.filter((event) => services.includes(event.service));
@@ -1546,6 +1557,7 @@
         leitura: "interpretacao",
         escrita: "redacao",
         matematica: "tabuada",
+        ingles: "ingles",
         organizacao: "interpretacao",
         outro: "interpretacao"
       }[area] || "interpretacao";
@@ -1559,6 +1571,7 @@
         leitura: "Me mostra onde está a pista no texto?",
         escrita: "Qual é a primeira coisa que aconteceu? E depois?",
         matematica: "Vamos treinar poucos exemplos com calma.",
+        ingles: "Vamos treinar poucas palavras de cada vez?",
         organizacao: "Qual é o primeiro passo? E o próximo?",
         outro: "Vamos fazer uma tentativa pequena e observar."
       }[area] || "Vamos fazer uma tentativa pequena e observar.";
@@ -1597,7 +1610,7 @@
       const candidates = planAreaCandidates();
       const selected = candidates.slice(0, 3);
       const labels = ["Hoje", "Daqui a 2 dias", "Fim da semana"];
-      const durations = { leitura: "8 minutos", escrita: "12 minutos", matematica: "5 minutos", organizacao: "6 minutos", outro: "8 minutos" };
+      const durations = { leitura: "8 minutos", escrita: "12 minutos", matematica: "5 minutos", ingles: "7 minutos", organizacao: "6 minutos", outro: "8 minutos" };
       return selected.map((item, index) => {
         const goal = item.goals[0];
         const hasEvidence = item.evidences.length > 0;
@@ -1647,6 +1660,7 @@
         escrita: ["redacao"],
         matematica: ["tabuada"]
       };
+      if (shouldIncludeEnglishArea()) areaServices.ingles = ["ingles"];
       const areaCounts = Object.entries(areaServices).map(([area, services]) => ({
         area,
         count: recent.filter((event) => services.includes(event.service)).length
@@ -1746,7 +1760,9 @@
         };
       }
 
-      const areas = ["leitura", "escrita", "matematica"];
+      const areas = shouldIncludeEnglishArea()
+        ? ["leitura", "escrita", "matematica", "ingles"]
+        : ["leitura", "escrita", "matematica"];
       const areaData = areas.map((area) => ({
         area,
         events: eventsForArea(area),
@@ -2322,7 +2338,7 @@
       }).join("");
 
       const max = Math.max(1, ...evolution.areaCounts.map((item) => item.count));
-      const fillClass = { leitura: "reading", escrita: "writing", matematica: "math" };
+      const fillClass = { leitura: "reading", escrita: "writing", matematica: "math", ingles: "english" };
       els.areaBalance.innerHTML = `
         <article class="feedback-card primary">
           <span class="pill">continuidade</span>
@@ -2347,6 +2363,7 @@
         return;
       }
       const map = { leitura: ["interpretacao"], escrita: ["redacao"], matematica: ["tabuada"] };
+      if (shouldIncludeEnglishArea()) map.ingles = ["ingles"];
       Object.entries(map).forEach(([area, services]) => {
         const goals = state.goals.filter((goal) => goal.area === area);
         const evidences = state.events.filter((event) => services.includes(event.service));
