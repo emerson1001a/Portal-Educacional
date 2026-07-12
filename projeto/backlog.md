@@ -6,8 +6,8 @@
 - Testar o fluxo diario com Miguel e Gabriel por alguns dias, registrando confusoes, atritos e evidencias uteis.
 - Validar `/api/supabase-status` em producao sempre que uma migracao parecer faltar.
 - Testar missao com meta vinculada, prazo, nota adulta, progresso por item e retorno claro para a crianca.
-- Melhorar o historico unificado para mostrar texto e feedback dos modulos de forma expansivel, sem ocupar espaco demais.
-- Consolidar o primeiro desenho do relatorio longitudinal adulto.
+- Testar se o historico unificado continua facil de interpretar depois de varios dias de atividades.
+- Testar o primeiro relatorio longitudinal adulto com dados reais, verificando se a leitura por area, a base de evidencias e os indicadores ajudam na conversa com o responsavel/professor.
 - Validar em producao a Interpretacao de Texto corrigida: perguntas devem se apoiar somente em evidencias do texto e o feedback final deve ficar visualmente destacado.
 - Validar em producao o bloco "Meta Pedagogica": "Organizar Percepcao" deve devolver orientacao da IA ou uma meta segura de contingencia, sem erro tecnico para o adulto.
 - Revisar navegabilidade geral entre portal adulto, portal infantil, Redacao, Interpretacao e Tabuada, garantindo retorno claro ao portal infantil/principal.
@@ -18,6 +18,7 @@
 - Definir modelo de compartilhamento entre responsavel e professor.
 - Especificar primeira camada de gamificacao leve para a area infantil.
 - Refinar historico de missoes concluidas na area infantil depois dos testes reais.
+- Refinar relatorio longitudinal depois dos primeiros dias de uso real, especialmente clareza para reuniao e orientacao pratica do adulto.
 - Interpretacao: permitir que tamanho e complexidade do texto sejam sugeridos pela IA e/ou pelo adulto, considerando evolucao longitudinal da crianca.
 - Interpretacao: evitar que todo texto use a propria crianca como personagem; permitir uso ocasional, mas variar personagens e contextos.
 - Interpretacao: em modo missao infantil, nao pedir confirmacao editavel de nome e idade; usar os dados do cadastro.
@@ -35,7 +36,6 @@
 
 ## Mais tarde
 
-- Relatorio longitudinal.
 - Unificacao visual e logica dos modulos.
 - Catalogo de modulos plugaveis e jornadas de apoio.
 - Painel administrativo do negocio: acompanhar usuarios, contas, criancas cadastradas, modulos utilizados, intensidade de uso, planos, cobranca, inadimplencia, usuarios inativos, churn, suporte, auditoria e indicadores operacionais.
@@ -47,6 +47,16 @@
 - Preparar habilitacao futura por modulo, sem expor bloqueios comerciais para a crianca.
 - Redacao: avaliar se o bloco lateral de missoes deve ser eliminado e integrado ao bloco principal, com a etapa evoluindo dentro do fluxo central.
 - Definir arquitetura comercial/funcional por modulos plugaveis, sem alterar ou excluir modulos durante o periodo inicial de testes.
+
+## Concluido recentemente
+
+- Historico unificado com texto e feedback expansivel dos modulos, reduzindo espaco ocupado no painel adulto.
+- Primeiro relatorio longitudinal adulto com metricas, base de evidencias, leitura por area, receita para o adulto e registros recentes.
+- Resumo do Desenvolvimento com card "Base da leitura", separando atividades, metas, percepcoes e metas concluidas.
+- Indicadores do momento com comparacao numerica por area nos ultimos 28 dias.
+- Registro de percepcao adulto renomeado e com campo de observacao privada.
+- Contexto de aniversario a partir da data de nascimento da crianca.
+- Retorno claro da atividade infantil para a missao e remocao de tarefas concluidas da area infantil.
 
 ## Pendente de decisao
 
