@@ -117,6 +117,20 @@ Observacao:
 
 - esta etapa e o centro de valor do produto; deve ser feita com calma, a partir dos testes reais de uso.
 
+## Etapa 8.5: Compartilhamento responsavel/professor
+
+Status: definida em PRD inicial
+
+Objetivo:
+
+- permitir acompanhamento compartilhado sem expor percepcoes privadas por padrao;
+- preparar convite, aceite, escopo e revogacao;
+- separar contexto familiar, escolar e tutoria/reforco.
+
+Documento:
+
+- `docs/prd-compartilhamento-responsavel-professor.md`
+
 ## Etapa 9: Unificacao visual e logica dos modulos
 
 Status: planejada

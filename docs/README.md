@@ -12,6 +12,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `prd-controle-de-acesso-supabase.md`: desenho da Etapa 2 para tabelas, vinculos, RLS e token infantil.
 - `prd-portal-crianca.md`: experiencia infantil, token, missoes, limites de informacao e gamificacao futura.
 - `prd-metas-e-tarefas.md`: fluxo de percepcao adulta, meta pedagogica, tarefa, missao infantil e evidencias.
+- `prd-compartilhamento-responsavel-professor.md`: regras para responsavel e professor compartilharem acompanhamento sem expor percepcoes privadas por padrao.
 - `prd-modulos-plugaveis.md`: arquitetura de modulos, jornadas de apoio e base para futura habilitacao comercial.
 - `prd-modulo-ingles.md`: desenho inicial do modulo futuro de Ingles, com missoes de gramatica, vocabulario e evidencias.
 - `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
