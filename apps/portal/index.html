@@ -631,6 +631,25 @@
       display: grid;
       gap: 8px;
     }
+    .event-signals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .event-signal {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(11,143,134,.18);
+      background: #eefaf8;
+      color: #0b5f59;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.1;
+    }
     .event-details details {
       overflow: hidden;
       border: 1px solid var(--line);
@@ -1511,6 +1530,39 @@
       const feedback = event?.feedback && typeof event.feedback === "object" ? event.feedback : {};
       const adult = feedback.adult && typeof feedback.adult === "object" ? feedback.adult : {};
       return adult.summary || (Array.isArray(adult.recipe) ? adult.recipe[0] : "") || "";
+    }
+
+    function eventSignals(event) {
+      const feedback = event?.feedback && typeof event.feedback === "object" ? event.feedback : {};
+      const adult = feedback.adult && typeof feedback.adult === "object" ? feedback.adult : {};
+      const artifacts = event?.artifacts && typeof event.artifacts === "object" ? event.artifacts : {};
+      const metrics = event?.metrics && typeof event.metrics === "object" ? event.metrics : {};
+      const signals = [];
+
+      if (adult.summary || adult.recipe?.length || adult.attention_points?.length) {
+        signals.push("feedback adulto");
+      }
+      if (feedback.child?.message) {
+        signals.push("feedback da criança");
+      }
+      if (artifacts.text) {
+        signals.push(event.service === "redacao" ? "redação salva" : "texto salvo");
+      }
+      if (Array.isArray(artifacts.questions) || Array.isArray(artifacts.answers)) {
+        const count = Math.max(artifacts.questions?.length || 0, artifacts.answers?.length || 0);
+        signals.push(`${count || ""} pergunta${count === 1 ? "" : "s"}`.trim());
+      }
+      if (Number.isFinite(Number(metrics.total_attempts))) {
+        signals.push(`${Number(metrics.total_attempts)} tentativa${Number(metrics.total_attempts) === 1 ? "" : "s"}`);
+      }
+      if (Number.isFinite(Number(metrics.recent_accuracy_pct))) {
+        signals.push(`${Number(metrics.recent_accuracy_pct)}% acerto`);
+      }
+      if (Number.isFinite(Number(metrics.target_attempts))) {
+        signals.push(`meta ${Number(metrics.target_attempts)}`);
+      }
+
+      return uniqueList(signals, 5);
     }
 
     function adultFeedback(event) {
@@ -2962,6 +3014,51 @@
       return detailBlock("Perguntas e respostas", `<ul class="question-list">${items}</ul>`);
     }
 
+    function eventMetricsDetails(event) {
+      const metrics = event.metrics && typeof event.metrics === "object" ? event.metrics : {};
+      const rows = [];
+
+      if (Number.isFinite(Number(metrics.total_attempts))) {
+        rows.push(["Tentativas totais", Number(metrics.total_attempts)]);
+      }
+      if (Number.isFinite(Number(metrics.recent_attempts))) {
+        rows.push(["Tentativas neste envio", Number(metrics.recent_attempts)]);
+      }
+      if (Number.isFinite(Number(metrics.recent_correct))) {
+        rows.push(["Acertos neste envio", Number(metrics.recent_correct)]);
+      }
+      if (Number.isFinite(Number(metrics.recent_accuracy_pct))) {
+        rows.push(["Precisão recente", `${Number(metrics.recent_accuracy_pct)}%`]);
+      }
+      if (Number.isFinite(Number(metrics.target_attempts))) {
+        rows.push(["Meta combinada", `${Number(metrics.target_attempts)} respostas`]);
+      }
+      if (Array.isArray(metrics.selected_tabs) && metrics.selected_tabs.length) {
+        rows.push(["Tabuadas praticadas", metrics.selected_tabs.join(", ")]);
+      }
+      if (metrics.training_mode) {
+        rows.push(["Modo de treino", metrics.training_mode === "random" ? "Aleatório" : "Adaptativo"]);
+      }
+      if (Number.isFinite(Number(metrics.child_age))) {
+        rows.push(["Idade no registro", `${Number(metrics.child_age)} anos`]);
+      }
+
+      if (!rows.length) return "";
+
+      const body = `
+        <ul class="question-list">
+          ${rows.map(([label, value]) => `
+            <li>
+              <strong>${escapeHtml(label)}</strong>
+              <p class="small">${escapeHtml(String(value))}</p>
+            </li>
+          `).join("")}
+        </ul>
+      `;
+
+      return detailBlock("Números da atividade", body);
+    }
+
     function renderTimeline() {
       const child = activeChild();
       els.timeline.innerHTML = "";
@@ -2980,14 +3077,17 @@
         const details = [
           eventFeedbackDetails(event),
           eventArtifactDetails(event),
-          eventQuestionDetails(event)
+          eventQuestionDetails(event),
+          eventMetricsDetails(event)
         ].join("");
+        const signals = eventSignals(event);
         item.innerHTML = `
           <div class="event-head">
             <div>
               <strong>${escapeHtml(event.title || serviceName(event.service))}</strong>
               <div class="muted small">${escapeHtml(serviceName(event.service))} - ${escapeHtml(event.activity_type || "atividade")}</div>
               ${adultSummary ? `<p class="muted small">${escapeHtml(adultSummary)}</p>` : ""}
+              ${signals.length ? `<div class="event-signals">${signals.map((signal) => `<span class="event-signal">${escapeHtml(signal)}</span>`).join("")}</div>` : ""}
             </div>
             <span class="pill">${formatDate(event.occurred_at || event.created_at)}</span>
           </div>
