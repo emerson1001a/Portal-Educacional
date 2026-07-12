@@ -885,6 +885,33 @@
       background: #fff;
     }
 
+    .mission-progress {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #bde7df;
+      border-radius: 8px;
+      background: #effaf7;
+    }
+
+    .mission-progress .row {
+      justify-content: space-between;
+      font-weight: 900;
+    }
+
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dce7f0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--sun));
+    }
+
     .child-assignment-items {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -2431,6 +2458,27 @@
       return { done, total: items.length };
     }
 
+    function missionProgressHtml(progress) {
+      const percent = progress.total ? Math.round((progress.done / progress.total) * 100) : 0;
+      const message = !progress.total
+        ? "Missão em preparação."
+        : progress.done === progress.total
+          ? "Missão completa. Bom trabalho!"
+          : progress.done > 0
+            ? "Você já começou. Faça uma parte de cada vez."
+            : "Comece com calma pela primeira atividade.";
+      return `
+        <div class="mission-progress" aria-label="Progresso da missão">
+          <div class="row">
+            <span>${progress.done}/${progress.total} concluída${progress.done === 1 ? "" : "s"}</span>
+            <span>${percent}%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
+          <div class="muted small">${escapeHtml(message)}</div>
+        </div>
+      `;
+    }
+
     function renderAssignmentsLegacyUnused() {
       const child = activeChild();
       els.assignmentsList.innerHTML = "";
@@ -3038,6 +3086,7 @@
       els.childModeCopy.textContent = `${pendingItemsCount} atividade${pendingItemsCount === 1 ? "" : "s"} para fazer. Comece pela primeira missão disponível.`;
 
       activeAssignments.forEach((assignment) => {
+        const progress = assignmentProgress(assignment);
         const items = (assignment.items || [])
           .filter((item) => item.resolved_status !== "done")
           .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
@@ -3051,6 +3100,7 @@
             <h3>${escapeHtml(assignment.child_title || assignment.title || "Missão")}</h3>
             <p class="muted">${escapeHtml(assignment.child_instructions || "Faça uma atividade por vez, com calma.")}</p>
           </div>
+          ${missionProgressHtml(progress)}
           <div class="child-assignment-items"></div>
         `;
 

@@ -210,6 +210,36 @@
       background: #fff;
     }
 
+    .mission-progress {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #bde7df;
+      border-radius: 8px;
+      background: #effaf7;
+    }
+
+    .mission-progress .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 900;
+    }
+
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dce7f0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--sun));
+    }
+
     .items {
       display: grid;
       gap: 10px;
@@ -453,6 +483,34 @@
       return parts.join(" · ");
     }
 
+    function assignmentProgress(assignment) {
+      const items = assignment.items || [];
+      const total = items.length;
+      const done = items.filter((item) => item.status === "done").length;
+      const percent = total ? Math.round((done / total) * 100) : 0;
+      const message = !total
+        ? "Missão em preparação."
+        : done === total
+          ? "Missão completa. Bom trabalho!"
+          : done > 0
+            ? "Você já começou. Faça uma parte de cada vez."
+            : "Comece com calma pela primeira atividade.";
+      return { total, done, percent, message };
+    }
+
+    function missionProgressHtml(progress) {
+      return `
+        <div class="mission-progress" aria-label="Progresso da missão">
+          <div class="row">
+            <span>${progress.done}/${progress.total} concluída${progress.done === 1 ? "" : "s"}</span>
+            <span>${progress.percent}%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${progress.percent}%"></div></div>
+          <div class="muted small">${progress.message}</div>
+        </div>
+      `;
+    }
+
     function moduleUrl(item) {
       const module = item.module || {};
       if (!module.url) return "";
@@ -546,6 +604,7 @@
         : "Tudo entregue por aqui. O adulto já pode acompanhar o progresso.";
 
       state.assignments.forEach((assignment) => {
+        const progress = assignmentProgress(assignment);
         const card = document.createElement("article");
         card.className = "assignment";
         card.innerHTML = `
@@ -554,6 +613,7 @@
             <h3>${assignment.title || "Atividade"}</h3>
             ${assignment.instructions ? `<p class="muted">${assignment.instructions}</p>` : ""}
           </div>
+          ${missionProgressHtml(progress)}
           <div class="items"></div>
         `;
 
