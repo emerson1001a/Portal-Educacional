@@ -2110,6 +2110,12 @@
 
     function renderGeneralFeedback() {
       const feedback = buildGeneralFeedback();
+      const evidenceBase = [
+        `${state.events.length} atividade${state.events.length === 1 ? "" : "s"} concluída${state.events.length === 1 ? "" : "s"} nos módulos.`,
+        `${state.goals.length} meta${state.goals.length === 1 ? "" : "s"} pedagógica${state.goals.length === 1 ? "" : "s"} ativa${state.goals.length === 1 ? "" : "s"}.`,
+        `${state.reviews.length} percepção${state.reviews.length === 1 ? "" : "s"} registrada${state.reviews.length === 1 ? "" : "s"} pelo adulto.`,
+        `${state.completedGoals.length} meta${state.completedGoals.length === 1 ? "" : "s"} concluída${state.completedGoals.length === 1 ? "" : "s"} no histórico.`
+      ];
       els.generalFeedback.innerHTML = `
         <details class="feedback-card primary">
           <summary>
@@ -2119,6 +2125,17 @@
           </summary>
           <div class="feedback-body">
             <p class="small">Use esta síntese como ponto de partida. A comparação principal é sempre com o próprio percurso da criança.</p>
+          </div>
+        </details>
+        <details class="feedback-card milestone">
+          <summary>
+            <span class="pill">base da leitura</span>
+            <strong>Evidências, metas e percepções</strong>
+            <p class="muted">${escapeHtml(evidenceBase[0])}</p>
+          </summary>
+          <div class="feedback-body">
+            ${listItems(evidenceBase)}
+            <p class="small">As percepções do adulto ajudam a dar contexto, mas a orientação fica mais forte quando aparece junto de atividades registradas ao longo do tempo.</p>
           </div>
         </details>
         <details class="feedback-card attention">
