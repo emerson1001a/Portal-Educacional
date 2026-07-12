@@ -399,6 +399,34 @@
       els.message.classList.remove("error");
     }
 
+    function moduleLabel(service) {
+      return {
+        redacao: "Redação",
+        interpretacao: "Interpretação",
+        tabuada: "Tabuada"
+      }[service] || "Atividade";
+    }
+
+    function consumePortalReturnNotice() {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("portal_status");
+      if (!status) return;
+
+      const service = params.get("service");
+      const saved = status === "activity_saved";
+      showMessage(
+        saved
+          ? `${moduleLabel(service)} registrada. Você voltou para a missão.`
+          : `Você voltou para a missão. Se terminou a atividade, peça ajuda ao adulto para conferir o registro.`,
+        !saved
+      );
+
+      const cleanUrl = state.token
+        ? `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(state.token)}`
+        : `${window.location.origin}${window.location.pathname}`;
+      window.history.replaceState({}, "", cleanUrl);
+    }
+
     function applyModuleConfigParams(params, item) {
       const config = item?.config || {};
       if (item?.module_id === "tabuada" && config.tabuada) {
@@ -605,6 +633,7 @@
         state.assignments = Array.isArray(data.assignments) ? data.assignments : [];
         state.freeModules = Array.isArray(data.free_modules) ? data.free_modules : [];
         render();
+        consumePortalReturnNotice();
       } catch (error) {
         state.assignments = [];
         state.freeModules = [];
