@@ -313,3 +313,19 @@ Motivo:
 - permitir que novas janelas do Codex retomem o contexto certo;
 - evitar backlog desatualizado apontando para etapas que ja evoluiram;
 - proteger as decisoes pedagogicas centrais enquanto o produto cresce por modulos.
+
+### Painel administrativo sem acesso pedagogico individual
+
+Decisao:
+
+- o painel administrativo do negocio deve trabalhar com dados operacionais, planos, cobranca, uso, suporte e metricas agregadas;
+- admin do negocio nao acessa dados pedagogicos individuais, textos, percepcoes, feedbacks privados, relatorios individuais ou dados pessoais sensiveis;
+- o produto pode usar analytics anonimo/agregado para entender evolucao, dificuldade e efetividade por modulo;
+- qualquer consulta identificavel de crianca, adulto, turma ou escola exige autorizacao explicita dos responsaveis legais ou da escola autorizada, alem de auditoria.
+
+Motivo:
+
+- proteger a confianca de pais, criancas, professores e escolas;
+- permitir melhoria do produto sem invadir a privacidade pedagogica;
+- evitar que `admin` vire permissao ampla sobre dados sensiveis;
+- alinhar a arquitetura futura com privacidade, LGPD e minimo acesso necessario.

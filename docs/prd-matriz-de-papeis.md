@@ -83,7 +83,16 @@ Pessoa responsavel por configuracao operacional da plataforma.
 
 Responsabilidade principal:
 
-- manter modulos, configuracoes, modelos e integracoes funcionando.
+- manter modulos, configuracoes, modelos, integracoes, planos, cobranca e operacao do negocio funcionando.
+
+Regra critica:
+
+- administrador do negocio nao acessa dados pedagogicos individuais, textos, percepcoes, feedbacks privados, relatorios de criancas ou dados pessoais sensiveis de adultos e criancas;
+- o painel administrativo deve trabalhar com dados operacionais, indicadores agregados, faturamento, uso por modulo, suporte tecnico e auditoria;
+- o produto pode usar metricas anonimas ou agregadas para entender quantas criancas estao evoluindo, quantas estao com dificuldade por area/modulo e onde o produto precisa melhorar;
+- consultas de melhoria do produto devem evitar identificacao individual e precisam respeitar tamanho minimo de amostra para reduzir risco de reidentificacao;
+- acesso a qualquer dado especifico de uma crianca, adulto, escola ou turma identificavel so pode ocorrer com autorizacao explicita dos responsaveis legais ou da escola autorizada;
+- qualquer necessidade excepcional de suporte que envolva conteudo individual deve depender de mecanismo especifico, autorizado, auditado e desenhado fora do acesso administrativo rotineiro.
 
 ## Niveis de informacao
 
@@ -136,7 +145,7 @@ Inclui:
 
 ### Nivel 4: operacional
 
-Pode aparecer apenas para administracao tecnica quando necessario.
+Pode aparecer para administracao operacional e tecnica, sem expor conteudo pedagogico individual.
 
 Inclui:
 
@@ -145,6 +154,18 @@ Inclui:
 - tokens;
 - configuracoes de modulo;
 - dados tecnicos de execucao.
+- metricas agregadas de uso;
+- metricas anonimas de evolucao e dificuldade por modulo, area, faixa etaria, serie ou periodo, sempre com protecao contra reidentificacao;
+- status de plano e cobranca;
+- indicadores de ativacao, inatividade e suporte.
+
+Nao inclui:
+
+- textos de criancas;
+- percepcoes de adultos;
+- feedback adulto privado;
+- relatorios longitudinais individuais;
+- historico pedagogico individual identificavel.
 
 ## Objetos que precisam de classificacao
 
@@ -161,36 +182,44 @@ Todo dado sensivel deve nascer com classificacao clara. A Etapa 2 deve transform
 | Evidencia bruta | Nivel 2 | Nao por padrao | Adulto/professor usa para acompanhar |
 | Relatorio longitudinal | Nivel 2 | Nao | Conteudo adulto |
 | Log tecnico | Nivel 4 | Nao | Operacional |
+| Metrica agregada de negocio | Nivel 4 | Nao | Pode alimentar painel administrativo |
+| Metrica anonima de evolucao | Nivel 4 | Nao | Pode melhorar produto se nao identificar crianca, adulto, escola ou turma pequena |
 
 ## Matriz de permissoes por area
 
 | Area | Responsavel | Professor | Crianca | Admin |
 |---|---|---|---|---|
-| Login adulto | Sim | Sim | Nao | Sim |
+| Login adulto | Sim | Sim | Nao | Nao no painel pedagogico |
+| Login administrativo | Nao | Nao | Nao | Sim |
 | Acesso infantil por link/codigo | Nao | Nao | Sim | Nao |
-| Criar crianca | Sim | Sim, se autorizado | Nao | Sim |
-| Ver crianca vinculada | Sim | Sim, se autorizado | Apenas a si mesma | Sim, se necessario |
-| Editar dados basicos da crianca | Sim | Sim, se autorizado | Nao | Sim |
+| Criar crianca | Sim | Sim, se autorizado | Nao | Nao |
+| Ver crianca vinculada | Sim | Sim, se autorizado | Apenas a si mesma | Nao |
+| Editar dados basicos da crianca | Sim | Sim, se autorizado | Nao | Nao |
 | Registrar percepcao privada | Sim | Sim | Nao | Nao |
 | Ver percepcao privada familiar | Autor | Nao, salvo compartilhamento | Nao | Nao por padrao |
 | Ver observacao pedagogica do professor | Se compartilhada | Autor | Nao | Nao por padrao |
-| Criar meta | Sim | Sim | Nao | Sim |
+| Criar meta | Sim | Sim | Nao | Nao |
 | Aprovar meta sugerida pela IA | Sim | Sim | Nao | Nao |
-| Editar meta ativa | Sim | Sim, se autor ou autorizado | Nao | Sim |
-| Encerrar meta | Sim | Sim, se autor ou autorizado | Nao | Sim |
-| Criar tarefa | Sim | Sim | Nao | Sim |
-| Liberar tarefa | Sim | Sim | Nao | Sim |
-| Ver tarefa liberada | Sim | Sim | Sim | Sim |
+| Editar meta ativa | Sim | Sim, se autor ou autorizado | Nao | Nao |
+| Encerrar meta | Sim | Sim, se autor ou autorizado | Nao | Nao |
+| Criar tarefa | Sim | Sim | Nao | Nao |
+| Liberar tarefa | Sim | Sim | Nao | Nao |
+| Ver tarefa liberada | Sim | Sim | Sim | Nao |
 | Executar tarefa | Nao | Nao | Sim | Nao |
 | Enviar resposta | Nao | Nao | Sim | Nao |
-| Ver feedback infantil | Sim | Sim | Sim | Sim |
-| Ver feedback adulto | Sim | Sim | Nao | Sim, se necessario |
-| Ver evidencia bruta | Sim | Sim, se autorizado | Nao por padrao | Sim, se necessario |
-| Ver relatorio longitudinal | Sim | Sim, se autorizado | Nao | Sim, se necessario |
-| Gerar relatorio para reuniao | Sim | Sim | Nao | Sim |
-| Criar turma | Nao no MVP familiar | Sim | Nao | Sim |
-| Atribuir tarefa para turma | Nao | Sim | Nao | Sim |
+| Ver feedback infantil | Sim | Sim | Sim | Nao |
+| Ver feedback adulto | Sim | Sim | Nao | Nao |
+| Ver evidencia bruta | Sim | Sim, se autorizado | Nao por padrao | Nao |
+| Ver relatorio longitudinal | Sim | Sim, se autorizado | Nao | Nao |
+| Gerar relatorio para reuniao | Sim | Sim | Nao | Nao |
+| Criar turma | Nao no MVP familiar | Sim | Nao | Nao |
+| Atribuir tarefa para turma | Nao | Sim | Nao | Nao |
 | Configurar modulo | Nao | Nao | Nao | Sim |
+| Ver metricas agregadas de uso | Nao | Nao | Nao | Sim |
+| Ver metricas anonimas de evolucao | Nao | Nao | Nao | Sim |
+| Rodar analises de melhoria do produto | Nao | Nao | Nao | Sim, apenas com dados anonimos/agregados |
+| Gerenciar planos e cobranca | Nao | Nao | Nao | Sim |
+| Ver usuarios inativos sem conteudo sensivel | Nao | Nao | Nao | Sim |
 | Voltar da area infantil ao painel adulto | Com senha adulta | Com senha adulta | Nao | Com senha adulta |
 
 ## Matriz de bloqueios obrigatorios
@@ -203,7 +232,8 @@ Todo dado sensivel deve nascer com classificacao clara. A Etapa 2 deve transform
 | Sessao lembrada nao libera retorno adulto | Computador pode estar com a crianca | Retorno exige senha adulta ou mecanismo equivalente |
 | Professor nao ve contexto familiar privado por padrao | Separacao escola-familia | Compartilhamento deve ser explicito |
 | Responsavel nao ve dados de turma inteira | Privacidade dos outros alunos | Responsavel ve apenas criancas vinculadas |
-| Admin nao acessa conteudo sensivel por rotina | Minimizar exposicao | Acesso admin deve ser tecnico e excepcional |
+| Admin nao acessa conteudo pedagogico individual | Minimizar exposicao e proteger privacidade | Painel admin usa dados de negocio e metricas agregadas, sem textos, percepcoes, feedbacks privados ou relatorios individuais |
+| Metrica anonima nao pode reidentificar crianca | Privacidade e LGPD | Analises devem usar agregacao, pseudonimizacao quando necessario e tamanho minimo de amostra |
 
 ## Casos limite
 

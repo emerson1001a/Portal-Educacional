@@ -25,7 +25,16 @@ Esta etapa e delicada porque seguranca nao pode depender apenas da interface.
 
 Se a crianca nao pode ver percepcoes privadas, isso precisa ser verdade no banco, nos endpoints e nas policies, nao apenas escondido por CSS ou por navegacao.
 
-Tambem precisamos evitar outro erro comum: dar poder demais ao papel `admin`. O admin deve existir para operacao, mas o acesso a dados pedagogicos sensiveis deve ser excepcional, registrado e reduzido ao minimo necessario.
+Tambem precisamos evitar outro erro comum: dar poder demais ao papel `admin`. O admin do negocio deve existir para operacao, cobranca, suporte tecnico, metricas e configuracao da plataforma, mas nao deve acessar dados pedagogicos individuais, textos, percepcoes, feedbacks privados ou relatorios de criancas e adultos.
+
+Regra atualizada:
+
+- `admin` nao deve ser atalho para ver dados de criancas;
+- o painel administrativo deve usar dados agregados e operacionais;
+- o painel pode mostrar metricas anonimas de evolucao, dificuldade, uso por modulo, retencao, inatividade, cobranca e suporte;
+- queries de melhoria do produto devem operar sobre dados anonimos, agregados ou pseudonimizados, com cuidado contra reidentificacao em grupos pequenos;
+- dados especificos de crianca, adulto, turma ou escola identificavel so podem ser acessados com autorizacao explicita dos responsaveis legais ou da escola autorizada, e com trilha de auditoria;
+- qualquer rotina excepcional de suporte que envolva conteudo individual precisa ser desenhada como fluxo proprio, autorizado e auditado, nao como permissao administrativa padrao.
 
 ## Estado atual do schema
 
@@ -66,7 +75,9 @@ O Supabase deve ser a camada principal para:
 
 ### Adulto autenticado
 
-Responsavel, professor e admin entram por Supabase Auth.
+Responsavel e professor entram por Supabase Auth no ambiente adulto pedagogico.
+
+Admin pode entrar por Supabase Auth em ambiente administrativo separado, sem acesso direto a dados pedagogicos individuais.
 
 ### Crianca no MVP
 
@@ -397,10 +408,14 @@ can_adult_access_child(child_id uuid)
 
 Retorna true se:
 
-- admin operacional autorizado;
 - responsavel ativo da crianca;
 - professor ativo da crianca;
 - professor da turma onde a crianca esta ativa.
+
+Regra:
+
+- admin do negocio nao entra nessa funcao;
+- acesso administrativo deve ser separado e limitado a dados operacionais/agregados.
 
 ### Adulto pode gerenciar tarefas
 
@@ -441,27 +456,28 @@ Motivo:
 ### profiles
 
 - usuario ve e edita seu proprio profile;
-- admin tecnico pode ver profiles se necessario;
+- admin do negocio ve apenas dados necessarios para operacao, cobranca e suporte, preferencialmente sem dados sensiveis;
 - crianca nao acessa.
 
 ### profile_roles
 
 - usuario ve seus papeis;
-- admin tecnico gerencia;
+- admin do negocio gerencia papeis operacionais sem acessar conteudo pedagogico;
 - futuro: convite pode conceder papel teacher/guardian.
 
 ### children
 
 - adulto ve criancas vinculadas;
 - professor ve alunos vinculados;
-- admin tecnico ve se necessario;
+- admin do negocio nao ve dados identificaveis de criancas por padrao;
+- painel administrativo pode consultar apenas contagens e segmentacoes anonimas, como faixa etaria, modulo, plano, periodo e status agregado;
 - token infantil nao deve consultar diretamente todos os dados da crianca.
 
 ### child_guardians
 
 - responsavel ve seu proprio vinculo;
 - outro responsavel so ve se compartilhamento exigir;
-- admin tecnico gerencia se necessario.
+- admin do negocio nao consulta vinculos familiares individuais por rotina.
 
 ### child_teachers
 
@@ -474,37 +490,56 @@ Motivo:
 - autor ve;
 - compartilhados veem conforme `visibility`;
 - crianca nunca ve;
-- admin nao ve por padrao.
+- admin nao ve.
 
 ### learning_goals
 
 - adultos vinculados veem metas permitidas;
 - crianca nao acessa meta adulta diretamente;
 - crianca pode ver tarefa derivada da meta.
+- admin do negocio nao ve metas individuais.
 
 ### assignments
 
 - adultos autorizados gerenciam;
 - crianca acessa apenas via token e apenas campos infantis;
 - assignments nao liberadas ficam invisiveis para crianca.
+- admin do negocio nao ve tarefas individuais.
 
 ### activity_sessions
 
 - modulo cria via endpoint seguro;
 - adulto autorizado ve;
 - crianca nao lista historico adulto.
+- admin do negocio pode ver metricas agregadas ou anonimas de sessoes, sem conteudo individual identificavel.
 
 ### activity_events
 
 - modulo insere via endpoint seguro;
 - adulto autorizado ve;
 - crianca nao ve feedback adulto nem evidencia bruta.
+- admin do negocio pode ver metricas agregadas ou anonimas de eventos, sem respostas, textos, feedbacks individuais ou identificadores diretos.
 
 ### progress_snapshots e learning_reviews
 
 - adultos autorizados veem;
 - crianca nao acessa;
 - relatorio longitudinal permanece adulto.
+- admin do negocio nao acessa relatorios individuais.
+- painel administrativo pode usar indicadores anonimos derivados para entender tendencia de evolucao, dificuldade e efetividade por modulo, desde que nao permita identificar crianca, familia, professor, escola ou turma pequena.
+
+### Analytics anonimo
+
+O produto pode criar views, jobs ou tabelas derivadas para analise anonima.
+
+Regras:
+
+- remover identificadores diretos antes de chegar ao painel administrativo;
+- preferir agregacao por periodo, modulo, area, faixa etaria, serie e tipo de conta;
+- aplicar tamanho minimo de amostra para nao expor grupos pequenos;
+- nao disponibilizar textos, redacoes, respostas abertas, percepcoes ou feedbacks privados no painel administrativo;
+- registrar auditoria de queries administrativas sensiveis;
+- exigir autorizacao explicita para qualquer analise identificavel solicitada por escola ou responsaveis.
 
 ## Endpoints necessarios
 

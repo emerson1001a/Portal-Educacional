@@ -39,7 +39,10 @@
 - Unificacao visual e logica dos modulos.
 - Catalogo de modulos plugaveis e jornadas de apoio.
 - Painel administrativo do negocio: acompanhar usuarios, contas, criancas cadastradas, modulos utilizados, intensidade de uso, planos, cobranca, inadimplencia, usuarios inativos, churn, suporte, auditoria e indicadores operacionais.
-- Painel administrativo deve priorizar metricas agregadas e operacionais, com acesso minimo necessario a dados pedagogicos sensiveis e trilha de auditoria para qualquer consulta administrativa.
+- Painel administrativo nao deve acessar dados pedagogicos individuais, textos, percepcoes, feedbacks privados ou dados pessoais sensiveis de criancas e adultos; deve trabalhar com dados de negocio, metricas agregadas, cobranca, uso, suporte operacional e auditoria.
+- Painel administrativo pode ter analytics anonimo para entender quantas criancas estao evoluindo, quantas estao com dificuldade por area/modulo e onde o produto precisa melhorar, sempre com dados agregados ou pseudonimizados, tamanho minimo de amostra e protecao contra reidentificacao.
+- Qualquer consulta identificavel de crianca, adulto, turma ou escola so pode ocorrer com autorizacao explicita dos responsaveis legais ou da escola autorizada, alem de trilha de auditoria.
+- Antes de criar o painel administrativo, revisar policies, funcoes e endpoints para separar `admin_operacional` de acesso pedagogico. O admin do negocio nao deve herdar permissao para ver criancas, relatorios, percepcoes ou evidencias individuais.
 - Preparar habilitacao futura por modulo, sem expor bloqueios comerciais para a crianca.
 - Redacao: avaliar se o bloco lateral de missoes deve ser eliminado e integrado ao bloco principal, com a etapa evoluindo dentro do fluxo central.
 - Definir arquitetura comercial/funcional por modulos plugaveis, sem alterar ou excluir modulos durante o periodo inicial de testes.
@@ -51,6 +54,5 @@
 - Professor podera convidar responsavel por e-mail?
 - Responsavel podera compartilhar relatorio com professor por link?
 - Admin tera tela propria ou apenas acesso operacional inicial?
-- Qual sera o limite de acesso do painel administrativo a dados pedagogicos individuais, considerando privacidade, LGPD, auditoria e necessidade real de suporte?
 - Quais jornadas iniciais fazem sentido: leitura, escrita, matematica, idiomas, organizacao?
 - A habilitacao comercial futura sera por conta, crianca, turma, escola ou pacote?
