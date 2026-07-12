@@ -21,6 +21,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback, limites pedagogicos e material para revisao profissional.
 - `deployment-plan.md`: plano de GitHub, Vercel e Supabase.
 - `external-setup.md`: configuracoes externas ja usadas no projeto.
+- `supabase-migrations-checklist.md`: ordem e finalidade das migracoes SQL do Supabase.
 - `decisao-token-infantil.md`: escopos, expiracao e limites do link infantil.
 - `decisao-codigo-curto-infantil.md`: decisao sobre codigo curto temporario para missao, sessao e sala de aula.
 

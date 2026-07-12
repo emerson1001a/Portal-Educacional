@@ -60,3 +60,11 @@ supabase/schema.sql
 ```
 
 no SQL Editor.
+
+Depois da base inicial, siga a ordem de migracoes em:
+
+```text
+docs/supabase-migrations-checklist.md
+```
+
+Esse checklist separa o que e necessario para o fluxo atual do que e preparacao futura, como a area de Ingles.
