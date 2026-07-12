@@ -31,11 +31,23 @@ function safeAssignment(assignment, items) {
       activity_type: item.activity_type,
       title: item.title,
       child_instructions: item.child_instructions || "",
+      config: item.config || {},
       sort_order: item.sort_order,
       required: item.required,
       status: item.status
     }))
   };
+}
+
+function ageFromBirthDate(value) {
+  if (!value) return null;
+  const birth = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(birth.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDelta = today.getMonth() - birth.getMonth();
+  if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < birth.getDate())) age -= 1;
+  return age > 0 && age < 25 ? age : null;
 }
 
 function sessionExpiresAt(accessExpiresAt) {
@@ -76,7 +88,7 @@ export default async function handler(req, res) {
 
   const { data: child, error: childError } = await admin
     .from("children")
-    .select("id, full_name, grade")
+    .select("id, full_name, birth_date, grade")
     .eq("id", access.child_id)
     .maybeSingle();
 
@@ -114,11 +126,21 @@ export default async function handler(req, res) {
   const assignmentIds = (assignments || []).map((assignment) => assignment.id);
   let items = [];
   if (assignmentIds.length) {
-    const { data: itemRows, error: itemsError } = await admin
+    let { data: itemRows, error: itemsError } = await admin
       .from("assignment_items")
-      .select("id, assignment_id, module_id, activity_type, title, child_instructions, sort_order, required, status")
+      .select("id, assignment_id, module_id, activity_type, title, child_instructions, config, sort_order, required, status")
       .in("assignment_id", assignmentIds)
       .order("sort_order", { ascending: true });
+
+    if (itemsError && /config|schema cache|column/i.test(String(itemsError.message || ""))) {
+      const retry = await admin
+        .from("assignment_items")
+        .select("id, assignment_id, module_id, activity_type, title, child_instructions, sort_order, required, status")
+        .in("assignment_id", assignmentIds)
+        .order("sort_order", { ascending: true });
+      itemRows = retry.data;
+      itemsError = retry.error;
+    }
 
     if (itemsError) return json(res, 500, { ok: false, message: itemsError.message });
     items = itemRows || [];
@@ -135,7 +157,10 @@ export default async function handler(req, res) {
     ok: true,
     token: rawToken,
     child_url: `${publicOrigin(req)}/child.html?token=${encodeURIComponent(rawToken)}`,
-    child,
+    child: {
+      ...child,
+      age: ageFromBirthDate(child.birth_date)
+    },
     access: {
       id: access.id,
       purpose: access.purpose,
