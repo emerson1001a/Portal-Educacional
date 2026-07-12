@@ -1474,6 +1474,20 @@
       return age >= 0 && age < 30 ? age : null;
     }
 
+    function birthdayContext(child) {
+      const birthDate = dateOnly(child?.birth_date);
+      if (!birthDate) return "";
+      const [, month, day] = birthDate.split("-").map(Number);
+      if (!month || !day) return "";
+      const today = new Date();
+      const currentMonth = today.getMonth() + 1;
+      const currentDay = today.getDate();
+      if (currentMonth !== month) return "";
+      if (currentDay === day) return "aniversário hoje";
+      if (Math.abs(currentDay - day) <= 7) return "semana do aniversário";
+      return "mês do aniversário";
+    }
+
     function areaLabel(area) {
       return { leitura: "Leitura", escrita: "Escrita", matematica: "Matemática", ingles: "Inglês", organizacao: "Organização", outro: "Outro" }[area] || area;
     }
@@ -2040,7 +2054,8 @@
       state.children.forEach((item) => {
         const age = childAge(item);
         const ageLabel = age !== null ? `${age} ano${age === 1 ? "" : "s"}` : "idade não informada";
-        const badges = [item.grade, ageLabel]
+        const birthdayLabel = birthdayContext(item);
+        const badges = [item.grade, ageLabel, birthdayLabel]
           .filter(Boolean)
           .map((label) => `<span class="pill">${escapeHtml(label)}</span>`)
           .join("");
