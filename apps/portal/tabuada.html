@@ -38,7 +38,7 @@
     <main class="hero">
       <section class="card setup">
         <div><h2>Preparar treino</h2><div class="muted">Escolha o aluno e as tabuadas. Depois é só começar.</div></div>
-        <div class="grid2"><div class="field"><label for="studentId">Aluno</label><input id="studentId" placeholder="ex.: miguel01" /></div><div class="field"><label for="mode">Modo de treino</label><select id="mode"><option value="adaptive" selected>Adaptativo</option><option value="random">Aleatório</option></select></div></div>
+        <div class="grid2"><div class="field"><label for="studentId">Aluno</label><input id="studentId" placeholder="ex.: miguel01" /><div id="studentContext" class="muted hidden"></div></div><div class="field"><label for="mode">Modo de treino</label><select id="mode"><option value="adaptive" selected>Adaptativo</option><option value="random">Aleatório</option></select></div></div>
         <div class="field"><label>Tabuadas</label><div class="tabs" id="tabsBox"></div><div class="grid2"><button id="allBtn" class="secondary">Marcar todas</button><button id="noneBtn" class="secondary">Desmarcar todas</button></div></div>
         <div class="grid3"><button id="startBtn" class="primary">Começar</button><button id="pauseBtn" class="caution">Pausar</button><button id="resetBtn" class="danger" title="Apaga dados do aluno atual">Reset do aluno</button></div>
         <div id="studentMini" class="student-panel"><div class="metric"><span class="muted">Últimas 20 tentativas</span><div id="studentMiniBox" style="margin-top:8px;">—</div></div><div class="metric"><span class="muted">Mais precisa treinar</span><strong id="studentMostErrors">—</strong></div><div class="msg" style="grid-column:1/-1;"><h3>Mensagem de incentivo</h3><div id="studentCoachMsg"><strong>—</strong><div class="muted">—</div></div><div class="muted" style="margin-top:8px;"><b>Últimas mensagens:</b></div><div id="studentCoachHistory" class="muted" style="margin-top:4px;">—</div></div></div>
@@ -83,10 +83,28 @@
   const EXTRA_COACH_ON_ERR = true;    // gera dica extra em padrão de erro (pressa/dúvida)
   const MISSION_TARGET_ATTEMPTS = 20;
 
+  function parseAge(value) {
+    const age = Number.parseInt(value || "", 10);
+    return Number.isFinite(age) && age > 0 && age < 25 ? age : null;
+  }
+
+  function ageFromBirthDate(value) {
+    if (!value) return null;
+    const birth = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(birth.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDelta = today.getMonth() - birth.getMonth();
+    if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < birth.getDate())) age -= 1;
+    return age > 0 && age < 25 ? age : null;
+  }
+
   const params = new URLSearchParams(window.location.search);
   const portal = {
     childId: params.get("child_id") || "",
     childName: params.get("child_name") || "",
+    childBirthDate: params.get("child_birth_date") || "",
+    childAge: parseAge(params.get("child_age")) || ageFromBirthDate(params.get("child_birth_date") || ""),
     token: params.get("portal_event_token") || "",
     childToken: params.get("portal_child_token") || "",
     assignmentId: params.get("assignment_id") || "",
@@ -115,6 +133,7 @@
   const roleHint = el("roleHint");
   const teacherArea = el("teacherArea");
   const studentMini = el("studentMini");
+  const studentContextEl = el("studentContext");
 
   // Student coach UI
   const studentCoachMsg = el("studentCoachMsg");
@@ -275,7 +294,8 @@
           recent_attempts: summary.total,
           recent_correct: summary.correct,
           recent_accuracy_pct: summary.acc,
-          hard_facts: summary.hard
+          hard_facts: summary.hard,
+          child_age: student.profile?.child_age ?? portal.childAge ?? null
         },
         feedback: {
           child: {
@@ -296,6 +316,7 @@
           }
         },
         artifacts: {
+          student_profile: student.profile || null,
           recent_events: recentEvents,
           coach_history: student.coach?.history || []
         }
@@ -347,6 +368,14 @@
       if (!db.students[studentId].coach) {
         db.students[studentId].coach = { history: [], lastCoachAtTotal: 0 };
       }
+    }
+    if (portal.enabled) {
+      db.students[studentId].profile = {
+        child_id: portal.childId || studentId,
+        child_name: portal.childName || "Aluno da missão",
+        child_birth_date: portal.childBirthDate || null,
+        child_age: portal.childAge
+      };
     }
   }
 
@@ -1316,6 +1345,13 @@
     studentIdEl.value = portal.childName || "Aluno da missão";
     studentIdEl.readOnly = true;
     studentIdEl.title = "Aluno definido pela missão no Portal Educacional";
+    if (portal.childAge || portal.childBirthDate) {
+      const parts = [];
+      if (portal.childAge) parts.push(`${portal.childAge} anos`);
+      if (portal.childBirthDate) parts.push(`nasc. ${portal.childBirthDate.split("-").reverse().join("/")}`);
+      studentContextEl.textContent = `Dados recebidos do Portal: ${parts.join(" • ")}.`;
+      studentContextEl.classList.remove("hidden");
+    }
     resetBtn.style.display = "none";
     exportBtn.style.display = "none";
     importBtn.style.display = "none";
