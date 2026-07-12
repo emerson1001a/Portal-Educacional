@@ -1490,6 +1490,20 @@
       return module?.short_name || module?.name || service || "Atividade";
     }
 
+    function assignmentConfigSummary(item) {
+      if (item?.module_id !== "tabuada") return "";
+      const tabuada = item.config?.tabuada;
+      if (!tabuada) return "";
+      const tabs = Array.isArray(tabuada.tabs) && tabuada.tabs.length ? tabuada.tabs.join(", ") : "";
+      const target = tabuada.target_attempts ? `${tabuada.target_attempts} respostas` : "";
+      const mode = tabuada.mode === "random" ? "aleatório" : "adaptativo";
+      const parts = [];
+      if (tabs) parts.push(`tabuadas ${tabs}`);
+      if (target) parts.push(target);
+      parts.push(`modo ${mode}`);
+      return parts.join(" · ");
+    }
+
     function eventAdultSummary(event) {
       const feedback = event?.feedback && typeof event.feedback === "object" ? event.feedback : {};
       const adult = feedback.adult && typeof feedback.adult === "object" ? feedback.adult : {};
@@ -2250,12 +2264,16 @@
         const linkedGoal = goalById(assignment.goal_id);
         const dueText = assignment.due_at ? `Prazo: ${formatDate(assignment.due_at)}` : "Sem prazo definido";
         const effectiveStatus = assignment.resolved_status || assignment.status;
-        const itemRows = (assignment.items || []).map((item) => `
-          <div class="small">
-            <strong>${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}:</strong>
-            ${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}
-          </div>
-        `).join("");
+        const itemRows = (assignment.items || []).map((item) => {
+          const configSummary = assignmentConfigSummary(item);
+          return `
+            <div class="small">
+              <strong>${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}:</strong>
+              ${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}
+              ${configSummary ? `<div class="muted small">${escapeHtml(configSummary)}</div>` : ""}
+            </div>
+          `;
+        }).join("");
         const card = document.createElement("article");
         card.className = "goal-card";
         card.innerHTML = `
@@ -3233,11 +3251,20 @@
       const assignmentIds = assignments.map((assignment) => assignment.id);
       let items = [];
       if (assignmentIds.length) {
-        const { data: itemRows, error: itemsError } = await state.supabase
+        let { data: itemRows, error: itemsError } = await state.supabase
           .from("assignment_items")
-          .select("id, assignment_id, module_id, title, status, sort_order")
+          .select("id, assignment_id, module_id, title, status, sort_order, config")
           .in("assignment_id", assignmentIds)
           .order("sort_order", { ascending: true });
+        if (itemsError && /config|schema cache|column/i.test(String(itemsError.message || ""))) {
+          const retry = await state.supabase
+            .from("assignment_items")
+            .select("id, assignment_id, module_id, title, status, sort_order")
+            .in("assignment_id", assignmentIds)
+            .order("sort_order", { ascending: true });
+          itemRows = retry.data;
+          itemsError = retry.error;
+        }
         if (itemsError) {
           message(`Itens das missões ainda não disponíveis: ${itemsError.message}`, true);
         } else {

@@ -414,6 +414,16 @@
       }
     }
 
+    function assignmentConfigSummary(item) {
+      if (item?.module_id !== "tabuada") return "";
+      const tabuada = item.config?.tabuada;
+      if (!tabuada) return "";
+      const parts = [];
+      if (Array.isArray(tabuada.tabs) && tabuada.tabs.length) parts.push(`tabuadas ${tabuada.tabs.join(", ")}`);
+      if (tabuada.target_attempts) parts.push(`${tabuada.target_attempts} respostas`);
+      return parts.join(" · ");
+    }
+
     function moduleUrl(item) {
       const module = item.module || {};
       if (!module.url) return "";
@@ -532,6 +542,7 @@
         sortedItems.forEach((item) => {
           const module = item.module || {};
           const isDone = item.status === "done";
+          const configSummary = assignmentConfigSummary(item);
           const row = document.createElement("div");
           row.className = `item${isDone ? " done" : ""}`;
           row.innerHTML = `
@@ -539,6 +550,7 @@
             <div>
               <strong>${item.title || module.short_name || module.name || "Atividade"}</strong>
               ${item.child_instructions ? `<div class="muted small">${item.child_instructions}</div>` : ""}
+              ${configSummary ? `<div class="muted small">${configSummary}</div>` : ""}
               ${isDone ? '<div class="done-line">Feita. Bom trabalho!</div>' : ""}
             </div>
             <button class="button" type="button">${isDone ? "Feita" : "Começar"}</button>
