@@ -17,7 +17,7 @@ Documento:
 
 ## Etapa 2: Controle de acesso e Supabase
 
-Status: migracao proposta para revisao
+Status: implementada em base incremental
 
 Objetivo:
 
@@ -58,7 +58,7 @@ Documento:
 
 ## Etapa 5: Banco de dados
 
-Status: migracao proposta para revisao
+Status: base atual em uso; migracoes incrementais documentadas
 
 Objetivo:
 
@@ -77,15 +77,21 @@ Documentos:
 
 ## Etapa 6: Interface do adulto
 
-Status: planejada
+Status: MVP em uso
 
 Objetivo:
 
 - organizar telas de criancas, metas, tarefas, evidencias e relatorios.
 
+Proximo foco:
+
+- reduzir excesso visual por blocos recolhiveis;
+- melhorar historico unificado;
+- transformar feedback dos modulos em relatorio longitudinal claro.
+
 ## Etapa 7: Interface da crianca
 
-Status: planejada
+Status: MVP em uso
 
 Objetivo:
 
@@ -99,13 +105,17 @@ Documento de apoio:
 
 ## Etapa 8: Relatorio longitudinal
 
-Status: planejada
+Status: proxima grande prioridade
 
 Objetivo:
 
 - consolidar evidencias;
 - mostrar progresso no tempo;
 - gerar relatorio para pais e professores.
+
+Observacao:
+
+- esta etapa e o centro de valor do produto; deve ser feita com calma, a partir dos testes reais de uso.
 
 ## Etapa 9: Unificacao visual e logica dos modulos
 
@@ -117,7 +127,7 @@ Objetivo:
 
 ## Etapa 10: Catalogo de modulos plugaveis
 
-Status: planejada
+Status: arquitetura iniciada
 
 Objetivo:
 
@@ -125,3 +135,8 @@ Objetivo:
 - organizar modulos por jornadas de apoio;
 - preparar campos para habilitacao futura por conta, turma ou crianca;
 - considerar Ingles e outros dominios como modulos futuros sem antecipar sua implementacao.
+
+Documento:
+
+- `docs/prd-modulos-plugaveis.md`
+- `docs/prd-modulo-ingles.md`

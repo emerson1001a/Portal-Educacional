@@ -9,45 +9,47 @@ Ela nao substitui `docs/`. A diferenca e:
 
 ## Estado atual
 
-Etapa atual: Etapa 2 - Controle de acesso e Supabase
-Status: migracao proposta para revisao
-Documento principal: `docs/prd-controle-de-acesso-supabase.md`
+Etapa atual: consolidacao do portal adulto/crianca com evidencias longitudinais
+Status: MVP funcional em evolucao incremental
+Documento de retomada: `projeto/painel-atual.md`
 
 ## Como retomar em uma nova janela do Codex
 
 Quando o trabalho for retomado, comece por:
 
 1. ler este arquivo;
-2. abrir `roadmap.md`;
-3. verificar a etapa em andamento;
-4. ler o PRD indicado;
+2. abrir `painel-atual.md`;
+3. abrir `backlog.md`;
+4. verificar a etapa em andamento em `roadmap.md`;
 5. checar `git status`.
 
 ## Etapa em andamento
 
-Etapa 2: Controle de acesso e Supabase.
+Consolidacao do MVP do Portal Educacional.
 
 Entrega esperada:
 
-- PRD de controle de acesso;
-- desenho de tabelas e vinculos;
-- politicas RLS previstas;
-- funcoes seguras;
-- criterios de teste.
+- manter adulto e crianca em ambientes separados;
+- garantir que as evidencias dos modulos retornem ao historico central;
+- melhorar relatorio longitudinal;
+- refinar navegabilidade entre portal, area infantil e modulos;
+- preservar as decisoes pedagogicas e de seguranca ja documentadas.
 
-Entrega tecnica em revisao:
+Entregas recentes:
 
-- `supabase/migrations/20260709_access_control_foundation.sql`
-- `supabase/EXECUCAO-MIGRACAO-ETAPA-2.md`
-- `supabase/tests/20260709_access_control_smoke.sql`
-- `docs/analise-schema-etapa-2.md`
+- area infantil por link temporario;
+- missoes adultas com itens por modulo;
+- retorno de atividade concluida para o historico adulto;
+- Tabuada configuravel por missao;
+- PRD do modulo de Ingles;
+- checklist e endpoint de status das migracoes Supabase.
 
-Antes de rodar no Supabase:
+Antes de mexer em banco:
 
-1. revisar a migracao;
-2. rodar no SQL Editor;
-3. testar permissoes basicas;
-4. depois adaptar endpoints e telas.
+1. abrir `docs/supabase-migrations-checklist.md`;
+2. testar `/api/supabase-status`;
+3. separar o que e obrigatorio, recomendado e futuro;
+4. aplicar uma migracao por vez no SQL Editor.
 
 ## Regra de trabalho
 

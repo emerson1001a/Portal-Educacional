@@ -2,19 +2,16 @@
 
 ## Agora
 
-- Revisar `docs/analise-schema-etapa-5.md`.
-- Revisar migracao `supabase/migrations/20260710_goals_assignments_alignment.sql`.
-- Rodar migracao da Etapa 5 no Supabase SQL Editor depois de revisada.
-- Executar smoke test `supabase/tests/20260710_goals_assignments_smoke.sql` depois da migracao.
-- Revisar migracao `supabase/migrations/20260710_child_short_codes.sql`.
-- Rodar migracao de codigo curto no Supabase SQL Editor depois de revisada.
-- Executar smoke test `supabase/tests/20260710_child_short_codes_smoke.sql` depois da migracao.
-- Testar geracao de link + codigo curto no painel adulto depois da migracao no Supabase.
-- Testar pagina `/entrar` com codigo real depois da migracao no Supabase.
-- Testar missao com meta vinculada, prazo, nota adulta e progresso por item.
+- Usar `projeto/painel-atual.md` como ponto de retomada em novas janelas do Codex.
+- Testar o fluxo diario com Miguel e Gabriel por alguns dias, registrando confusoes, atritos e evidencias uteis.
+- Validar `/api/supabase-status` em producao sempre que uma migracao parecer faltar.
+- Testar missao com meta vinculada, prazo, nota adulta, progresso por item e retorno claro para a crianca.
+- Melhorar o historico unificado para mostrar texto e feedback dos modulos de forma expansivel, sem ocupar espaco demais.
+- Consolidar o primeiro desenho do relatorio longitudinal adulto.
 - Validar em producao a Interpretacao de Texto corrigida: perguntas devem se apoiar somente em evidencias do texto e o feedback final deve ficar visualmente destacado.
 - Validar em producao o bloco "Meta Pedagogica": "Organizar Percepcao" deve devolver orientacao da IA ou uma meta segura de contingencia, sem erro tecnico para o adulto.
 - Revisar navegabilidade geral entre portal adulto, portal infantil, Redacao, Interpretacao e Tabuada, garantindo retorno claro ao portal infantil/principal.
+- Confirmar se o codigo curto infantil sera testado agora ou se continua como melhoria recomendada para sala de aula.
 
 ## Proximo
 

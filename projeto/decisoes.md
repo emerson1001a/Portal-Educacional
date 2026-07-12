@@ -295,3 +295,21 @@ Motivo:
 - a crianca precisa perceber que terminou uma parte da missao;
 - apagar a atividade sem reconhecimento pode reduzir a sensacao de progresso;
 - manter o estado concluido ajuda o adulto a entender o caminho sem poluir a lista de pendencias.
+
+## 2026-07-12
+
+### Painel atual como central operacional
+
+Decisao:
+
+- criar `projeto/painel-atual.md` como primeira leitura para retomar o projeto;
+- atualizar `projeto/README.md`, `projeto/roadmap.md` e `projeto/backlog.md` para refletir o MVP atual;
+- manter `docs/` como fonte formal de PRDs, regras pedagogicas e setup;
+- manter `projeto/` como painel de trabalho vivo.
+
+Motivo:
+
+- reduzir dependencia de memoria informal;
+- permitir que novas janelas do Codex retomem o contexto certo;
+- evitar backlog desatualizado apontando para etapas que ja evoluiram;
+- proteger as decisoes pedagogicas centrais enquanto o produto cresce por modulos.
