@@ -3195,6 +3195,62 @@
       return items;
     }
 
+    function reportTrackedAreas() {
+      const areas = ["leitura", "escrita", "matematica"];
+      if (shouldIncludeEnglishArea()) areas.push("ingles");
+      return areas;
+    }
+
+    function reportAreaRows() {
+      return reportTrackedAreas().map((area) => {
+        const events = eventsForArea(area);
+        const recentEvents = events.filter((event) => eventsSince(28).includes(event));
+        const goals = state.goals.filter((goal) => goal.area === area);
+        const completedGoals = state.completedGoals.filter((goal) => goal.area === area);
+        const latest = events[0];
+        const latestSummary = latest ? eventAdultSummary(latest) : "";
+        const status = events.length
+          ? `${events.length} evidência${events.length === 1 ? "" : "s"} no histórico, ${recentEvents.length} nos últimos 28 dias.`
+          : goals.length
+            ? "há meta registrada, mas ainda falta prática para comparar evolução."
+            : "sem foco ativo no momento.";
+        const detail = latest
+          ? ` Última prática: ${serviceName(latest.service)} em ${formatDate(latest.occurred_at || latest.created_at)}${latestSummary ? ` - ${latestSummary}` : ""}`
+          : goals.length
+            ? ` Meta atual: ${goals[0].title}.`
+            : "";
+
+        return {
+          area,
+          events,
+          goals,
+          completedGoals,
+          recentEvents,
+          text: `${areaLabel(area)}: ${status}${detail}`
+        };
+      });
+    }
+
+    function reportNextObservation(areaRows) {
+      const goalWithoutEvidence = areaRows.find((row) => row.goals.length && !row.events.length);
+      if (goalWithoutEvidence) {
+        return `${areaLabel(goalWithoutEvidence.area)} merece a próxima prática curta, porque já existe uma meta e ainda falta evidência registrada.`;
+      }
+
+      const withGoals = areaRows.filter((row) => row.goals.length);
+      if (withGoals.length) {
+        const leastRecent = [...withGoals].sort((a, b) => a.recentEvents.length - b.recentEvents.length)[0];
+        return `Observe ${areaLabel(leastRecent.area)} nos próximos dias, mantendo a prática leve e registrando uma evidência simples.`;
+      }
+
+      const leastPracticed = [...areaRows].sort((a, b) => a.events.length - b.events.length)[0];
+      if (leastPracticed) {
+        return `Escolha uma atividade curta em ${areaLabel(leastPracticed.area)} para equilibrar melhor o histórico antes de tirar conclusões.`;
+      }
+
+      return "Registre uma primeira atividade curta para iniciar a comparação longitudinal.";
+    }
+
     function reportMetricCards(time) {
       const cards = [
         ["Período", reportPeriodLabel()],
@@ -3236,6 +3292,8 @@
       const areaCounts = time.areaCounts.map((item) => `${areaLabel(item.area)}: ${item.count} registro${item.count === 1 ? "" : "s"} nos últimos 28 dias`);
       const reviewComparison = buildReviewComparison();
       const evidenceSummary = reportEvidenceSummary(time);
+      const areaRows = reportAreaRows();
+      const nextObservation = reportNextObservation(areaRows);
 
       return `
         <div>
@@ -3254,6 +3312,11 @@
         <section class="report-block">
           <h3>Base de evidências</h3>
           ${reportList(evidenceSummary)}
+        </section>
+        <section class="report-block">
+          <h3>Leitura por área</h3>
+          ${reportList(areaRows.map((row) => row.text))}
+          <p class="small"><strong>Próxima observação sugerida:</strong> ${escapeHtml(nextObservation)}</p>
         </section>
         <section class="report-block">
           <h3>Receita para o adulto</h3>
