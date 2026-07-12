@@ -10,7 +10,7 @@
 - Testar o primeiro relatorio longitudinal adulto com dados reais, verificando se a leitura por area, a base de evidencias e os indicadores ajudam na conversa com o responsavel/professor.
 - Validar em producao a Interpretacao de Texto corrigida: perguntas devem se apoiar somente em evidencias do texto e o feedback final deve ficar visualmente destacado.
 - Validar em producao o bloco "Meta Pedagogica": "Organizar Percepcao" deve devolver orientacao da IA ou uma meta segura de contingencia, sem erro tecnico para o adulto.
-- Revisar navegabilidade geral entre portal adulto, portal infantil, Redacao, Interpretacao e Tabuada, garantindo retorno claro ao portal infantil/principal.
+- Testar navegabilidade geral entre portal adulto, portal infantil, Redacao, Interpretacao e Tabuada, garantindo retorno claro ao portal infantil/principal.
 - Testar o codigo curto infantil em producao quando a migracao recomendada estiver aplicada no Supabase.
 
 ## Proximo
@@ -58,6 +58,8 @@
 - Contexto de aniversario a partir da data de nascimento da crianca.
 - Retorno claro da atividade infantil para a missao e remocao de tarefas concluidas da area infantil.
 - Entrada infantil por codigo curto com tela orientada para a crianca e mesma configuracao das missoes acessadas por link.
+- Area infantil interna alinhada as missoes liberadas, sem mostrar catalogo solto de modulos.
+- Acoes adultas esclarecidas: abrir missao infantil para testar no mesmo computador e gerar link infantil para enviar a crianca.
 
 ## Pendente de decisao
 

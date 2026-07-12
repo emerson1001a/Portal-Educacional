@@ -9,6 +9,7 @@ O Portal Educacional ja funciona como plataforma inicial com:
 - login adulto por Supabase;
 - cadastro de criancas;
 - area infantil separada por link temporario;
+- entrada infantil por codigo curto preparada para uso quando a migracao recomendada estiver aplicada;
 - criacao de missoes pelo adulto;
 - retorno de evidencias dos modulos para o historico adulto;
 - resumo do desenvolvimento com base da leitura separando evidencias, metas e percepcoes;
@@ -28,7 +29,8 @@ O portal deve mostrar evolucao longitudinal, sempre comparando a crianca com ela
 - Adulto cria conta e entra no portal.
 - Adulto cadastra criancas.
 - Adulto cria missoes com um ou mais modulos.
-- Crianca acessa a area infantil pelo link.
+- Crianca acessa a area infantil pelo link ou por codigo curto, quando disponivel.
+- Adulto consegue abrir a missao infantil no mesmo computador para testar ou entregar a tarefa.
 - Crianca conclui atividades.
 - Portal adulto recebe historico e sinais de progresso.
 - Missoes concluidas deixam de parecer pendentes na area infantil.
@@ -41,6 +43,8 @@ O portal deve mostrar evolucao longitudinal, sempre comparando a crianca com ela
 - Qualidade do feedback recebido pelo adulto.
 - Se o historico e o relatorio continuam faceis de interpretar depois de varios dias de uso.
 - Se as missoes ficam na dose certa para a crianca.
+- Se a diferenca entre "Abrir missao infantil" e "Gerar link infantil" esta clara para o adulto.
+- Se a entrada por codigo curto e simples o suficiente para criancas e sala de aula.
 - Se a Tabuada registra evidencias sem poluir o historico.
 - Se Interpretacao e Redacao mantem coerencia, navegabilidade e retorno claro.
 - Se o adulto entende a diferenca entre evidencia do modulo, meta pedagogica e percepcao privada.
@@ -65,7 +69,7 @@ Leitura do resultado:
 ## Proximas prioridades sugeridas
 
 1. Testar relatorio longitudinal com dados reais de Miguel e Gabriel por alguns dias.
-2. Revisar navegabilidade e identidade visual dos modulos atuais.
+2. Revisar navegabilidade e identidade visual dos modulos atuais, agora partindo do fluxo de missao infantil como referencia.
 3. Melhorar dose pedagogica das missoes com base nos testes reais.
 4. Definir modelo de compartilhamento responsavel/professor sem expor dados sensiveis.
 5. Depois dos testes reais, decidir se o foco inicial comercial e pais, professores ou ambos com entradas diferentes.
