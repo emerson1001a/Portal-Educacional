@@ -735,6 +735,28 @@
       background: rgba(255,255,255,.9);
       box-shadow: var(--shadow);
     }
+    .child-hero-main {
+      display: grid;
+      gap: 10px;
+    }
+    .child-path {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .child-path span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 6px 10px;
+      border: 1px solid rgba(11,143,134,.18);
+      border-radius: 999px;
+      background: #eef9f7;
+      color: var(--teal-dark);
+      font-size: 12px;
+      font-weight: 900;
+    }
 
     .adult-confirm {
       display: grid;
@@ -1278,10 +1300,17 @@
   <section class="child-overlay hidden" id="childOverlay" aria-label="Área da criança">
     <div class="child-shell">
       <header class="child-hero">
-        <div>
+        <div class="child-hero-main">
           <span class="pill">área da criança</span>
-          <h2 class="child-title" id="childModeTitle">Escolha uma atividade</h2>
-          <p class="muted" id="childModeCopy">Aqui aparecem apenas as atividades liberadas pelo adulto.</p>
+          <div>
+            <h2 class="child-title" id="childModeTitle">Escolha uma atividade</h2>
+            <p class="muted" id="childModeCopy">Aqui aparecem apenas as atividades liberadas pelo adulto.</p>
+          </div>
+          <div class="child-path" aria-label="Caminho da missão">
+            <span>1. Escolher missão</span>
+            <span>2. Fazer atividade</span>
+            <span>3. Voltar para a missão</span>
+          </div>
         </div>
         <button class="button ghost" id="closeChildModeButton" type="button">Voltar para o adulto</button>
       </header>
