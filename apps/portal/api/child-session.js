@@ -30,6 +30,17 @@ function safeAssignment(assignment, items) {
   };
 }
 
+function ageFromBirthDate(value) {
+  if (!value) return null;
+  const birth = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(birth.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDelta = today.getMonth() - birth.getMonth();
+  if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < birth.getDate())) age -= 1;
+  return age > 0 && age < 25 ? age : null;
+}
+
 export default async function handler(req, res) {
   allowCors(res);
 
@@ -61,7 +72,7 @@ export default async function handler(req, res) {
 
   const { data: child, error: childError } = await admin
     .from("children")
-    .select("id, full_name, grade")
+    .select("id, full_name, birth_date, grade")
     .eq("id", access.child_id)
     .maybeSingle();
 
@@ -103,7 +114,10 @@ export default async function handler(req, res) {
 
   return json(res, 200, {
     ok: true,
-    child,
+    child: {
+      ...child,
+      age: ageFromBirthDate(child.birth_date)
+    },
     access: {
       id: access.id,
       purpose: access.purpose,

@@ -404,6 +404,8 @@
       const params = new URLSearchParams();
       params.set("child_id", state.child?.id || "");
       params.set("child_name", state.child?.full_name || "");
+      if (state.child?.birth_date) params.set("child_birth_date", state.child.birth_date);
+      if (state.child?.age !== null && state.child?.age !== undefined) params.set("child_age", String(state.child.age));
       params.set("assignment_item_id", item.id);
       if (item.assignment_id) params.set("assignment_id", item.assignment_id);
       params.set("portal_child_token", state.token);
@@ -416,6 +418,8 @@
       const params = new URLSearchParams();
       params.set("child_id", state.child?.id || "");
       params.set("child_name", state.child?.full_name || "");
+      if (state.child?.birth_date) params.set("child_birth_date", state.child.birth_date);
+      if (state.child?.age !== null && state.child?.age !== undefined) params.set("child_age", String(state.child.age));
       params.set("portal_child_token", state.token);
       params.set("portal_return_url", window.location.href);
       return `${module.url}?${params.toString()}`;
