@@ -81,7 +81,7 @@
   const COACH_HISTORY_MAX = 6;        // guarda últimas mensagens
   const COACH_COOLDOWN = 5;           // não spammar: mínimo de X tentativas entre mensagens extras
   const EXTRA_COACH_ON_ERR = true;    // gera dica extra em padrão de erro (pressa/dúvida)
-  const MISSION_TARGET_ATTEMPTS = 20;
+  const DEFAULT_MISSION_TARGET_ATTEMPTS = 20;
 
   function parseAge(value) {
     const age = Number.parseInt(value || "", 10);
@@ -99,12 +99,28 @@
     return age > 0 && age < 25 ? age : null;
   }
 
+  function parseTargetAttempts(value) {
+    const target = Number.parseInt(value || "", 10);
+    return Number.isInteger(target) ? Math.min(60, Math.max(6, target)) : DEFAULT_MISSION_TARGET_ATTEMPTS;
+  }
+
+  function parseTabuadaTabs(value) {
+    return String(value || "")
+      .split(",")
+      .map((item) => Number.parseInt(item.trim(), 10))
+      .filter((item, index, list) => Number.isInteger(item) && item >= TAB_MIN && item <= TAB_MAX && list.indexOf(item) === index)
+      .sort((a, b) => a - b);
+  }
+
   const params = new URLSearchParams(window.location.search);
   const portal = {
     childId: params.get("child_id") || "",
     childName: params.get("child_name") || "",
     childBirthDate: params.get("child_birth_date") || "",
     childAge: parseAge(params.get("child_age")) || ageFromBirthDate(params.get("child_birth_date") || ""),
+    targetAttempts: parseTargetAttempts(params.get("target_attempts")),
+    assignedTabs: parseTabuadaTabs(params.get("tabuada_tabs")),
+    trainingMode: params.get("training_mode") === "random" ? "random" : "adaptive",
     token: params.get("portal_event_token") || "",
     childToken: params.get("portal_child_token") || "",
     assignmentId: params.get("assignment_id") || "",
@@ -112,6 +128,8 @@
     returnUrl: params.get("portal_return_url") || ""
   };
   portal.enabled = Boolean((portal.token || portal.childToken) && portal.returnUrl);
+  portal.hasTrainingConfig = Boolean(params.get("target_attempts") || portal.assignedTabs.length || params.get("training_mode"));
+  const missionTargetAttempts = portal.targetAttempts || DEFAULT_MISSION_TARGET_ATTEMPTS;
   let portalLastSentTotal = 0;
 
   // =========================
@@ -220,7 +238,7 @@
   }
 
   function updateMissionProgress() {
-    missionProgressEl.textContent = `${Math.min(missionAttempts, MISSION_TARGET_ATTEMPTS)}/${MISSION_TARGET_ATTEMPTS}`;
+    missionProgressEl.textContent = `${Math.min(missionAttempts, missionTargetAttempts)}/${missionTargetAttempts}`;
   }
 
   async function handleReturnToPortal(button) {
@@ -295,7 +313,10 @@
           recent_correct: summary.correct,
           recent_accuracy_pct: summary.acc,
           hard_facts: summary.hard,
-          child_age: student.profile?.child_age ?? portal.childAge ?? null
+          child_age: student.profile?.child_age ?? portal.childAge ?? null,
+          target_attempts: missionTargetAttempts,
+          selected_tabs: getSelectedTabsArray(),
+          training_mode: modeEl.value
         },
         feedback: {
           child: {
@@ -337,7 +358,7 @@
     teacherArea.classList.toggle("hidden", !isTeacher);
     studentMini.classList.toggle("hidden", isTeacher);
     roleHint.textContent = portal.enabled
-      ? `Complete ${MISSION_TARGET_ATTEMPTS} respostas e depois retorne à missão.`
+      ? `Complete ${missionTargetAttempts} respostas e depois retorne à missão.`
       : (isTeacher
         ? "Professor: visão pedagógica e analítica (demo)."
         : "Aluno: treino leve, com incentivo.");
@@ -475,6 +496,14 @@
     selectedTabs.clear();
     for (let a = TAB_MIN; a <= TAB_MAX; a++) selectedTabs.add(a);
     for (let a = TAB_MIN; a <= TAB_MAX; a++) el(`tab_${a}`).checked = true;
+  }
+  function markSpecificTabs(tabs) {
+    selectedTabs.clear();
+    for (let a = TAB_MIN; a <= TAB_MAX; a++) {
+      const checked = tabs.includes(a);
+      if (checked) selectedTabs.add(a);
+      el(`tab_${a}`).checked = checked;
+    }
   }
   function unmarkAllTabs() {
     selectedTabs.clear();
@@ -1099,7 +1128,7 @@
     sendBtn.disabled = true;
     const summary = tabuadaSummary(student);
     missionCompleteText.textContent = summary.total
-      ? `Você completou ${MISSION_TARGET_ATTEMPTS} respostas. Acertou ${summary.correct} das últimas ${summary.total}. Agora entregue para o adulto acompanhar.`
+      ? `Você completou ${missionTargetAttempts} respostas. Acertou ${summary.correct} das últimas ${summary.total}. Agora entregue para o adulto acompanhar.`
       : "Você completou o treino combinado. Agora entregue para o adulto acompanhar.";
     missionCompleteEl.classList.remove("hidden");
     missionCompleteEl.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1203,7 +1232,7 @@
 
     missionAttempts = Math.max(0, student.events.length - missionStartTotal);
     updateMissionProgress();
-    if (portal.enabled && missionAttempts >= MISSION_TARGET_ATTEMPTS) {
+    if (portal.enabled && missionAttempts >= missionTargetAttempts) {
       finishMission(student);
       return;
     }
@@ -1339,6 +1368,9 @@
 
   // init
   buildTabSelectors();
+  updateMissionProgress();
+  modeEl.value = portal.trainingMode;
+  if (portal.assignedTabs.length) markSpecificTabs(portal.assignedTabs);
   if (portal.enabled) {
     roleTeacherBtn.style.display = "none";
     returnPortalBtn.style.display = "inline-flex";
@@ -1351,6 +1383,18 @@
       if (portal.childBirthDate) parts.push(`nasc. ${portal.childBirthDate.split("-").reverse().join("/")}`);
       studentContextEl.textContent = `Dados recebidos do Portal: ${parts.join(" • ")}.`;
       studentContextEl.classList.remove("hidden");
+    }
+    if (portal.hasTrainingConfig) {
+      const configParts = [];
+      if (portal.assignedTabs.length) configParts.push(`tabuadas ${portal.assignedTabs.join(", ")}`);
+      configParts.push(`${missionTargetAttempts} respostas`);
+      if (studentContextEl.textContent) studentContextEl.textContent += " ";
+      studentContextEl.textContent += `Missão combinada: ${configParts.join(" • ")}.`;
+      studentContextEl.classList.remove("hidden");
+      modeEl.disabled = true;
+      tabsBox.querySelectorAll("input").forEach((input) => { input.disabled = true; });
+      allBtn.style.display = "none";
+      noneBtn.style.display = "none";
     }
     resetBtn.style.display = "none";
     exportBtn.style.display = "none";

@@ -340,6 +340,31 @@
       font-weight: 800;
     }
     .module-choice input { width: auto; min-height: auto; }
+    .module-settings {
+      display: grid;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #dbe8f1;
+      border-radius: 8px;
+      background: #f7fbfd;
+    }
+    .mini-checks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(54px, 1fr));
+      gap: 8px;
+    }
+    .mini-checks label {
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      font-weight: 850;
+    }
+    .mini-checks input { width: auto; min-height: auto; }
     .child-button {
       width: 100%;
       min-height: 48px;
@@ -1043,6 +1068,27 @@
             <div class="perception-tools">
               <strong class="title-with-help">Módulos desta missão <span class="info-tip" tabindex="0" data-tip="Escolha quais atividades a criança receberá nesta missão. O resultado volta para o histórico adulto quando o módulo registra a conclusão.">?</span></strong>
               <div class="module-choice-list" id="assignmentModuleChoices"></div>
+              <div class="module-settings hidden" id="tabuadaAssignmentSettings">
+                <strong>Configuração da Tabuada</strong>
+                <div class="row">
+                  <label style="flex:1 1 180px">
+                    Meta de respostas
+                    <input id="tabuadaTargetInput" type="number" min="6" max="60" step="1" value="20">
+                  </label>
+                  <label style="flex:1 1 180px">
+                    Modo de treino
+                    <select id="tabuadaModeInput">
+                      <option value="adaptive" selected>Adaptativo</option>
+                      <option value="random">Aleatório</option>
+                    </select>
+                  </label>
+                </div>
+                <label>
+                  Tabuadas para praticar
+                  <div class="mini-checks" id="tabuadaTabsInput"></div>
+                </label>
+                <p class="muted small">Comece curto. A ideia é terminar com sensação de missão cumprida, não cansar.</p>
+              </div>
             </div>
             <button class="button blue" type="submit">Liberar missão</button>
           </form>
@@ -1308,6 +1354,10 @@
       assignmentInstructionsInput: document.querySelector("#assignmentInstructionsInput"),
       assignmentAdultNotesInput: document.querySelector("#assignmentAdultNotesInput"),
       assignmentModuleChoices: document.querySelector("#assignmentModuleChoices"),
+      tabuadaAssignmentSettings: document.querySelector("#tabuadaAssignmentSettings"),
+      tabuadaTargetInput: document.querySelector("#tabuadaTargetInput"),
+      tabuadaModeInput: document.querySelector("#tabuadaModeInput"),
+      tabuadaTabsInput: document.querySelector("#tabuadaTabsInput"),
       assignmentsList: document.querySelector("#assignmentsList"),
       modulesGrid: document.querySelector("#modulesGrid"),
       timeline: document.querySelector("#timeline"),
@@ -2090,6 +2140,47 @@
           <span>${escapeHtml(module.short_name || module.name)}</span>
         </label>
       `).join("");
+      renderTabuadaSettings();
+      els.assignmentModuleChoices.querySelectorAll('input[name="assignmentModule"]').forEach((input) => {
+        input.addEventListener("change", updateTabuadaSettingsVisibility);
+      });
+      updateTabuadaSettingsVisibility();
+    }
+
+    function renderTabuadaSettings() {
+      if (!els.tabuadaTabsInput) return;
+      els.tabuadaTabsInput.innerHTML = Array.from({ length: 8 }, (_, index) => index + 2).map((number) => `
+        <label>
+          <input type="checkbox" name="tabuadaTab" value="${number}" ${number <= 5 ? "checked" : ""}>
+          ${number}
+        </label>
+      `).join("");
+    }
+
+    function updateTabuadaSettingsVisibility() {
+      if (!els.tabuadaAssignmentSettings) return;
+      const selected = Boolean(els.assignmentModuleChoices.querySelector('input[name="assignmentModule"][value="tabuada"]:checked'));
+      els.tabuadaAssignmentSettings.classList.toggle("hidden", !selected);
+    }
+
+    function tabuadaAssignmentConfig() {
+      const selectedTabs = Array.from(els.tabuadaTabsInput?.querySelectorAll('input[name="tabuadaTab"]:checked') || [])
+        .map((input) => Number.parseInt(input.value, 10))
+        .filter((value) => Number.isInteger(value) && value >= 2 && value <= 9);
+      const targetAttempts = Number.parseInt(els.tabuadaTargetInput?.value || "20", 10);
+      const mode = els.tabuadaModeInput?.value === "random" ? "random" : "adaptive";
+      return {
+        tabuada: {
+          target_attempts: Number.isInteger(targetAttempts) ? Math.min(60, Math.max(6, targetAttempts)) : 20,
+          tabs: selectedTabs.length ? selectedTabs : [2, 3, 4, 5],
+          mode
+        }
+      };
+    }
+
+    function assignmentItemConfig(moduleId) {
+      if (moduleId === "tabuada") return tabuadaAssignmentConfig();
+      return null;
     }
 
     function renderAssignmentGoalOptions() {
@@ -3434,7 +3525,7 @@
 
         const items = selectedModules.map((moduleId, index) => {
           const module = state.modules.find((item) => item.id === moduleId) || {};
-          return {
+          const item = {
             assignment_id: assignment.id,
             module_id: moduleId,
             activity_type: module.area || "atividade",
@@ -3444,9 +3535,19 @@
             required: true,
             status: "pending"
           };
+          const config = assignmentItemConfig(moduleId);
+          if (config) item.config = config;
+          return item;
         });
 
-        const { error: itemsError } = await state.supabase.from("assignment_items").insert(items);
+        let configFallback = false;
+        let { error: itemsError } = await state.supabase.from("assignment_items").insert(items);
+        if (itemsError && /config|schema cache|column/i.test(String(itemsError.message || ""))) {
+          configFallback = true;
+          const itemsWithoutConfig = items.map(({ config, ...item }) => item);
+          const retry = await state.supabase.from("assignment_items").insert(itemsWithoutConfig);
+          itemsError = retry.error;
+        }
         if (itemsError) {
           message(`Missão criada, mas os módulos não foram vinculados: ${itemsError.message}`, true);
           return;
@@ -3457,7 +3558,9 @@
         renderAssignmentModuleChoices();
         await loadAssignments();
         renderAssignments();
-        message("Missão liberada. Abra ou atualize o link infantil para a criança ver.");
+        message(configFallback
+          ? "Missão liberada. Para a Tabuada obedecer à configuração, aplique a migração de configuração no Supabase."
+          : "Missão liberada. Abra ou atualize o link infantil para a criança ver.");
       } finally {
         setButtonBusy(submitButton, false);
       }

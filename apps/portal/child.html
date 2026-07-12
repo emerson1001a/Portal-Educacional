@@ -398,6 +398,22 @@
       els.message.classList.remove("error");
     }
 
+    function applyModuleConfigParams(params, item) {
+      const config = item?.config || {};
+      if (item?.module_id === "tabuada" && config.tabuada) {
+        const tabuada = config.tabuada;
+        if (Array.isArray(tabuada.tabs) && tabuada.tabs.length) {
+          params.set("tabuada_tabs", tabuada.tabs.join(","));
+        }
+        if (tabuada.target_attempts) {
+          params.set("target_attempts", String(tabuada.target_attempts));
+        }
+        if (tabuada.mode) {
+          params.set("training_mode", String(tabuada.mode));
+        }
+      }
+    }
+
     function moduleUrl(item) {
       const module = item.module || {};
       if (!module.url) return "";
@@ -410,6 +426,7 @@
       if (item.assignment_id) params.set("assignment_id", item.assignment_id);
       params.set("portal_child_token", state.token);
       params.set("portal_return_url", window.location.href);
+      applyModuleConfigParams(params, item);
       return `${module.url}?${params.toString()}`;
     }
 

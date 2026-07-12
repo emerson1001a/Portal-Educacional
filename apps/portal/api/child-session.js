@@ -23,6 +23,7 @@ function safeAssignment(assignment, items) {
       activity_type: item.activity_type,
       title: item.title,
       child_instructions: item.child_instructions || "",
+      config: item.config || {},
       sort_order: item.sort_order,
       required: item.required,
       status: item.status
@@ -95,11 +96,21 @@ export default async function handler(req, res) {
   const assignmentIds = (assignments || []).map((assignment) => assignment.id);
   let items = [];
   if (assignmentIds.length) {
-    const { data: itemRows, error: itemsError } = await admin
+    let { data: itemRows, error: itemsError } = await admin
       .from("assignment_items")
-      .select("id, assignment_id, module_id, activity_type, title, child_instructions, sort_order, required, status")
+      .select("id, assignment_id, module_id, activity_type, title, child_instructions, config, sort_order, required, status")
       .in("assignment_id", assignmentIds)
       .order("sort_order", { ascending: true });
+
+    if (itemsError && /config|schema cache|column/i.test(String(itemsError.message || ""))) {
+      const retry = await admin
+        .from("assignment_items")
+        .select("id, assignment_id, module_id, activity_type, title, child_instructions, sort_order, required, status")
+        .in("assignment_id", assignmentIds)
+        .order("sort_order", { ascending: true });
+      itemRows = retry.data;
+      itemsError = retry.error;
+    }
 
     if (itemsError) return json(res, 500, { ok: false, message: itemsError.message });
     items = itemRows || [];
