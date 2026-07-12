@@ -1030,6 +1030,13 @@
             </div>
             <button class="button secondary" id="saveReviewButton" type="button">Salvar percepção</button>
           </div>
+          <div class="perception-tools" style="margin-top:12px">
+            <label>
+              Observação do adulto
+              <textarea id="reviewObservationInput" placeholder="Ex.: Hoje ele leu com mais calma, mas ainda respondeu algumas perguntas sem voltar ao texto."></textarea>
+            </label>
+            <p class="muted small">Este campo é privado da área adulta. Use para registrar uma percepção curta do momento; o portal junta isso às evidências salvas para comparar evolução depois.</p>
+          </div>
           <div class="review-list" id="reviewsList"></div>
           <div class="row between" style="margin-top:18px">
             <div>
@@ -1353,6 +1360,7 @@
       metricLast: document.querySelector("#metricLast"),
       generalFeedback: document.querySelector("#generalFeedback"),
       saveReviewButton: document.querySelector("#saveReviewButton"),
+      reviewObservationInput: document.querySelector("#reviewObservationInput"),
       reviewsList: document.querySelector("#reviewsList"),
       snapshotsList: document.querySelector("#snapshotsList"),
       practicePlan: document.querySelector("#practicePlan"),
@@ -1924,16 +1932,20 @@
     function currentReviewPayload() {
       const child = activeChild();
       const feedback = buildGeneralFeedback();
+      const adultObservation = els.reviewObservationInput?.value.trim() || "";
       const confidence = state.events.length >= 10 ? "high" : state.events.length >= 3 ? "medium" : "low";
       const today = new Date();
       const periodStart = new Date(today);
       periodStart.setDate(today.getDate() - 27);
+      const summaryParts = [];
+      if (adultObservation) summaryParts.push(`Observação do adulto: ${adultObservation}`);
+      summaryParts.push(`${feedback.status}. ${feedback.summary}`);
       return {
         child_id: child.id,
         owner_id: state.session.user.id,
         period_start: periodStart.toISOString().slice(0, 10),
         period_end: today.toISOString().slice(0, 10),
-        summary: `${feedback.status}. ${feedback.summary}`,
+        summary: summaryParts.join(" "),
         strengths: feedback.markers || [],
         attention_points: [feedback.attention].filter(Boolean),
         home_recipe: feedback.recipe || [],
@@ -3499,6 +3511,7 @@
             : "Percepção e indicadores salvos para comparação futura.",
           Boolean(snapshotError)
         );
+        if (!snapshotError && els.reviewObservationInput) els.reviewObservationInput.value = "";
         await loadReviews();
         await loadSnapshots();
         renderReviews();
