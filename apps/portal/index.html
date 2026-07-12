@@ -796,6 +796,29 @@
       background: #fbfdff;
     }
     .report-block ul { margin: 10px 0 0; padding-left: 20px; }
+    .report-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .report-metric {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbff;
+    }
+    .report-metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .report-metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 20px;
+      line-height: 1.15;
+    }
 
     .child-title {
       margin: 0;
@@ -839,6 +862,7 @@
 
     @media (max-width: 980px) {
       .hero, .app, .metrics, .evolution-grid, .services, .adult-feedback, .time-grid, .child-modules { grid-template-columns: 1fr; }
+      .report-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .plan-step { grid-template-columns: 1fr; align-items: stretch; }
       .topic > summary { align-items: flex-start; flex-direction: column; }
       .topic-toggle { min-width: 0; }
@@ -850,6 +874,7 @@
     @media (max-width: 640px) {
       .nav, .shell { width: min(100% - 22px, 1180px); }
       .hero { min-height: auto; }
+      .report-metrics { grid-template-columns: 1fr; }
       .hero-copy { min-height: 420px; padding: 28px; }
       h1 { font-size: 38px; }
       .row .button { width: 100%; }
@@ -969,7 +994,7 @@
             <div class="row">
               <button class="button" id="openChildModeButton" type="button">Abrir área da criança</button>
               <button class="button blue" id="generateChildLinkButton" type="button">Gerar link infantil</button>
-              <button class="button secondary" id="openReportButton" type="button">Relatório rápido</button>
+              <button class="button secondary" id="openReportButton" type="button">Relatório longitudinal</button>
               <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
             </div>
           </div>
@@ -1289,7 +1314,7 @@
     </div>
   </section>
 
-  <section class="report-overlay hidden" id="reportOverlay" aria-label="Relatório rápido">
+  <section class="report-overlay hidden" id="reportOverlay" aria-label="Relatório longitudinal">
     <div class="report-sheet">
       <div class="report-actions">
         <button class="button ghost" id="closeReportButton" type="button">Fechar</button>
@@ -3130,11 +3155,71 @@
         : '<p class="muted">Ainda não há itens registrados.</p>';
     }
 
+    function reportConfidence() {
+      if (state.events.length >= 10 && state.reviews.length >= 2) return "boa base de evidências";
+      if (state.events.length >= 3 || state.reviews.length >= 2) return "evidência em formação";
+      return "ponto de partida";
+    }
+
+    function reportPeriodLabel() {
+      if (!state.events.length) return "Sem período com atividade registrada";
+      const dates = state.events
+        .map((event) => eventDate(event))
+        .filter((date) => !Number.isNaN(date.getTime()))
+        .sort((a, b) => a - b);
+      const first = dates[0];
+      const last = dates[dates.length - 1];
+      return `${formatDate(first.toISOString())} a ${formatDate(last.toISOString())}`;
+    }
+
+    function reportAreaCoverage(time) {
+      const practiced = time.areaCounts.filter((item) => item.count > 0);
+      if (!practiced.length) return "Nenhuma área com prática registrada";
+      return practiced.map((item) => `${areaLabel(item.area)} (${item.count})`).join(", ");
+    }
+
+    function reportEvidenceSummary(time) {
+      const items = [
+        `${state.events.length} evidência${state.events.length === 1 ? "" : "s"} no histórico completo.`,
+        `${time.total} registro${time.total === 1 ? "" : "s"} nos últimos 28 dias.`,
+        `${time.activeWeeks} de 4 semanas recentes tiveram prática registrada.`,
+        `Áreas com prática recente: ${reportAreaCoverage(time)}.`
+      ];
+
+      if (state.reviews.length) {
+        items.push(`${state.reviews.length} percepção${state.reviews.length === 1 ? "" : "s"} salva${state.reviews.length === 1 ? "" : "s"} pelo adulto.`);
+      } else {
+        items.push("Ainda não há percepção adulta salva para comparação longitudinal.");
+      }
+
+      return items;
+    }
+
+    function reportMetricCards(time) {
+      const cards = [
+        ["Período", reportPeriodLabel()],
+        ["Evidências", String(state.events.length)],
+        ["Continuidade", `${time.activeWeeks}/4 semanas`],
+        ["Confiança", reportConfidence()]
+      ];
+
+      return `
+        <div class="report-metrics">
+          ${cards.map(([label, value]) => `
+            <div class="report-metric">
+              <span>${escapeHtml(label)}</span>
+              <strong>${escapeHtml(value)}</strong>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
     function buildReportHtml() {
       const child = activeChild();
       if (!child) {
         return `
-          <h2>Relatório rápido</h2>
+          <h2>Relatório longitudinal</h2>
           <p class="muted">Selecione uma criança para gerar o relatório.</p>
         `;
       }
@@ -3150,18 +3235,25 @@
       const completedGoals = state.completedGoals.map((goal) => `${areaLabel(goal.area)}: ${goal.title} (${formatDate(goal.updated_at || goal.created_at)})`);
       const areaCounts = time.areaCounts.map((item) => `${areaLabel(item.area)}: ${item.count} registro${item.count === 1 ? "" : "s"} nos últimos 28 dias`);
       const reviewComparison = buildReviewComparison();
+      const evidenceSummary = reportEvidenceSummary(time);
 
       return `
         <div>
-          <span class="pill">relatório rápido</span>
+          <span class="pill">relatório longitudinal</span>
           <h2>${escapeHtml(child.full_name)}</h2>
           <p class="muted">Gerado em ${new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date())}</p>
         </div>
+        ${reportMetricCards(time)}
         <section class="report-block">
           <h3>Síntese geral</h3>
           <p><strong>${escapeHtml(feedback.status)}</strong></p>
           <p class="muted">${escapeHtml(feedback.summary)}</p>
+          <p class="small"><strong>Leitura de confiança:</strong> ${escapeHtml(reportConfidence())}. Esta leitura apoia a rotina do adulto e não é diagnóstico.</p>
           <p><strong>Próximo foco:</strong> ${escapeHtml(feedback.attention)}</p>
+        </section>
+        <section class="report-block">
+          <h3>Base de evidências</h3>
+          ${reportList(evidenceSummary)}
         </section>
         <section class="report-block">
           <h3>Receita para o adulto</h3>
