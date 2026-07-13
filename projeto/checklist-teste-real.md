@@ -100,6 +100,10 @@ Depois de alguns dias de uso, revisar:
 - O portal conseguiu mostrar evolucao da crianca em relacao a ela mesma?
 - Alguma tela ainda expoe informacao adulta que a crianca nao deveria ver?
 
+## Validacoes ja observadas
+
+- Redacao: fluxo ponta a ponta validado. O adulto criou uma meta vinculada, a crianca realizou a redacao no portal infantil, a evidencia apareceu no portal adulto, as observacoes da meta foram conferidas e a meta foi fechada.
+
 ## Decisoes esperadas apos o teste
 
 - Ajustar dose das missoes por idade, area e historico.

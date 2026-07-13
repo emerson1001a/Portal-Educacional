@@ -33,6 +33,7 @@ O portal deve mostrar evolucao longitudinal, sempre comparando a crianca com ela
 - Adulto consegue abrir a missao infantil no mesmo computador para testar ou entregar a tarefa.
 - Crianca conclui atividades.
 - Portal adulto recebe historico e sinais de progresso.
+- Fluxo ponta a ponta da Redacao ja foi validado: meta vinculada, missao infantil, redacao concluida, evidencia recebida no adulto e meta fechada.
 - Missoes concluidas deixam de parecer pendentes na area infantil.
 - Adulto consegue abrir um relatorio longitudinal inicial para reuniao ou acompanhamento.
 - Indicadores do momento comparam evidencias, continuidade, metas e areas praticadas.
@@ -41,6 +42,7 @@ O portal deve mostrar evolucao longitudinal, sempre comparando a crianca com ela
 
 - Usar `projeto/checklist-teste-real.md` para registrar sessoes com Miguel e Gabriel sem transformar o uso em burocracia.
 - Usar Pedro Antonio e Jose Carlos como perfis ficticios quando for preciso testar fluxo sem misturar com casos reais.
+- Repetir o ciclo validado da Redacao com Interpretacao e Tabuada, observando se evidencia, retorno e fechamento de meta ficam igualmente claros.
 - Clareza da navegacao entre adulto, crianca e modulos.
 - Qualidade do feedback recebido pelo adulto.
 - Se o historico e o relatorio continuam faceis de interpretar depois de varios dias de uso.

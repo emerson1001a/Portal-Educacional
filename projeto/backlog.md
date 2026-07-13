@@ -7,7 +7,7 @@
 - Usar Pedro Antonio e Jose Carlos como perfis ficticios para testes de fluxo, preservando Miguel e Gabriel como casos reais.
 - Testar o fluxo diario com Miguel e Gabriel por alguns dias, registrando confusoes, atritos e evidencias uteis.
 - Validar `/api/supabase-status` em producao sempre que uma migracao parecer faltar.
-- Testar missao com meta vinculada, prazo, nota adulta, progresso por item e retorno claro para a crianca.
+- Repetir o teste ponta a ponta com Interpretacao e Tabuada: meta vinculada, missao infantil, atividade concluida, evidencia no adulto e fechamento da meta.
 - Testar se o historico unificado continua facil de interpretar depois de varios dias de atividades.
 - Testar o primeiro relatorio longitudinal adulto com dados reais, verificando se a leitura por area, a base de evidencias e os indicadores ajudam na conversa com o responsavel/professor.
 - Validar em producao a Interpretacao de Texto corrigida: perguntas devem se apoiar somente em evidencias do texto e o feedback final deve ficar visualmente destacado.
@@ -21,8 +21,6 @@
 - Refinar historico de missoes concluidas depois dos testes reais, avaliando se a separacao entre andamento e concluidas ficou clara.
 - Refinar primeira camada de gamificacao leve depois dos testes reais, mantendo foco em progresso proprio, sem ranking.
 - Refinar relatorio longitudinal depois dos primeiros dias de uso real, especialmente clareza para reuniao e orientacao pratica do adulto.
-- Interpretacao: permitir que tamanho e complexidade do texto sejam sugeridos pela IA e/ou pelo adulto, considerando evolucao longitudinal da crianca.
-- Interpretacao: evitar que todo texto use a propria crianca como personagem; permitir uso ocasional, mas variar personagens e contextos.
 - Tabuada: permitir que adulto defina quantidade de tentativas ou tempo de treino; IA pode sugerir carga pedagogica adequada para evitar estresse.
 - Tabuada: avaliar mostrar o resultado por alguns milissegundos no inicio de cada nova tabuada como apoio de memorizacao.
 
@@ -42,6 +40,8 @@
 
 ## Concluido recentemente
 
+- Fluxo ponta a ponta da Redacao validado em teste real: adulto criou meta vinculada, crianca fez a redacao, evidencia voltou ao portal adulto e a meta foi revisada/fechada.
+- Interpretacao sugere tamanho/complexidade pela idade, esconde essa escolha da crianca em modo missao e evita usar o nome do aluno como personagem.
 - Checklist de teste real para Miguel e Gabriel, com Pedro Antonio e Jose Carlos como perfis ficticios de teste.
 - Redacao em modo missao infantil identifica a crianca pelo Portal, sem pedir nome/idade editaveis, e usa titulos/botoes mais claros na escolha do tipo.
 - Interpretacao em modo missao infantil usa nome e idade recebidos do Portal, sem campos editaveis para a crianca.
