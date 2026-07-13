@@ -617,7 +617,14 @@
         return;
       }
 
-      const pendingItemsCount = state.assignments.reduce((total, assignment) => {
+      const activeAssignments = state.assignments
+        .map((assignment) => ({
+          ...assignment,
+          items: (assignment.items || []).filter((item) => item.status !== "done")
+        }))
+        .filter((assignment) => assignment.items.length);
+
+      const pendingItemsCount = activeAssignments.reduce((total, assignment) => {
         return total + (assignment.items || []).filter((item) => item.status !== "done").length;
       }, 0);
       els.statusTitle.textContent = pendingItemsCount
@@ -627,7 +634,12 @@
         ? "Comece pela primeira atividade disponível."
         : "Tudo entregue por aqui. O adulto já pode acompanhar o progresso.";
 
-      state.assignments.forEach((assignment) => {
+      if (!activeAssignments.length) {
+        els.assignments.innerHTML = '<div class="notice">Todas as missões liberadas já foram concluídas. Bom trabalho!</div>';
+        return;
+      }
+
+      activeAssignments.forEach((assignment) => {
         const progress = assignmentProgress(assignment);
         const card = document.createElement("article");
         card.className = "assignment";

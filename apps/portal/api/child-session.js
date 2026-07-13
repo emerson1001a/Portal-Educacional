@@ -116,6 +116,18 @@ export default async function handler(req, res) {
     items = itemRows || [];
   }
 
+  const itemIds = items.map((item) => item.id).filter(Boolean);
+  if (itemIds.length) {
+    const { data: doneEvents } = await admin
+      .from("activity_events")
+      .select("assignment_item_id")
+      .in("assignment_item_id", itemIds);
+    const doneItemIds = new Set((doneEvents || []).map((event) => event.assignment_item_id));
+    if (doneItemIds.size) {
+      items = items.map((item) => doneItemIds.has(item.id) ? { ...item, status: "done" } : item);
+    }
+  }
+
   const grouped = new Map();
   items.forEach((item) => {
     const list = grouped.get(item.assignment_id) || [];

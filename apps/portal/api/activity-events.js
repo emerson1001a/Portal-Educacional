@@ -75,22 +75,58 @@ function normalizeFeedback(feedback) {
 }
 
 async function syncAssignmentProgress(admin, event) {
-  if (!event.assignment_id) return;
+  let assignmentId = event.assignment_id || null;
+  let itemDone = false;
 
   if (event.assignment_item_id) {
-    await admin
+    let updateQuery = admin
       .from("assignment_items")
       .update({ status: "done" })
-      .eq("id", event.assignment_item_id)
-      .eq("assignment_id", event.assignment_id);
+      .eq("id", event.assignment_item_id);
+
+    if (assignmentId) updateQuery = updateQuery.eq("assignment_id", assignmentId);
+
+    const { data: updatedItems } = await updateQuery.select("id, assignment_id");
+    if (updatedItems?.length) {
+      assignmentId = updatedItems[0].assignment_id;
+      itemDone = true;
+    } else {
+      const { data: item } = await admin
+        .from("assignment_items")
+        .select("id, assignment_id")
+        .eq("id", event.assignment_item_id)
+        .maybeSingle();
+
+      if (item?.assignment_id) {
+        const { data: assignment } = await admin
+          .from("assignments")
+          .select("id, child_id")
+          .eq("id", item.assignment_id)
+          .maybeSingle();
+
+        if (assignment?.child_id === event.child_id) {
+          const { data: retryItems } = await admin
+            .from("assignment_items")
+            .update({ status: "done" })
+            .eq("id", item.id)
+            .select("id, assignment_id");
+          if (retryItems?.length) {
+            assignmentId = retryItems[0].assignment_id;
+            itemDone = true;
+          }
+        }
+      }
+    }
   }
+
+  if (!assignmentId) return { assignment_id: null, item_done: itemDone, assignment_done: false };
 
   const { data: items, error } = await admin
     .from("assignment_items")
     .select("id, required, status")
-    .eq("assignment_id", event.assignment_id);
+    .eq("assignment_id", assignmentId);
 
-  if (error || !items?.length) return;
+  if (error || !items?.length) return { assignment_id: assignmentId, item_done: itemDone, assignment_done: false };
 
   const requiredItems = items.filter((item) => item.required !== false);
   const progressItems = requiredItems.length ? requiredItems : items;
@@ -99,8 +135,10 @@ async function syncAssignmentProgress(admin, event) {
   await admin
     .from("assignments")
     .update({ status: allDone ? "done" : "in_progress" })
-    .eq("id", event.assignment_id)
+    .eq("id", assignmentId)
     .in("status", ["released", "in_progress", "done"]);
+
+  return { assignment_id: assignmentId, item_done: itemDone, assignment_done: allDone };
 }
 
 export default async function handler(req, res) {
@@ -197,6 +235,6 @@ export default async function handler(req, res) {
 
   const { data, error } = await admin.from("activity_events").insert(event).select().single();
   if (error) return json(res, 500, { ok: false, message: error.message });
-  await syncAssignmentProgress(admin, event);
-  return json(res, 200, { ok: true, event: data });
+  const sync = await syncAssignmentProgress(admin, event);
+  return json(res, 200, { ok: true, event: data, sync });
 }
