@@ -39,6 +39,8 @@ O portal deve mostrar evolucao longitudinal, sempre comparando a crianca com ela
 
 ## O que ainda precisa observacao em teste real
 
+- Usar `projeto/checklist-teste-real.md` para registrar sessoes com Miguel e Gabriel sem transformar o uso em burocracia.
+- Usar Pedro Antonio e Jose Carlos como perfis ficticios quando for preciso testar fluxo sem misturar com casos reais.
 - Clareza da navegacao entre adulto, crianca e modulos.
 - Qualidade do feedback recebido pelo adulto.
 - Se o historico e o relatorio continuam faceis de interpretar depois de varios dias de uso.
@@ -88,6 +90,7 @@ Leitura do resultado:
 
 1. Ler este arquivo.
 2. Abrir `projeto/backlog.md`.
-3. Abrir `projeto/roadmap.md`.
-4. Verificar `git status`.
-5. Escolher uma entrega pequena, testar e registrar commit.
+3. Abrir `projeto/checklist-teste-real.md` se estivermos analisando uso real ou massa de teste.
+4. Abrir `projeto/roadmap.md`.
+5. Verificar `git status`.
+6. Escolher uma entrega pequena, testar e registrar commit.

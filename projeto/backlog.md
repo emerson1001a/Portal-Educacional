@@ -3,6 +3,8 @@
 ## Agora
 
 - Usar `projeto/painel-atual.md` como ponto de retomada em novas janelas do Codex.
+- Usar `projeto/checklist-teste-real.md` para registrar os testes reais sem depender de memoria ou impressao solta.
+- Usar Pedro Antonio e Jose Carlos como perfis ficticios para testes de fluxo, preservando Miguel e Gabriel como casos reais.
 - Testar o fluxo diario com Miguel e Gabriel por alguns dias, registrando confusoes, atritos e evidencias uteis.
 - Validar `/api/supabase-status` em producao sempre que uma migracao parecer faltar.
 - Testar missao com meta vinculada, prazo, nota adulta, progresso por item e retorno claro para a crianca.
@@ -50,6 +52,7 @@
 
 ## Concluido recentemente
 
+- Checklist de teste real para Miguel e Gabriel, com Pedro Antonio e Jose Carlos como perfis ficticios de teste.
 - Historico unificado com texto e feedback expansivel dos modulos, reduzindo espaco ocupado no painel adulto.
 - Primeiro relatorio longitudinal adulto com metricas, base de evidencias, leitura por area, receita para o adulto e registros recentes.
 - Resumo do Desenvolvimento com card "Base da leitura", separando atividades, metas, percepcoes e metas concluidas.
