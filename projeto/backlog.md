@@ -22,7 +22,6 @@
 - Refinar primeira camada de gamificacao leve depois dos testes reais, mantendo foco em progresso proprio, sem ranking.
 - Refinar relatorio longitudinal depois dos primeiros dias de uso real, especialmente clareza para reuniao e orientacao pratica do adulto.
 - Tabuada: permitir que adulto defina quantidade de tentativas ou tempo de treino; IA pode sugerir carga pedagogica adequada para evitar estresse.
-- Tabuada: avaliar mostrar o resultado por alguns milissegundos no inicio de cada nova tabuada como apoio de memorizacao.
 
 ## Mais tarde
 
@@ -41,6 +40,7 @@
 ## Concluido recentemente
 
 - Fluxo ponta a ponta da Redacao validado em teste real: adulto criou meta vinculada, crianca fez a redacao, evidencia voltou ao portal adulto e a meta foi revisada/fechada.
+- Tabuada mostra a resposta por um instante antes da tentativa, apoiando memorizacao sem contar esse tempo como resposta.
 - Interpretacao sugere tamanho/complexidade pela idade, esconde essa escolha da crianca em modo missao e evita usar o nome do aluno como personagem.
 - Checklist de teste real para Miguel e Gabriel, com Pedro Antonio e Jose Carlos como perfis ficticios de teste.
 - Redacao em modo missao infantil identifica a crianca pelo Portal, sem pedir nome/idade editaveis, e usa titulos/botoes mais claros na escolha do tipo.

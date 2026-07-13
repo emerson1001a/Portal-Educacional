@@ -82,6 +82,7 @@
   const COACH_COOLDOWN = 5;           // não spammar: mínimo de X tentativas entre mensagens extras
   const EXTRA_COACH_ON_ERR = true;    // gera dica extra em padrão de erro (pressa/dúvida)
   const DEFAULT_MISSION_TARGET_ATTEMPTS = 20;
+  const ANSWER_PREVIEW_MS = 850;      // mostra a resposta antes de pedir memorização
 
   function parseAge(value) {
     const age = Number.parseInt(value || "", 10);
@@ -205,6 +206,7 @@
   let streak = 0;
   let paused = false;
   let timerHandle = null;
+  let previewHandle = null;
   let missionStartTotal = 0;
   let missionAttempts = 0;
   let missionCompleted = false;
@@ -1121,6 +1123,8 @@
     paused = true;
     current = null;
     stopTimer();
+    if (previewHandle) clearTimeout(previewHandle);
+    previewHandle = null;
     questionEl.textContent = "Muito bem!";
     questionEl.classList.add("complete");
     answerbarEl.classList.add("hidden");
@@ -1142,24 +1146,39 @@
 
   function showQuestion(student) {
     if (paused || missionCompleted) return;
+    if (previewHandle) clearTimeout(previewHandle);
     const q = pickNextQuestion(student);
-    current = { a:q.a, b:q.b, correct:q.a*q.b, startMs: Date.now(), fromHard: !!q.fromHard, fromRepeat: !!q.fromRepeat };
+    current = { a:q.a, b:q.b, correct:q.a*q.b, startMs: null, fromHard: !!q.fromHard, fromRepeat: !!q.fromRepeat, previewing: true };
     questionEl.classList.remove("complete");
-    questionEl.textContent = `${current.a} × ${current.b} = ?`;
-    feedbackEl.textContent = "";
+    questionEl.textContent = `${current.a} × ${current.b} = ${current.correct}`;
+    feedbackEl.innerHTML = `<span class="pill">Observe a resposta e guarde na memória.</span>`;
     answerEl.value = "";
-    answerEl.focus();
-    startTimer();
+    answerEl.disabled = true;
+    sendBtn.disabled = true;
+    timerEl.textContent = "—";
+    previewHandle = setTimeout(() => {
+      if (!current || paused || missionCompleted) return;
+      previewHandle = null;
+      current.previewing = false;
+      current.startMs = Date.now();
+      questionEl.textContent = `${current.a} × ${current.b} = ?`;
+      feedbackEl.textContent = "";
+      answerEl.disabled = false;
+      sendBtn.disabled = false;
+      answerEl.focus();
+      startTimer();
+    }, ANSWER_PREVIEW_MS);
   }
 
   function onSend() {
     const student = getStudent();
     if (!student || !current || paused) return;
+    if (current.previewing) return;
 
     const raw = (answerEl.value||"").trim();
     if (!raw || raw === "-") return;
 
-    const ms = Date.now() - current.startMs;
+    const ms = Date.now() - (current.startMs || Date.now());
     stopTimer();
 
     const ans = parseInt(raw,10);
@@ -1251,6 +1270,8 @@
 
     paused = false;
     missionCompleted = false;
+    if (previewHandle) clearTimeout(previewHandle);
+    previewHandle = null;
     missionStartTotal = student.events.length;
     missionAttempts = 0;
     updateMissionProgress();
@@ -1276,6 +1297,8 @@
     pauseBtn.textContent = paused ? "Retomar" : "Pausar";
     if (paused) {
       stopTimer();
+      if (previewHandle) clearTimeout(previewHandle);
+      previewHandle = null;
       feedbackEl.innerHTML = `<span class="pill">Pausado</span>`;
       questionEl.textContent = "—";
       current = null;
@@ -1296,6 +1319,8 @@
 
     paused = false;
     stopTimer();
+    if (previewHandle) clearTimeout(previewHandle);
+    previewHandle = null;
     current = null;
     streak = 0;
     repeatQueue.length = 0;
