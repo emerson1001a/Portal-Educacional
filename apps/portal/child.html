@@ -404,7 +404,9 @@
       token: new URLSearchParams(window.location.search).get("token") || "",
       child: null,
       assignments: [],
-      freeModules: []
+      freeModules: [],
+      access: null,
+      completedActivityReturn: false
     };
 
     const els = {
@@ -453,8 +455,7 @@
             return { ...item, status: "done" };
           });
           return { ...assignment, items };
-        })
-        .filter((assignment) => (assignment.items || []).some((item) => item.status !== "done"));
+        });
 
       return changed;
     }
@@ -466,6 +467,7 @@
 
       const service = params.get("service");
       const saved = status === "activity_saved";
+      state.completedActivityReturn = saved;
       const changed = applyReturnedCompletion(params);
       showMessage(
         saved
@@ -478,7 +480,7 @@
         ? `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(state.token)}`
         : `${window.location.origin}${window.location.pathname}`;
       window.history.replaceState({}, "", cleanUrl);
-      if (changed) render();
+      if (saved || changed) render();
     }
 
     function applyModuleConfigParams(params, item) {
@@ -563,6 +565,46 @@
       return `${module.url}?${params.toString()}`;
     }
 
+    function appendFreeModulesSection(completedMissionContext = false) {
+      if (!state.freeModules.length) return;
+      const section = document.createElement("section");
+      section.className = "assignment";
+      section.innerHTML = `
+        <div>
+          <span class="pill">${completedMissionContext ? "atividades livres" : "atividades livres"}</span>
+          <h3>${completedMissionContext ? "Se quiser praticar mais" : "Atividades livres"}</h3>
+          <p class="muted">${completedMissionContext ? "O combinado de hoje já foi entregue. Estas atividades são extras." : "O adulto ainda não montou uma missão específica. Você pode praticar uma destas atividades."}</p>
+        </div>
+        <div class="free-list"></div>
+      `;
+      const list = section.querySelector(".free-list");
+      state.freeModules.forEach((module) => {
+        const card = document.createElement("article");
+        card.className = "free-card";
+        card.innerHTML = `
+          <div class="module-icon ${module.accent || "reading"}">${module.icon || "A"}</div>
+          <div>
+            <strong>${module.short_name || module.name}</strong>
+            <div class="muted small">${module.description || "Atividade para praticar."}</div>
+          </div>
+          <button class="button" type="button">Começar</button>
+        `;
+        const button = card.querySelector("button");
+        button.addEventListener("click", () => {
+          const url = freeModuleUrl(module);
+          if (!url) {
+            showMessage("Esta atividade ainda não está disponível.", true);
+            return;
+          }
+          button.disabled = true;
+          button.textContent = "Abrindo...";
+          window.location.href = url;
+        });
+        list.appendChild(card);
+      });
+      els.assignments.appendChild(section);
+    }
+
     function render() {
       els.assignments.innerHTML = "";
 
@@ -572,57 +614,41 @@
       }
 
       if (!state.assignments.length) {
-        if (!state.freeModules.length) {
+        const completedMissionContext = state.completedActivityReturn || state.access?.assignment_id;
+        if (completedMissionContext) {
+          els.statusTitle.textContent = "Missão concluída";
+          els.statusCopy.textContent = "Tudo entregue por aqui. O adulto já pode acompanhar o progresso.";
+          if (!state.freeModules.length) {
+            els.assignments.innerHTML = '<div class="notice">Você concluiu a missão liberada. Bom trabalho!</div>';
+            return;
+          }
+        } else if (!state.freeModules.length) {
           els.statusTitle.textContent = "Nenhuma atividade liberada agora.";
           els.statusCopy.textContent = "Quando houver uma missão, ela aparecerá aqui.";
           els.assignments.innerHTML = '<div class="notice">Nenhuma missão disponível no momento.</div>';
           return;
         }
 
-        els.statusTitle.textContent = "Atividades livres disponíveis.";
-        els.statusCopy.textContent = "Escolha uma atividade curta para praticar agora.";
-        els.assignments.innerHTML = `
-          <div>
-            <span class="pill">atividades livres</span>
-            <p class="muted">O adulto ainda não montou uma missão específica. Você pode praticar uma destas atividades.</p>
-          </div>
-          <div class="free-list"></div>
-        `;
+        if (!completedMissionContext) {
+          els.statusTitle.textContent = "Atividades livres disponíveis.";
+          els.statusCopy.textContent = "Escolha uma atividade curta para praticar agora.";
+        }
 
-        const list = els.assignments.querySelector(".free-list");
-        state.freeModules.forEach((module) => {
-          const card = document.createElement("article");
-          card.className = "free-card";
-          card.innerHTML = `
-            <div class="module-icon ${module.accent || "reading"}">${module.icon || "A"}</div>
-            <div>
-              <strong>${module.short_name || module.name}</strong>
-              <div class="muted small">${module.description || "Atividade para praticar."}</div>
-            </div>
-            <button class="button" type="button">Começar</button>
-          `;
-          const button = card.querySelector("button");
-          button.addEventListener("click", () => {
-            const url = freeModuleUrl(module);
-            if (!url) {
-              showMessage("Esta atividade ainda não está disponível.", true);
-              return;
-            }
-            button.disabled = true;
-            button.textContent = "Abrindo...";
-            window.location.href = url;
-          });
-          list.appendChild(card);
-        });
+        if (completedMissionContext) {
+          els.assignments.innerHTML = '<div class="notice">Você concluiu a missão combinada. Bom trabalho!</div>';
+        }
+        appendFreeModulesSection(completedMissionContext);
         return;
       }
 
-      const activeAssignments = state.assignments
-        .map((assignment) => ({
-          ...assignment,
-          items: (assignment.items || []).filter((item) => item.status !== "done")
-        }))
-        .filter((assignment) => assignment.items.length);
+      const completedAssignments = state.assignments.filter((assignment) => {
+        const items = assignment.items || [];
+        return items.length && items.every((item) => item.status === "done");
+      });
+      const activeAssignments = state.assignments.filter((assignment) => {
+        const items = assignment.items || [];
+        return !items.length || items.some((item) => item.status !== "done");
+      });
 
       const pendingItemsCount = activeAssignments.reduce((total, assignment) => {
         return total + (assignment.items || []).filter((item) => item.status !== "done").length;
@@ -635,17 +661,17 @@
         : "Tudo entregue por aqui. O adulto já pode acompanhar o progresso.";
 
       if (!activeAssignments.length) {
-        els.assignments.innerHTML = '<div class="notice">Todas as missões liberadas já foram concluídas. Bom trabalho!</div>';
-        return;
+        els.assignments.innerHTML = '<div class="notice">Missão concluída. Você fez o combinado de hoje. Bom trabalho!</div>';
       }
 
-      activeAssignments.forEach((assignment) => {
+      const visibleAssignments = activeAssignments.length ? activeAssignments : completedAssignments;
+      visibleAssignments.forEach((assignment) => {
         const progress = assignmentProgress(assignment);
         const card = document.createElement("article");
         card.className = "assignment";
         card.innerHTML = `
           <div>
-            <span class="pill">missão</span>
+            <span class="pill">${progress.done === progress.total && progress.total ? "missão concluída" : "missão"}</span>
             <h3>${assignment.title || "Atividade"}</h3>
             ${assignment.instructions ? `<p class="muted">${assignment.instructions}</p>` : ""}
           </div>
@@ -703,6 +729,7 @@
 
         els.assignments.appendChild(card);
       });
+      if (!activeAssignments.length) appendFreeModulesSection(true);
     }
 
     async function loadChildSession() {
@@ -728,6 +755,7 @@
         state.child = data.child;
         state.assignments = Array.isArray(data.assignments) ? data.assignments : [];
         state.freeModules = Array.isArray(data.free_modules) ? data.free_modules : [];
+        state.access = data.access || null;
         render();
         consumePortalReturnNotice();
       } catch (error) {

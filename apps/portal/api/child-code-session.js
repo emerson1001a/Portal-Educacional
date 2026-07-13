@@ -114,7 +114,7 @@ export default async function handler(req, res) {
     .from("assignments")
     .select("id, child_id, title, child_title, child_instructions, status, due_at, created_at")
     .eq("child_id", access.child_id)
-    .in("status", ["released", "in_progress"])
+    .in("status", access.assignment_id ? ["released", "in_progress", "done"] : ["released", "in_progress"])
     .order("due_at", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
 
@@ -164,6 +164,7 @@ export default async function handler(req, res) {
     access: {
       id: access.id,
       purpose: access.purpose,
+      assignment_id: access.assignment_id,
       expires_at: access.expires_at,
       session_expires_at: childSessionExpiresAt
     },
