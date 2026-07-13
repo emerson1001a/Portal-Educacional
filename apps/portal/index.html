@@ -441,6 +441,15 @@
       color: #075f59;
       font-size: 13px;
     }
+    .child-access-warning {
+      padding: 11px 12px;
+      border: 1px solid #ffd08a;
+      border-radius: 8px;
+      color: #8a4b00;
+      background: #fff8e8;
+      font-size: 13px;
+      font-weight: 750;
+    }
     .quick-actions {
       display: grid;
       justify-items: end;
@@ -1119,6 +1128,7 @@
             <span class="pill">acesso da criança</span>
             <strong id="childAccessTitle">Link infantil pronto</strong>
             <p class="muted small" id="childAccessCopy">Este link abre somente a área infantil e não mostra percepções, relatórios ou orientações do adulto.</p>
+            <p class="child-access-warning hidden" id="childCodeUnavailableNote">Código curto indisponível neste banco. Rode a migração <strong>20260710_child_short_codes.sql</strong>; enquanto isso, o link infantil continua funcionando.</p>
             <div class="child-access-fields">
               <label>
                 Link infantil
@@ -1509,6 +1519,7 @@
       childAccessCodeWrap: document.querySelector("#childAccessCodeWrap"),
       childAccessCode: document.querySelector("#childAccessCode"),
       childCodeGuide: document.querySelector("#childCodeGuide"),
+      childCodeUnavailableNote: document.querySelector("#childCodeUnavailableNote"),
       copyChildLinkButton: document.querySelector("#copyChildLinkButton"),
       copyChildCodeButton: document.querySelector("#copyChildCodeButton"),
       openChildCodeEntryButton: document.querySelector("#openChildCodeEntryButton"),
@@ -3002,6 +3013,7 @@
       els.childAccessCode.value = "";
       els.childAccessCodeWrap.classList.add("hidden");
       els.childCodeGuide.classList.add("hidden");
+      els.childCodeUnavailableNote.classList.add("hidden");
       els.copyChildCodeButton.classList.add("hidden");
       els.openChildCodeEntryButton.classList.add("hidden");
       els.openChildLinkButton.href = "#";
@@ -3016,6 +3028,9 @@
         : "Envie este link apenas para a criança ou abra em outro aparelho. Ele é temporário e não libera a área do adulto.";
       if (codeUnavailable) {
         els.childAccessCopy.textContent += " O código curto ficará disponível depois da migração no Supabase.";
+        els.childCodeUnavailableNote.classList.remove("hidden");
+      } else {
+        els.childCodeUnavailableNote.classList.add("hidden");
       }
       els.childAccessLink.value = link;
       els.openChildLinkButton.href = link;
