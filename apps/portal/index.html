@@ -453,6 +453,25 @@
       border-radius: 8px;
       background: #fbfdff;
     }
+    .assignment-group {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .assignment-group-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 2px 0;
+    }
+    .assignment-group-title strong {
+      font-size: 15px;
+    }
+    .assignment-card-done {
+      border-color: #bde7df;
+      background: #f2fbf8;
+    }
     .feedback-card.primary { border-color: rgba(11,143,134,.32); background: #f0fbf9; }
     .feedback-card.attention { border-color: rgba(239,123,91,.28); background: #fff7f2; }
     .feedback-card.milestone { border-color: rgba(37,99,235,.24); background: #f5f8ff; }
@@ -2511,6 +2530,61 @@
       });
     }
 
+    function assignmentCard(assignment) {
+      const progress = assignmentProgress(assignment);
+      const linkedGoal = goalById(assignment.goal_id);
+      const dueText = assignment.due_at ? `Prazo: ${formatDate(assignment.due_at)}` : "Sem prazo definido";
+      const effectiveStatus = assignment.resolved_status || assignment.status;
+      const itemRows = (assignment.items || []).map((item) => {
+        const configSummary = assignmentConfigSummary(item);
+        return `
+          <div class="small">
+            <strong>${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}:</strong>
+            ${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}
+            ${configSummary ? `<div class="muted small">${escapeHtml(configSummary)}</div>` : ""}
+          </div>
+        `;
+      }).join("");
+      const card = document.createElement("article");
+      card.className = `goal-card${effectiveStatus === "done" ? " assignment-card-done" : ""}`;
+      card.innerHTML = `
+        <span class="pill">missão ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
+        <strong>${escapeHtml(assignment.child_title || assignment.title)}</strong>
+        <p class="muted">${escapeHtml(assignment.child_instructions || "Sem orientação adicional.")}</p>
+        ${linkedGoal ? `<p class="small"><strong>Meta adulta:</strong> ${escapeHtml(areaLabel(linkedGoal.area))} - ${escapeHtml(linkedGoal.title)}</p>` : ""}
+        ${assignment.adult_notes ? `<p class="small"><strong>Nota adulta:</strong> ${escapeHtml(assignment.adult_notes)}</p>` : ""}
+        <p class="small"><strong>Progresso:</strong> ${progress.total ? `${progress.done}/${progress.total} itens concluídos` : "sem módulos vinculados"} · ${escapeHtml(dueText)}</p>
+        ${itemRows ? `<div class="stack">${itemRows}</div>` : '<p class="small">Nenhum módulo vinculado.</p>'}
+        <div class="row between">
+          <span class="small">Criada em ${formatDate(assignment.created_at)} · Status: ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
+        </div>
+        <div class="row">
+          ${effectiveStatus !== "done" ? `<button class="button ghost" type="button" data-assignment-action="done">Marcar concluída</button>` : ""}
+          <button class="button ghost" type="button" data-assignment-action="archived">Arquivar</button>
+        </div>
+      `;
+      card.querySelectorAll("[data-assignment-action]").forEach((button) => {
+        button.addEventListener("click", () => updateAssignmentStatus(assignment, button.dataset.assignmentAction, button));
+      });
+      return card;
+    }
+
+    function assignmentGroup(title, description, assignments) {
+      const section = document.createElement("section");
+      section.className = "assignment-group";
+      section.innerHTML = `
+        <div class="assignment-group-title">
+          <div>
+            <strong>${escapeHtml(title)}</strong>
+            <p class="muted small">${escapeHtml(description)}</p>
+          </div>
+          <span class="pill">${assignments.length}</span>
+        </div>
+      `;
+      assignments.forEach((assignment) => section.appendChild(assignmentCard(assignment)));
+      return section;
+    }
+
     function renderAssignments() {
       const child = activeChild();
       els.assignmentsList.innerHTML = "";
@@ -2522,44 +2596,24 @@
         els.assignmentsList.innerHTML = '<div class="notice">Ainda não há missões liberadas para esta criança.</div>';
         return;
       }
-      state.assignments.forEach((assignment) => {
-        const progress = assignmentProgress(assignment);
-        const linkedGoal = goalById(assignment.goal_id);
-        const dueText = assignment.due_at ? `Prazo: ${formatDate(assignment.due_at)}` : "Sem prazo definido";
-        const effectiveStatus = assignment.resolved_status || assignment.status;
-        const itemRows = (assignment.items || []).map((item) => {
-          const configSummary = assignmentConfigSummary(item);
-          return `
-            <div class="small">
-              <strong>${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}:</strong>
-              ${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}
-              ${configSummary ? `<div class="muted small">${escapeHtml(configSummary)}</div>` : ""}
-            </div>
-          `;
-        }).join("");
-        const card = document.createElement("article");
-        card.className = "goal-card";
-        card.innerHTML = `
-          <span class="pill">missão ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
-          <strong>${escapeHtml(assignment.child_title || assignment.title)}</strong>
-          <p class="muted">${escapeHtml(assignment.child_instructions || "Sem orientação adicional.")}</p>
-          ${linkedGoal ? `<p class="small"><strong>Meta adulta:</strong> ${escapeHtml(areaLabel(linkedGoal.area))} - ${escapeHtml(linkedGoal.title)}</p>` : ""}
-          ${assignment.adult_notes ? `<p class="small"><strong>Nota adulta:</strong> ${escapeHtml(assignment.adult_notes)}</p>` : ""}
-          <p class="small"><strong>Progresso:</strong> ${progress.total ? `${progress.done}/${progress.total} itens concluídos` : "sem módulos vinculados"} · ${escapeHtml(dueText)}</p>
-          ${itemRows ? `<div class="stack">${itemRows}</div>` : '<p class="small">Nenhum módulo vinculado.</p>'}
-          <div class="row between">
-            <span class="small">Criada em ${formatDate(assignment.created_at)} · Status: ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
-          </div>
-          <div class="row">
-            ${effectiveStatus !== "done" ? `<button class="button ghost" type="button" data-assignment-action="done">Marcar concluída</button>` : ""}
-            <button class="button ghost" type="button" data-assignment-action="archived">Arquivar</button>
-          </div>
-        `;
-        card.querySelectorAll("[data-assignment-action]").forEach((button) => {
-          button.addEventListener("click", () => updateAssignmentStatus(assignment, button.dataset.assignmentAction, button));
-        });
-        els.assignmentsList.appendChild(card);
-      });
+      const activeAssignments = state.assignments.filter((assignment) => (assignment.resolved_status || assignment.status) !== "done");
+      const doneAssignments = state.assignments.filter((assignment) => (assignment.resolved_status || assignment.status) === "done");
+
+      if (activeAssignments.length) {
+        els.assignmentsList.appendChild(assignmentGroup(
+          "Missões em andamento",
+          "Aparecem para a criança até serem concluídas ou arquivadas.",
+          activeAssignments
+        ));
+      }
+
+      if (doneAssignments.length) {
+        els.assignmentsList.appendChild(assignmentGroup(
+          "Missões concluídas",
+          "Saem da área infantil, mas continuam aqui como evidência do percurso.",
+          doneAssignments
+        ));
+      }
     }
 
     function renderTimeEvolution() {

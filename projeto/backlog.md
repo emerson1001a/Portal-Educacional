@@ -16,7 +16,7 @@
 ## Proximo
 
 - Validar o PRD de compartilhamento entre responsavel e professor antes de implementar convites e permissoes.
-- Refinar historico de missoes concluidas na area infantil depois dos testes reais.
+- Refinar historico de missoes concluidas depois dos testes reais, avaliando se a separacao entre andamento e concluidas ficou clara.
 - Refinar primeira camada de gamificacao leve depois dos testes reais, mantendo foco em progresso proprio, sem ranking.
 - Refinar relatorio longitudinal depois dos primeiros dias de uso real, especialmente clareza para reuniao e orientacao pratica do adulto.
 - Interpretacao: permitir que tamanho e complexidade do texto sejam sugeridos pela IA e/ou pelo adulto, considerando evolucao longitudinal da crianca.
@@ -62,6 +62,7 @@
 - Acoes adultas esclarecidas: abrir missao infantil para testar no mesmo computador e gerar link infantil para enviar a crianca.
 - Primeira camada de gamificacao leve na area infantil: barra de progresso da missao e mensagens de avanco sem competicao.
 - PRD inicial de compartilhamento responsavel/professor, com escopos, privacidade e revogacao.
+- Missoes adultas separadas entre andamento e concluidas, mantendo concluidas como evidencias do percurso.
 
 ## Pendente de decisao
 
