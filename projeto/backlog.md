@@ -28,11 +28,6 @@
 - Redacao: renomear "Missao 1: quem esta escrevendo?" para um titulo mais adequado, como "Missao Redacao" ou "Preparar Redacao".
 - Redacao: ajustar "Missao 2: escolha o tipo" para ficar em sintonia com o novo titulo da missao.
 - Redacao: destacar botoes de escolha do tipo de texto ("Uma historia", "Algo que aconteceu comigo", "Minha opiniao") com cor padrao ativa do projeto.
-- Portal adulto: renomear bloco "Leituras salvas" para algo como "Registro de Percepcoes" e trocar "Salvar leitura do momento" por "Salvar Percepcao".
-- Portal adulto: substituir ano de nascimento por data de nascimento para permitir contexto de mes, semana e dia do aniversario.
-- Tabuada: em modo missao infantil, mostrar nome do aluno como nao editavel.
-- Tabuada: adulto deve configurar "Modo Treino" e tabuadas a praticar antes da crianca iniciar.
-- Tabuada: enviar dados ao portal principal no fim da atividade, nao a cada bloco fixo de tentativas.
 - Tabuada: permitir que adulto defina quantidade de tentativas ou tempo de treino; IA pode sugerir carga pedagogica adequada para evitar estresse.
 - Tabuada: avaliar mostrar o resultado por alguns milissegundos no inicio de cada nova tabuada como apoio de memorizacao.
 
@@ -53,6 +48,9 @@
 ## Concluido recentemente
 
 - Checklist de teste real para Miguel e Gabriel, com Pedro Antonio e Jose Carlos como perfis ficticios de teste.
+- Tabuada em modo missao registra no portal apenas no fim da atividade, evitando eventos intermediarios no historico adulto.
+- Tabuada em modo missao usa nome da crianca como campo nao editavel e trava modo/tabuadas quando configurados pelo adulto.
+- Portal adulto com "Registros de percepcao", botao "Salvar percepcao" e cadastro por data de nascimento.
 - Historico unificado com texto e feedback expansivel dos modulos, reduzindo espaco ocupado no painel adulto.
 - Primeiro relatorio longitudinal adulto com metricas, base de evidencias, leitura por area, receita para o adulto e registros recentes.
 - Resumo do Desenvolvimento com card "Base da leitura", separando atividades, metas, percepcoes e metas concluidas.

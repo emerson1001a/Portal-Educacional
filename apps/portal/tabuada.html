@@ -279,6 +279,7 @@
 
   async function sendPortalEventIfNeeded(student, force = false) {
     if (!portal.enabled || !student) return false;
+    if (!force && portal.assignmentItemId) return false;
     const total = student.events.length;
     if (!force && total - portalLastSentTotal < 10) return false;
     if (!total) return false;
