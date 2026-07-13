@@ -21,7 +21,7 @@
 - Refinar historico de missoes concluidas depois dos testes reais, avaliando se a separacao entre andamento e concluidas ficou clara.
 - Refinar primeira camada de gamificacao leve depois dos testes reais, mantendo foco em progresso proprio, sem ranking.
 - Refinar relatorio longitudinal depois dos primeiros dias de uso real, especialmente clareza para reuniao e orientacao pratica do adulto.
-- Tabuada: permitir que adulto defina quantidade de tentativas ou tempo de treino; IA pode sugerir carga pedagogica adequada para evitar estresse.
+- Tabuada: permitir alternativa por tempo de treino e, no futuro, sugestao por IA com base no historico. A sugestao inicial por idade/respostas ja foi implementada.
 - Redacao: criar fluxo de impressao e digitalizacao assistida para criancas com dificuldade de digitacao. Adulto imprime a proposta/folha, a crianca escreve a mao, a IA le/transcreve o texto, o adulto confere e corrige eventuais erros de leitura, e so entao a redacao entra no fluxo normal de analise, feedback, conclusao da missao e registro no portal adulto. Cuidado pedagogico: preservar autoria da crianca e registrar que houve transcricao assistida.
 - Interpretacao: permitir que o adulto fotografe uma ou mais paginas do livro que a crianca esta lendo. O programa faz OCR, mostra o texto reconhecido para conferencia/correcao do adulto e gera perguntas apenas sobre o trecho conferido. Cuidado pedagogico e tecnico: respeitar o material enviado, evitar perguntas fora do texto e registrar que a atividade veio de leitura assistida por imagem.
 
@@ -64,6 +64,7 @@
 - Primeira camada de gamificacao leve na area infantil: barra de progresso da missao e mensagens de avanco sem competicao.
 - PRD inicial de compartilhamento responsavel/professor, com escopos, privacidade e revogacao.
 - Missoes adultas separadas entre andamento e concluidas, mantendo concluidas como evidencias do percurso.
+- Tabuada no portal adulto com sugestao inicial de dose por idade: respostas, tabuadas e modo adaptativo, com botao para aplicar a sugestao.
 
 ## Pendente de decisao
 

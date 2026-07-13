@@ -348,6 +348,17 @@
       border-radius: 8px;
       background: #f7fbfd;
     }
+    .dose-suggestion {
+      display: grid;
+      gap: 8px;
+      align-items: start;
+      background: #f0fbf9;
+    }
+    .dose-suggestion .button {
+      width: fit-content;
+      min-height: 38px;
+      padding: 8px 12px;
+    }
     .mini-checks {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(54px, 1fr));
@@ -1273,6 +1284,10 @@
                     </select>
                   </label>
                 </div>
+                <div class="notice dose-suggestion">
+                  <div id="tabuadaDoseSuggestion">Selecione uma criança para ver uma sugestão curta de treino.</div>
+                  <button class="button secondary" id="applyTabuadaSuggestionButton" type="button">Aplicar sugestão</button>
+                </div>
                 <label>
                   Tabuadas para praticar
                   <div class="mini-checks" id="tabuadaTabsInput"></div>
@@ -1558,6 +1573,8 @@
       tabuadaTargetInput: document.querySelector("#tabuadaTargetInput"),
       tabuadaModeInput: document.querySelector("#tabuadaModeInput"),
       tabuadaTabsInput: document.querySelector("#tabuadaTabsInput"),
+      tabuadaDoseSuggestion: document.querySelector("#tabuadaDoseSuggestion"),
+      applyTabuadaSuggestionButton: document.querySelector("#applyTabuadaSuggestionButton"),
       assignmentsList: document.querySelector("#assignmentsList"),
       modulesGrid: document.querySelector("#modulesGrid"),
       timeline: document.querySelector("#timeline"),
@@ -2472,12 +2489,69 @@
           ${number}
         </label>
       `).join("");
+      renderTabuadaDoseSuggestion();
+    }
+
+    function suggestedTabuadaDose(child = activeChild()) {
+      const age = childAge(child);
+      if (age !== null && age <= 7) {
+        return {
+          target: 8,
+          tabs: [2],
+          mode: "adaptive",
+          reason: "bem curta, para terminar com sensação de conquista"
+        };
+      }
+      if (age !== null && age <= 9) {
+        return {
+          target: 12,
+          tabs: [2, 3, 4],
+          mode: "adaptive",
+          reason: "curta e variada, sem sobrecarregar"
+        };
+      }
+      if (age !== null && age <= 11) {
+        return {
+          target: 16,
+          tabs: [2, 3, 4, 5, 6],
+          mode: "adaptive",
+          reason: "boa para praticar sem virar treino longo"
+        };
+      }
+      return {
+        target: 20,
+        tabs: [2, 3, 4, 5, 6],
+        mode: "adaptive",
+        reason: age === null ? "conservadora enquanto a idade nao estiver informada" : "um pouco mais completa, ainda com fechamento claro"
+      };
+    }
+
+    function renderTabuadaDoseSuggestion() {
+      if (!els.tabuadaDoseSuggestion) return;
+      const child = activeChild();
+      const dose = suggestedTabuadaDose(child);
+      const childLabel = child?.full_name ? ` para ${child.full_name}` : "";
+      els.tabuadaDoseSuggestion.innerHTML = `
+        <strong>Sugestão de dose${escapeHtml(childLabel)}</strong><br>
+        ${dose.target} respostas, tabuadas ${dose.tabs.join(", ")}, modo adaptativo: ${escapeHtml(dose.reason)}.
+      `;
+    }
+
+    function applyTabuadaDoseSuggestion() {
+      const dose = suggestedTabuadaDose();
+      if (els.tabuadaTargetInput) els.tabuadaTargetInput.value = String(dose.target);
+      if (els.tabuadaModeInput) els.tabuadaModeInput.value = dose.mode;
+      els.tabuadaTabsInput?.querySelectorAll('input[name="tabuadaTab"]').forEach((input) => {
+        input.checked = dose.tabs.includes(Number.parseInt(input.value, 10));
+      });
+      message(`Sugestão aplicada: ${dose.target} respostas em modo adaptativo.`);
     }
 
     function updateTabuadaSettingsVisibility() {
       if (!els.tabuadaAssignmentSettings) return;
       const selected = Boolean(els.assignmentModuleChoices.querySelector('input[name="assignmentModule"][value="tabuada"]:checked'));
       els.tabuadaAssignmentSettings.classList.toggle("hidden", !selected);
+      if (selected) renderTabuadaDoseSuggestion();
     }
 
     function tabuadaAssignmentConfig() {
@@ -3981,6 +4055,7 @@
     els.generateChildLinkButton.addEventListener("click", generateChildAccessLink);
     els.copyChildLinkButton.addEventListener("click", copyChildAccessLink);
     els.copyChildCodeButton.addEventListener("click", copyChildAccessCode);
+    els.applyTabuadaSuggestionButton.addEventListener("click", applyTabuadaDoseSuggestion);
     els.closeChildModeButton.addEventListener("click", closeChildMode);
     els.cancelAdultConfirmButton.addEventListener("click", hideAdultConfirm);
     els.openReportButton.addEventListener("click", openReport);
