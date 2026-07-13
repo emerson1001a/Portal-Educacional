@@ -39,6 +39,7 @@
 
 ## Concluido recentemente
 
+- Ajustes de teste da Tabuada: retorno ao Portal com marcacao de item concluido, multiplicacao sem quebra de linha, area de resposta reposicionada e fallback curto de tabuadas em missao infantil.
 - Fluxo ponta a ponta da Redacao validado em teste real: adulto criou meta vinculada, crianca fez a redacao, evidencia voltou ao portal adulto e a meta foi revisada/fechada.
 - Tabuada mostra a resposta por um instante antes da tentativa, apoiando memorizacao sem contar esse tempo como resposta.
 - Interpretacao sugere tamanho/complexidade pela idade, esconde essa escolha da crianca em modo missao e evita usar o nome do aluno como personagem.

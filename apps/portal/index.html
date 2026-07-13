@@ -3628,12 +3628,31 @@
       const status = params.get("portal_status");
       const service = params.get("service");
       const childId = params.get("child_id");
+      const assignmentId = params.get("assignment_id");
+      const assignmentItemId = params.get("assignment_item_id");
       if (!status) return;
 
       if (childId && state.children.some((child) => child.id === childId)) {
         state.activeChildId = childId;
         localStorage.setItem("portal.activeChildId", childId);
         await loadChildData();
+      }
+
+      if (status === "activity_saved" && assignmentId && assignmentItemId) {
+        state.assignments = state.assignments.map((assignment) => {
+          if (assignment.id !== assignmentId) return assignment;
+          const items = (assignment.items || []).map((item) => item.id === assignmentItemId
+            ? { ...item, status: "done", resolved_status: "done" }
+            : item
+          );
+          const allDone = items.length > 0 && items.every((item) => (item.resolved_status || item.status) === "done");
+          return {
+            ...assignment,
+            items,
+            status: allDone ? "done" : assignment.status,
+            resolved_status: allDone ? "done" : assignment.resolved_status
+          };
+        });
       }
 
       if (status === "activity_saved") {
