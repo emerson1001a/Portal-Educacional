@@ -74,6 +74,64 @@ function normalizeFeedback(feedback) {
   };
 }
 
+async function assignmentBelongsToChild(admin, assignmentId, childId) {
+  if (!assignmentId || !childId) return false;
+  const { data } = await admin
+    .from("assignments")
+    .select("id, child_id")
+    .eq("id", assignmentId)
+    .eq("child_id", childId)
+    .maybeSingle();
+  return Boolean(data);
+}
+
+async function firstPendingItemForAssignment(admin, assignmentId, service) {
+  if (!assignmentId || !service) return null;
+  const { data } = await admin
+    .from("assignment_items")
+    .select("id, assignment_id, module_id, status, sort_order")
+    .eq("assignment_id", assignmentId)
+    .eq("module_id", service)
+    .neq("status", "done")
+    .order("sort_order", { ascending: true })
+    .limit(1);
+  return data?.[0] || null;
+}
+
+async function resolveAssignmentTarget(admin, { childId, assignmentId, assignmentItemId, service }) {
+  if (assignmentItemId) {
+    const { data: item } = await admin
+      .from("assignment_items")
+      .select("id, assignment_id, module_id")
+      .eq("id", assignmentItemId)
+      .maybeSingle();
+    if (item && await assignmentBelongsToChild(admin, item.assignment_id, childId)) {
+      return { assignment_id: item.assignment_id, assignment_item_id: item.id };
+    }
+  }
+
+  if (assignmentId && await assignmentBelongsToChild(admin, assignmentId, childId)) {
+    const item = await firstPendingItemForAssignment(admin, assignmentId, service);
+    if (item) return { assignment_id: assignmentId, assignment_item_id: item.id };
+    return { assignment_id: assignmentId, assignment_item_id: assignmentItemId || null };
+  }
+
+  const { data: assignments } = await admin
+    .from("assignments")
+    .select("id, created_at, due_at")
+    .eq("child_id", childId)
+    .in("status", ["released", "in_progress"])
+    .order("due_at", { ascending: true, nullsFirst: false })
+    .order("created_at", { ascending: true });
+
+  for (const assignment of assignments || []) {
+    const item = await firstPendingItemForAssignment(admin, assignment.id, service);
+    if (item) return { assignment_id: assignment.id, assignment_item_id: item.id };
+  }
+
+  return { assignment_id: assignmentId || null, assignment_item_id: assignmentItemId || null };
+}
+
 async function syncAssignmentProgress(admin, event) {
   let assignmentId = event.assignment_id || null;
   let itemDone = false;
@@ -218,12 +276,21 @@ export default async function handler(req, res) {
 
   }
 
+  const target = await resolveAssignmentTarget(admin, {
+    childId,
+    assignmentId,
+    assignmentItemId: body.assignment_item_id || null,
+    service
+  });
+  assignmentId = target.assignment_id || assignmentId;
+  const assignmentItemId = target.assignment_item_id || body.assignment_item_id || null;
+
   const event = {
     child_id: childId,
     owner_id: ownerId,
     service,
     assignment_id: assignmentId,
-    assignment_item_id: body.assignment_item_id || null,
+    assignment_item_id: assignmentItemId,
     activity_type: body.activity_type || null,
     title: body.title || null,
     occurred_at: body.occurred_at || new Date().toISOString(),
