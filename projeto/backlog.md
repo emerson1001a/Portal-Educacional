@@ -23,7 +23,6 @@
 - Refinar relatorio longitudinal depois dos primeiros dias de uso real, especialmente clareza para reuniao e orientacao pratica do adulto.
 - Interpretacao: permitir que tamanho e complexidade do texto sejam sugeridos pela IA e/ou pelo adulto, considerando evolucao longitudinal da crianca.
 - Interpretacao: evitar que todo texto use a propria crianca como personagem; permitir uso ocasional, mas variar personagens e contextos.
-- Interpretacao: em modo missao infantil, nao pedir confirmacao editavel de nome e idade; usar os dados do cadastro.
 - Redacao: em modo missao infantil, remover campos editaveis "Seu nome" e "Sua idade" quando a crianca ja estiver identificada.
 - Redacao: renomear "Missao 1: quem esta escrevendo?" para um titulo mais adequado, como "Missao Redacao" ou "Preparar Redacao".
 - Redacao: ajustar "Missao 2: escolha o tipo" para ficar em sintonia com o novo titulo da missao.
@@ -48,6 +47,7 @@
 ## Concluido recentemente
 
 - Checklist de teste real para Miguel e Gabriel, com Pedro Antonio e Jose Carlos como perfis ficticios de teste.
+- Interpretacao em modo missao infantil usa nome e idade recebidos do Portal, sem campos editaveis para a crianca.
 - Tabuada em modo missao registra no portal apenas no fim da atividade, evitando eventos intermediarios no historico adulto.
 - Tabuada em modo missao usa nome da crianca como campo nao editavel e trava modo/tabuadas quando configurados pelo adulto.
 - Portal adulto com "Registros de percepcao", botao "Salvar percepcao" e cadastro por data de nascimento.
