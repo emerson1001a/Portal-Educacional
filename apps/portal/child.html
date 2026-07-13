@@ -437,6 +437,28 @@
       }[service] || "Atividade";
     }
 
+    function applyReturnedCompletion(params) {
+      if (params.get("portal_status") !== "activity_saved") return false;
+      const assignmentId = params.get("assignment_id");
+      const assignmentItemId = params.get("assignment_item_id");
+      if (!assignmentId || !assignmentItemId) return false;
+
+      let changed = false;
+      state.assignments = state.assignments
+        .map((assignment) => {
+          if (assignment.id !== assignmentId) return assignment;
+          const items = (assignment.items || []).map((item) => {
+            if (item.id !== assignmentItemId) return item;
+            changed = true;
+            return { ...item, status: "done" };
+          });
+          return { ...assignment, items };
+        })
+        .filter((assignment) => (assignment.items || []).some((item) => item.status !== "done"));
+
+      return changed;
+    }
+
     function consumePortalReturnNotice() {
       const params = new URLSearchParams(window.location.search);
       const status = params.get("portal_status");
@@ -444,6 +466,7 @@
 
       const service = params.get("service");
       const saved = status === "activity_saved";
+      const changed = applyReturnedCompletion(params);
       showMessage(
         saved
           ? `${moduleLabel(service)} registrada. Você voltou para a missão.`
@@ -455,6 +478,7 @@
         ? `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(state.token)}`
         : `${window.location.origin}${window.location.pathname}`;
       window.history.replaceState({}, "", cleanUrl);
+      if (changed) render();
     }
 
     function applyModuleConfigParams(params, item) {
