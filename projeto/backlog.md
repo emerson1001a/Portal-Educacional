@@ -23,6 +23,7 @@
 - Refinar relatorio longitudinal depois dos primeiros dias de uso real, especialmente clareza para reuniao e orientacao pratica do adulto.
 - Tabuada: permitir que adulto defina quantidade de tentativas ou tempo de treino; IA pode sugerir carga pedagogica adequada para evitar estresse.
 - Redacao: criar fluxo de impressao e digitalizacao assistida para criancas com dificuldade de digitacao. Adulto imprime a proposta/folha, a crianca escreve a mao, a IA le/transcreve o texto, o adulto confere e corrige eventuais erros de leitura, e so entao a redacao entra no fluxo normal de analise, feedback, conclusao da missao e registro no portal adulto. Cuidado pedagogico: preservar autoria da crianca e registrar que houve transcricao assistida.
+- Interpretacao: permitir que o adulto fotografe uma ou mais paginas do livro que a crianca esta lendo. O programa faz OCR, mostra o texto reconhecido para conferencia/correcao do adulto e gera perguntas apenas sobre o trecho conferido. Cuidado pedagogico e tecnico: respeitar o material enviado, evitar perguntas fora do texto e registrar que a atividade veio de leitura assistida por imagem.
 
 ## Mais tarde
 
