@@ -272,6 +272,17 @@
       cursor: default;
     }
 
+    .item.next {
+      border-color: #58d5ca;
+      background: #eefdf9;
+      box-shadow: 0 0 0 4px rgba(19, 152, 143, .12);
+    }
+
+    .item.next .button {
+      background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+      box-shadow: 0 14px 30px rgba(19, 152, 143, .28);
+    }
+
     .done-line {
       color: #095b55;
       font-weight: 900;
@@ -348,17 +359,26 @@
 
     @media (max-width: 860px) {
       .hero { grid-template-columns: 1fr; }
-      .welcome { min-height: 420px; }
+      .welcome { min-height: auto; }
     }
 
     @media (max-width: 640px) {
-      .shell { width: min(100% - 22px, 1120px); padding-top: 12px; }
-      .topbar, .panel-header { align-items: stretch; flex-direction: column; }
+      .shell { width: min(100% - 18px, 1120px); gap: 12px; padding: 10px 0 20px; }
+      .topbar { padding: 10px 12px; }
+      .topbar .pill { display: none; }
+      .brand-mark { width: 34px; height: 34px; }
+      .hero { gap: 12px; }
+      .welcome { gap: 14px; padding: 20px; }
+      .welcome p { margin-top: 10px; font-size: 17px; }
+      .status { padding: 12px; }
+      .panel { gap: 12px; padding: 16px; }
+      .panel-header { align-items: stretch; flex-direction: column; gap: 10px; }
       .item { grid-template-columns: 42px minmax(0, 1fr); }
       .item .button { grid-column: 1 / -1; width: 100%; }
       .free-card { grid-template-columns: 42px minmax(0, 1fr); }
       .free-card .button { grid-column: 1 / -1; width: 100%; }
-      h1 { font-size: 38px; }
+      h1 { margin-top: 12px; font-size: 36px; }
+      h2 { font-size: 30px; }
     }
   </style>
 </head>
@@ -690,29 +710,34 @@
           return (a.sort_order || 0) - (b.sort_order || 0);
         });
 
+        let highlightedPending = false;
         sortedItems.forEach((item) => {
           const module = item.module || {};
           const isDone = item.status === "done";
+          const isNext = !isDone && !highlightedPending;
           const configSummary = assignmentConfigSummary(item);
           const row = document.createElement("div");
-          row.className = `item${isDone ? " done" : ""}`;
+          row.className = `item${isDone ? " done" : ""}${isNext ? " next" : ""}`;
           row.innerHTML = `
             <div class="module-icon ${module.accent || "reading"}">${isDone ? "✓" : module.icon || "A"}</div>
             <div>
               <strong>${item.title || module.short_name || module.name || "Atividade"}</strong>
               ${item.child_instructions ? `<div class="muted small">${item.child_instructions}</div>` : ""}
               ${configSummary ? `<div class="muted small">${configSummary}</div>` : ""}
+              ${isNext ? '<div class="done-line">Comece por aqui.</div>' : ""}
               ${isDone ? '<div class="done-line">Feita. Bom trabalho!</div>' : ""}
             </div>
             <button class="button" type="button">${isDone ? "Feita" : "Começar"}</button>
           `;
 
           const button = row.querySelector("button");
+          if (isNext && !isDone) button.textContent = "Come\u00e7ar agora";
           button.disabled = isDone || !module.url;
           if (isDone) {
             items.appendChild(row);
             return;
           }
+          highlightedPending = true;
           button.addEventListener("click", () => {
             const url = moduleUrl(item);
             if (!url) {
