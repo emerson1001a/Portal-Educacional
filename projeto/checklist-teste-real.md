@@ -37,6 +37,18 @@ Observe sem interferir demais:
 - A crianca ficou animada, neutra, cansada ou frustrada?
 - A atividade pareceu curta, adequada ou longa demais?
 
+## Quando o teste for pelo celular
+
+O celular merece observacao propria, porque aumenta a chance de atrito em leitura, digitacao e botoes.
+
+- A crianca conseguiu abrir a missao sem ajuda?
+- A primeira atividade apareceu sem precisar rolar demais?
+- Os botoes ficaram grandes e claros para toque?
+- A leitura ficou confortavel no tamanho da tela?
+- A digitacao ficou aceitavel ou virou barreira?
+- A crianca conseguiu voltar para a missao depois da atividade?
+- Algum aviso ou feedback ficou escondido fora da tela?
+
 ## Depois da atividade
 
 No portal adulto, conferir:
@@ -57,6 +69,7 @@ Data:
 Crianca:
 Modulo:
 Missao:
+Dispositivo: celular / computador / tablet
 Tempo aproximado:
 
 O que funcionou bem:
@@ -103,6 +116,7 @@ Depois de alguns dias de uso, revisar:
 ## Validacoes ja observadas
 
 - Redacao: fluxo ponta a ponta validado. O adulto criou uma meta vinculada, a crianca realizou a redacao no portal infantil, a evidencia apareceu no portal adulto, as observacoes da meta foram conferidas e a meta foi fechada.
+- Interpretacao pelo celular: fluxo validado em uso real. A crianca conseguiu realizar a atividade pelo celular com boa experiencia.
 
 ## Decisoes esperadas apos o teste
 
