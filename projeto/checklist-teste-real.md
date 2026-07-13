@@ -117,6 +117,7 @@ Depois de alguns dias de uso, revisar:
 
 - Redacao: fluxo ponta a ponta validado. O adulto criou uma meta vinculada, a crianca realizou a redacao no portal infantil, a evidencia apareceu no portal adulto, as observacoes da meta foram conferidas e a meta foi fechada.
 - Interpretacao pelo celular: fluxo validado em uso real. A crianca conseguiu realizar a atividade pelo celular com boa experiencia.
+- Codigo curto infantil: migracao aplicada e entrada por codigo validada. O codigo apareceu no portal adulto e funcionou como acesso infantil.
 
 ## Decisoes esperadas apos o teste
 
