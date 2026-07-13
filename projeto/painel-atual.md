@@ -35,6 +35,7 @@ O portal deve mostrar evolucao longitudinal, sempre comparando a crianca com ela
 - Portal adulto recebe historico e sinais de progresso.
 - Fluxo ponta a ponta da Redacao ja foi validado: meta vinculada, missao infantil, redacao concluida, evidencia recebida no adulto e meta fechada.
 - Missoes concluidas deixam de parecer pendentes na area infantil.
+- Missoes concluidas e atividades livres devem aparecer separadas: a crianca precisa ter certeza de que fez o combinado antes de ver extras opcionais.
 - Adulto consegue abrir um relatorio longitudinal inicial para reuniao ou acompanhamento.
 - Indicadores do momento comparam evidencias, continuidade, metas e areas praticadas.
 

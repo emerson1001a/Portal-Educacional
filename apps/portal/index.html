@@ -2535,11 +2535,15 @@
       const linkedGoal = goalById(assignment.goal_id);
       const dueText = assignment.due_at ? `Prazo: ${formatDate(assignment.due_at)}` : "Sem prazo definido";
       const effectiveStatus = assignment.resolved_status || assignment.status;
+      const doneNotice = effectiveStatus === "done"
+        ? "Missão concluída: a criança cumpriu o combinado e esta missão agora fica como evidência do percurso."
+        : "";
       const itemRows = (assignment.items || []).map((item) => {
         const configSummary = assignmentConfigSummary(item);
+        const itemDone = (item.resolved_status || item.status) === "done";
         return `
           <div class="small">
-            <strong>${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}:</strong>
+            <strong>${itemDone ? "Feita - " : ""}${escapeHtml(serviceName(item.module_id) || item.title || "Atividade")}:</strong>
             ${escapeHtml(itemStatusLabel(item.resolved_status || item.status))}
             ${configSummary ? `<div class="muted small">${escapeHtml(configSummary)}</div>` : ""}
           </div>
@@ -2554,6 +2558,7 @@
         ${linkedGoal ? `<p class="small"><strong>Meta adulta:</strong> ${escapeHtml(areaLabel(linkedGoal.area))} - ${escapeHtml(linkedGoal.title)}</p>` : ""}
         ${assignment.adult_notes ? `<p class="small"><strong>Nota adulta:</strong> ${escapeHtml(assignment.adult_notes)}</p>` : ""}
         <p class="small"><strong>Progresso:</strong> ${progress.total ? `${progress.done}/${progress.total} itens concluídos` : "sem módulos vinculados"} · ${escapeHtml(dueText)}</p>
+        ${doneNotice ? `<div class="notice">${escapeHtml(doneNotice)}</div>` : ""}
         ${itemRows ? `<div class="stack">${itemRows}</div>` : '<p class="small">Nenhum módulo vinculado.</p>'}
         <div class="row between">
           <span class="small">Criada em ${formatDate(assignment.created_at)} · Status: ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>

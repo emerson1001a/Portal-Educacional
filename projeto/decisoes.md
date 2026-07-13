@@ -289,12 +289,14 @@ Decisao:
 - quando um modulo entrega uma evidencia com `assignment_item_id`, o portal marca o item como concluido;
 - a area infantil mostra o item concluido como "Feita" e mantem as atividades pendentes acima;
 - uma missao inteira concluida pode aparecer como concluida, em vez de continuar parecendo tarefa ativa.
+- atividades livres podem continuar disponiveis, mas devem aparecer separadas da missao, com texto claro de que sao extras opcionais.
 
 Motivo:
 
 - a crianca precisa perceber que terminou uma parte da missao;
 - apagar a atividade sem reconhecimento pode reduzir a sensacao de progresso;
 - manter o estado concluido ajuda o adulto a entender o caminho sem poluir a lista de pendencias.
+- sem essa separacao, uma atividade livre pode parecer uma tarefa que ficou pendente, mesmo quando o combinado ja foi cumprido.
 
 ## 2026-07-12
 
