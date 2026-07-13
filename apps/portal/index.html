@@ -1134,7 +1134,7 @@
                 <strong>Para enviar pelo WhatsApp</strong>
                 <span class="muted small">Copie o link infantil e envie para a criança abrir direto no celular.</span>
               </div>
-              <div>
+              <div id="childCodeGuide" class="hidden">
                 <strong>Para a criança digitar</strong>
                 <span class="muted small">Abra a entrada por código e peça para ela digitar o código curto.</span>
               </div>
@@ -1508,6 +1508,7 @@
       childAccessLink: document.querySelector("#childAccessLink"),
       childAccessCodeWrap: document.querySelector("#childAccessCodeWrap"),
       childAccessCode: document.querySelector("#childAccessCode"),
+      childCodeGuide: document.querySelector("#childCodeGuide"),
       copyChildLinkButton: document.querySelector("#copyChildLinkButton"),
       copyChildCodeButton: document.querySelector("#copyChildCodeButton"),
       openChildCodeEntryButton: document.querySelector("#openChildCodeEntryButton"),
@@ -3000,6 +3001,7 @@
       els.childAccessLink.value = "";
       els.childAccessCode.value = "";
       els.childAccessCodeWrap.classList.add("hidden");
+      els.childCodeGuide.classList.add("hidden");
       els.copyChildCodeButton.classList.add("hidden");
       els.openChildCodeEntryButton.classList.add("hidden");
       els.openChildLinkButton.href = "#";
@@ -3020,11 +3022,13 @@
       if (accessCode) {
         els.childAccessCode.value = accessCode;
         els.childAccessCodeWrap.classList.remove("hidden");
+        els.childCodeGuide.classList.remove("hidden");
         els.copyChildCodeButton.classList.remove("hidden");
         els.openChildCodeEntryButton.classList.remove("hidden");
       } else {
         els.childAccessCode.value = "";
         els.childAccessCodeWrap.classList.add("hidden");
+        els.childCodeGuide.classList.add("hidden");
         els.copyChildCodeButton.classList.add("hidden");
         els.openChildCodeEntryButton.classList.add("hidden");
       }
