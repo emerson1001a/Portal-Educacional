@@ -3635,6 +3635,24 @@
       return "Registre uma primeira atividade curta para iniciar a comparação longitudinal.";
     }
 
+    function reportConversationGuide(feedback, nextObservation) {
+      const child = activeChild();
+      const name = child?.full_name?.split(" ")[0] || "a criança";
+      const guide = [
+        `Comece valorizando uma conquista: "${name}, eu gostei de ver você tentando com calma."`,
+        `Faça uma pergunta curta: "Qual parte foi mais fácil hoje? E qual parte pediu mais atenção?"`,
+        `Transforme o próximo foco em convite: "${nextObservation} Vamos fazer uma tentativa pequena e observar."`
+      ];
+
+      if (feedback.avoid?.length) {
+        guide.push(`Cuidado com a frase: evite ${feedback.avoid[0]}. Troque por uma pergunta simples.`);
+      } else {
+        guide.push("Evite transformar o relatório em bronca. Use uma melhoria por vez.");
+      }
+
+      return guide;
+    }
+
     function reportMetricCards(time) {
       const cards = [
         ["Período", reportPeriodLabel()],
@@ -3678,6 +3696,7 @@
       const evidenceSummary = reportEvidenceSummary(time);
       const areaRows = reportAreaRows();
       const nextObservation = reportNextObservation(areaRows);
+      const conversationGuide = reportConversationGuide(feedback, nextObservation);
 
       return `
         <div>
@@ -3706,6 +3725,11 @@
           <h3>Receita para o adulto</h3>
           ${reportList(feedback.recipe || [])}
           ${feedback.avoid?.length ? `<p class="small"><strong>Evite dizer:</strong> ${escapeHtml(feedback.avoid.join(" / "))}</p>` : ""}
+        </section>
+        <section class="report-block">
+          <h3>Como conversar hoje</h3>
+          <p class="muted">Use como roteiro leve. A ideia é abrir conversa, não cobrar desempenho.</p>
+          ${reportList(conversationGuide)}
         </section>
         <section class="report-block">
           <h3>Sinais de evolução</h3>
