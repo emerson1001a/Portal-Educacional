@@ -16,6 +16,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `prd-modulos-plugaveis.md`: arquitetura de modulos, jornadas de apoio e base para futura habilitacao comercial.
 - `prd-modulo-ingles.md`: desenho inicial do modulo futuro de Ingles, com missoes de gramatica, vocabulario e evidencias.
 - `prd-sinais-da-missao.md`: sinais transversais das missoes, incluindo tempo invisivel, autoavaliacao leve da crianca e sintese cuidadosa da IA para o adulto.
+- `prd-consolidacao-monorepo.md`: plano para trazer Redacao, Interpretacao e Tabuada para o mesmo GitHub do Portal, com migracao paralela e desativacao segura dos projetos antigos.
 - `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
 - `analise-schema-etapa-5.md`: comparacao entre PRD de metas/tarefas e o schema/migracoes existentes.
 - `analise-codigo-curto-infantil.md`: preparo tecnico para codigo curto infantil com hash, expiracao e entrada futura.
