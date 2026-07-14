@@ -12,9 +12,19 @@ const DATA_FILE = path.join(DATA_DIR, "leituras.json");
 const isVercel = Boolean(process.env.VERCEL);
 
 const app = express();
+app.use((_req, res, next) => {
+  res.charset = "utf-8";
+  next();
+});
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, {
+  setHeaders(res, filePath) {
+    if (filePath.endsWith(".html")) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+    }
+  }
+}));
 
 async function readStore() {
   if (isVercel) {
