@@ -80,6 +80,7 @@
       background: #fff; color: var(--ink); font-size: 16px;
     }
     textarea { min-height: 180px; resize: vertical; line-height: 1.45; }
+    .voiceHint { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.4; }
     .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
     .chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .chip {
@@ -256,6 +257,7 @@
               <div class="field">
                 <label>Comeco</label>
                 <textarea id="begin" placeholder="Conte quem aparece e onde tudo começa."></textarea>
+                <p class="voiceHint">No celular, você pode digitar ou tocar no microfone do teclado para falar sua ideia.</p>
               </div>
             </div>
 
@@ -263,6 +265,7 @@
               <div class="field">
                 <label>Meio</label>
                 <textarea id="middle" placeholder="Conte o que aconteceu depois."></textarea>
+                <p class="voiceHint">Se for mais fácil, fale sua ideia pelo microfone do teclado e depois leia o texto.</p>
               </div>
             </div>
 
@@ -270,6 +273,7 @@
               <div class="field">
                 <label>Final</label>
                 <textarea id="end" placeholder="Conte como terminou e o que mudou."></textarea>
+                <p class="voiceHint">Você pode falar primeiro e revisar depois. O importante é fechar começo, meio e final.</p>
               </div>
             </div>
 
