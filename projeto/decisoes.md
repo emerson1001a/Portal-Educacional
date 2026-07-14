@@ -331,3 +331,24 @@ Motivo:
 - permitir melhoria do produto sem invadir a privacidade pedagogica;
 - evitar que `admin` vire permissao ampla sobre dados sensiveis;
 - alinhar a arquitetura futura com privacidade, LGPD e minimo acesso necessario.
+
+## 2026-07-14
+
+### Sinais da missao cuidam da crianca e do adulto
+
+Decisao:
+
+- criar `docs/prd-sinais-da-missao.md` para padronizar tempo invisivel, autoavaliacao leve da crianca e leitura combinada pela IA;
+- a crianca pode responder opcionalmente como foi a missao, com linguagem visual ou simples conforme idade;
+- o tempo de execucao deve ser registrado sem cronometro visivel para a crianca;
+- a IA pode combinar sinais para orientar o adulto, mas nao diagnosticar nem julgar a crianca;
+- o adulto deve receber indicadores reais com orientacao esperancosa, pratica e cuidadosa;
+- a crianca deve receber devolutiva curta, positiva e animadora sobre seu progresso.
+
+Motivo:
+
+- aprendizagem acontece na relacao entre crianca, adulto, tentativa, orientacao e constancia;
+- os indicadores ajudam, mas podem gerar ansiedade se vierem sem contexto;
+- o produto deve cuidar da confianca do adulto e da percepcao de progresso da crianca;
+- autoavaliacao e tempo so fazem sentido quando cruzados com historico, idade, tentativas, acertos e conclusao da missao;
+- o portal deve organizar sinais, nao transformar dificuldade em rotulo.

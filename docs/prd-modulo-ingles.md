@@ -209,7 +209,15 @@ A IA deve:
 3. separar em blocos pequenos;
 4. sugerir um primeiro bloco de pratica;
 5. criar exercicios variados;
-6. registrar quais palavras foram praticadas.
+6. oferecer botao de ouvir para cada palavra trabalhada;
+7. registrar quais palavras foram praticadas.
+
+Requisito de audio no vocabulario:
+
+- cada palavra do bloco de treino deve ter um botao simples de ouvir;
+- o objetivo e ajudar a crianca a associar palavra escrita, significado e som;
+- a crianca pode ouvir a palavra quantas vezes precisar;
+- o MVP nao deve gravar voz, avaliar fala ou dar nota de pronuncia.
 
 Regra pedagogica:
 
@@ -262,6 +270,7 @@ A crianca deve receber:
 - titulo simples;
 - instrucao curta;
 - uma questao por vez;
+- botao simples para ouvir a pronuncia de palavras e frases curtas;
 - reforco positivo imediato;
 - possibilidade de tentar novamente;
 - conclusao clara.
@@ -277,7 +286,7 @@ Faca uma parte pequena. Quando terminar, o adulto acompanha seu progresso.
 
 ## Tipos de exercicio
 
-O MVP pode usar exercicios sem audio:
+O MVP pode usar exercicios textuais com apoio simples de audio:
 
 - multipla escolha;
 - completar lacuna;
@@ -285,8 +294,11 @@ O MVP pode usar exercicios sem audio:
 - ligar pergunta e resposta;
 - escolher traducao simples;
 - revisar palavra ja praticada.
+- ouvir a pronuncia de uma palavra ou frase curta antes de responder.
 
-Exercicios com audio e pronuncia devem ficar fora do MVP.
+O audio do MVP deve ser apenas um apoio de escuta, acionado por um botao pequeno como "ouvir". A crianca pode ouvir a pronuncia, repetir se quiser e seguir a atividade.
+
+Ficam fora do MVP gravacao de voz, avaliacao automatica de pronuncia e pontuacao de fala.
 
 ## Evidencias enviadas ao portal
 
@@ -405,7 +417,7 @@ Ficam fora da primeira versao:
 - curso completo de Ingles;
 - conversacao livre;
 - avaliacao avancada de pronuncia;
-- audio obrigatorio;
+- audio obrigatorio em todas as atividades;
 - reconhecimento de fala;
 - ranking;
 - gamificacao complexa;
@@ -470,7 +482,7 @@ Permitir montar missao de Ingles com habilidade e lista de palavras, ainda sem m
 
 ### Fase 3: MVP do modulo
 
-Implementar atividades sem audio:
+Implementar atividades com audio simples de escuta no vocabulario, sem avaliacao de fala:
 
 - verb to be;
 - simple present;
@@ -487,9 +499,9 @@ Relatorios por:
 - estruturas com mais erro;
 - revisoes recomendadas.
 
-### Fase 5: Audio e pronuncia
+### Fase 5: Fala e pronuncia avaliada
 
-Somente depois de validar o MVP textual.
+Somente depois de validar o MVP textual e o apoio de audio por escuta.
 
 ## Decisao
 
