@@ -5,6 +5,7 @@
   "description": "Aplicativo independente para atividades de interpretacao de texto.",
   "main": "server.js",
   "scripts": {
+    "check": "node --check server.js && node --check api/index.js",
     "start": "node server.js"
   },
   "dependencies": {

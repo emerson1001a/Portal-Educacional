@@ -161,6 +161,33 @@ Para cada modulo:
 - Fazer deploy paralelo sem trocar o link usado em producao.
 - Testar URL nova com perfil ficticio.
 
+Configuracao inicial para a Interpretacao:
+
+```text
+Root Directory: apps/interpretacao
+Framework Preset: Other
+Build Command: deixe vazio
+Output Directory: deixe vazio
+Install Command: npm install
+```
+
+Variaveis:
+
+```text
+OPENAI_API_KEY
+OPENAI_MODEL=gpt-4.1-mini
+```
+
+Testes minimos depois do deploy:
+
+- abrir `/`;
+- abrir `/index.html`;
+- abrir `/api` e confirmar a mensagem `OK - Interpretacao de Texto backend rodando`;
+- criar uma missao de Interpretacao com perfil ficticio;
+- concluir a atividade infantil;
+- confirmar evidencia no historico adulto;
+- confirmar que a missao saiu da lista de pendentes.
+
 ### Fase 5: Troca controlada de URL
 
 - Atualizar `apps/portal/lib/modules.js` para apontar para a nova URL do modulo consolidado.
