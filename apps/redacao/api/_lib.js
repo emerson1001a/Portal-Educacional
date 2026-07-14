@@ -99,8 +99,13 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function readOpenAIKey() {
+  return String(process.env.OPENAI_API_KEY || "").trim().split(/\s+/)[0] || "";
+}
+
 export async function callOpenAI(system, user) {
-  if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY ausente");
+  const openAIKey = readOpenAIKey();
+  if (!openAIKey) throw new Error("OPENAI_API_KEY ausente");
 
   let lastError;
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -111,7 +116,7 @@ export async function callOpenAI(system, user) {
         method: "POST",
         signal: controller.signal,
         headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${openAIKey}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({

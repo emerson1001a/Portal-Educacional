@@ -895,21 +895,24 @@
       const current = activeStep();
       const map = { begin: "começo", middle: "meio", end: "final" };
       const textMap = { begin: "begin", middle: "middle", end: "end" };
+      const stepText = textValue(textMap[current.id]);
+      const localData = localValidation(current.id, stepText);
+      const locallyReady = stepText.length >= ageProfile().min;
       $("validateBtn").disabled = true;
       $("validateBtn").textContent = "Olhando...";
       try {
         const response = await fetch("/api/validar-etapa", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...payload(), etapa: map[current.id], textoEtapa: textValue(textMap[current.id]) })
+          body: JSON.stringify({ ...payload(), etapa: map[current.id], textoEtapa: stepText })
         });
         const data = await response.json();
+        if (!response.ok) throw new Error(data.details || data.error || "Erro ao validar");
         showMessage(data.mensagem || data.balao || "Pode continuar.");
-        if (data.ok === true) state.validatedSteps[current.id] = validationSignature(current.id);
+        if (data.ok === true || locallyReady) state.validatedSteps[current.id] = validationSignature(current.id);
       } catch (error) {
-        const data = localValidation(current.id, textValue(textMap[current.id]));
-        showMessage(data.mensagem);
-        if (textValue(textMap[current.id]).length >= ageProfile().min) state.validatedSteps[current.id] = validationSignature(current.id);
+        showMessage(localData.mensagem);
+        if (locallyReady) state.validatedSteps[current.id] = validationSignature(current.id);
       } finally {
         $("validateBtn").disabled = false;
         $("validateBtn").textContent = "Validar etapa";
