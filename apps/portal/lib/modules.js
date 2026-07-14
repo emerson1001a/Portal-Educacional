@@ -16,7 +16,7 @@ const defaultModules = [
     short_name: "Redação",
     area: "escrita",
     description: "Planejamento, escrita e análise da redação.",
-    url: "https://missao-redacao.vercel.app/",
+    url: "https://redacao-portal.vercel.app/",
     status: "available",
     accent: "writing",
     icon: "R"
