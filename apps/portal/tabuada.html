@@ -23,7 +23,7 @@
     .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.tabs label{min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:14px;background:#f8fafc;cursor:pointer;user-select:none;font-size:15px}.tabs input{width:auto;accent-color:var(--brand)}
     .practice{display:grid;grid-template-rows:auto minmax(150px,1fr) auto;min-height:min(520px,calc(100vh - 180px));overflow:visible;position:relative;background:linear-gradient(135deg,rgba(15,118,110,.10),rgba(14,165,233,.12)),var(--paper)}.practice-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.problem{display:grid;place-items:center;text-align:center;padding:4px 8px}.question-label{font-size:13px;font-weight:850;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.big{margin:0;font-size:clamp(46px,9vw,104px);line-height:1.05;font-weight:950;letter-spacing:0;color:#0b1728;white-space:nowrap}.big.complete{font-size:clamp(42px,6vw,76px);line-height:1.05;white-space:normal}
     .answerbar{display:grid;grid-template-columns:minmax(120px,1fr) auto;gap:10px;align-items:center;padding:12px 14px;border-radius:18px;background:#f8fbff;border:1px solid var(--line);margin-top:0}#answer{font-size:clamp(42px,8vw,88px);line-height:1;font-weight:950;text-align:center;padding:10px 18px;letter-spacing:0;color:#0b1728}#answer::placeholder{font-size:clamp(30px,6vw,58px);color:#6b7280;opacity:.85}#sendBtn{min-width:132px;background:linear-gradient(135deg,var(--sun),#fb7185);box-shadow:0 12px 24px rgba(245,158,11,.26)}.statusline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}#feedback{min-height:34px;font-size:16px}.ok{color:var(--green);font-weight:900}.bad{color:#dc2626;font-weight:900}.warn{color:#b45309;font-weight:900}
-    .student-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.metric{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px}.metric strong{display:block;font-size:22px;margin-top:4px}.msg{border:1px solid #bae6fd;border-radius:16px;padding:12px;background:#f0f9ff}.msg strong{display:block;margin-bottom:4px;color:#075985}.mission-complete{margin-top:12px;border:1px solid #99f6e4;background:#ecfdf5;border-radius:16px;padding:14px;display:grid;gap:10px}.mission-complete strong{font-size:18px;color:#065f46}.mission-complete .primary{justify-self:start}.teacher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}.teacher-wide{grid-column:span 2}.box{border:1px dashed #cbd5e1;border-radius:16px;padding:12px;background:#fbfdff}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #e5edf5;padding:8px 6px;text-align:left;font-size:13px;vertical-align:top}th{color:#475569;font-size:12px}ul{margin:8px 0 0 18px}.hidden{display:none!important}
+    .student-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.metric{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px}.metric strong{display:block;font-size:22px;margin-top:4px}.msg{border:1px solid #bae6fd;border-radius:16px;padding:12px;background:#f0f9ff}.msg strong{display:block;margin-bottom:4px;color:#075985}.mission-complete{margin-top:12px;border:1px solid #99f6e4;background:#ecfdf5;border-radius:16px;padding:14px;display:grid;gap:10px}.mission-complete strong{font-size:18px;color:#065f46}.mission-complete .primary{justify-self:start}.self-assessment{border:1px solid #bae6fd;background:#f8fdff;border-radius:14px;padding:12px;display:grid;gap:8px}.self-assessment p{margin:0;color:var(--muted)}.self-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.self-options button{background:#fff;border:1px solid #cbd5e1;color:#0b1728;box-shadow:none}.self-options button.active{background:#dff7f2;border-color:#14b8a6;color:#064e3b}.teacher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}.teacher-wide{grid-column:span 2}.box{border:1px dashed #cbd5e1;border-radius:16px;padding:12px;background:#fbfdff}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #e5edf5;padding:8px 6px;text-align:left;font-size:13px;vertical-align:top}th{color:#475569;font-size:12px}ul{margin:8px 0 0 18px}.hidden{display:none!important}
     @media(max-width:980px){.hero{grid-template-columns:1fr}.practice{min-height:auto}.student-panel,.teacher-grid{grid-template-columns:1fr}.teacher-wide{grid-column:auto}}
     @media(max-width:680px){.shell{width:min(100% - 20px,1180px);padding-top:12px}.topbar{align-items:flex-start;flex-direction:column}.grid2,.grid3{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(2,1fr)}.answerbar{grid-template-columns:1fr}#sendBtn{width:100%}.big{font-size:clamp(40px,13vw,58px)}}
   </style>
@@ -43,7 +43,7 @@
         <div class="grid3"><button id="startBtn" class="primary">Começar</button><button id="pauseBtn" class="caution">Pausar</button><button id="resetBtn" class="danger" title="Apaga dados do aluno atual">Reset do aluno</button></div>
         <div id="studentMini" class="student-panel"><div class="metric"><span class="muted">Últimas 20 tentativas</span><div id="studentMiniBox" style="margin-top:8px;">—</div></div><div class="metric"><span class="muted">Mais precisa treinar</span><strong id="studentMostErrors">—</strong></div><div class="msg" style="grid-column:1/-1;"><h3>Mensagem de incentivo</h3><div id="studentCoachMsg"><strong>—</strong><div class="muted">—</div></div><div class="muted" style="margin-top:8px;"><b>Últimas mensagens:</b></div><div id="studentCoachHistory" class="muted" style="margin-top:4px;">—</div></div></div>
       </section>
-      <section class="card practice"><div class="practice-head"><div><div class="question-label">Pergunta atual</div><div class="muted">Digite a resposta e pressione Enter ou Responder.</div></div><div class="statusline"><span class="pill">Meta <b id="missionProgress">0/20</b></span><span class="pill">Tempo <b id="timer">—</b></span><span class="pill">Sequência <b id="streak">0</b></span></div></div><div class="problem"><div id="question" class="big">—</div></div><div><div class="answerbar" id="answerbar"><input id="answer" inputmode="numeric" placeholder="resposta" autocomplete="off" /><button id="sendBtn">Responder</button></div><div id="feedback" style="margin-top:12px;"></div><div id="missionComplete" class="mission-complete hidden"><strong>Treino de hoje completo!</strong><div id="missionCompleteText">Você fez a prática combinada. Bom trabalho.</div><button id="missionReturnBtn" class="primary" type="button">Retornar à missão</button></div></div></section>
+      <section class="card practice"><div class="practice-head"><div><div class="question-label">Pergunta atual</div><div class="muted">Digite a resposta e pressione Enter ou Responder.</div></div><div class="statusline"><span class="pill">Meta <b id="missionProgress">0/20</b></span><span class="pill">Tempo <b id="timer">—</b></span><span class="pill">Sequência <b id="streak">0</b></span></div></div><div class="problem"><div id="question" class="big">—</div></div><div><div class="answerbar" id="answerbar"><input id="answer" inputmode="numeric" placeholder="resposta" autocomplete="off" /><button id="sendBtn">Responder</button></div><div id="feedback" style="margin-top:12px;"></div><div id="missionComplete" class="mission-complete hidden"><strong>Treino de hoje completo!</strong><div id="missionCompleteText">Você fez a prática combinada. Bom trabalho.</div><div class="self-assessment"><p>Opcional: como foi esse treino para você?</p><div id="selfAssessmentOptions" class="self-options"></div></div><button id="missionReturnBtn" class="primary" type="button">Retornar à missão</button></div></div></section>
     </main>
     <section id="teacherArea" class="teacher-grid">
       <div class="card"><h2>Resumo global</h2><div class="muted">Todas as tentativas do aluno</div><div id="summaryGlobal" style="margin-top:8px;">—</div><div class="muted" style="margin-top:8px;">Mais erros: <b id="mostErrorsGlobal">—</b></div></div>
@@ -180,6 +180,7 @@
   const missionCompleteEl = el("missionComplete");
   const missionCompleteText = el("missionCompleteText");
   const missionReturnBtn = el("missionReturnBtn");
+  const selfAssessmentOptionsEl = el("selfAssessmentOptions");
   const timerEl = el("timer");
   const streakEl = el("streak");
 
@@ -211,6 +212,9 @@
   let missionAttempts = 0;
   let missionCompleted = false;
   let missionSavePromise = null;
+  let missionStartedAt = null;
+  let missionFinishedAt = null;
+  let selectedSelfAssessment = null;
 
   const TEACHER_DEMO_PASS = "1234";
   let role = "student";
@@ -243,6 +247,45 @@
 
   function updateMissionProgress() {
     missionProgressEl.textContent = `${Math.min(missionAttempts, missionTargetAttempts)}/${missionTargetAttempts}`;
+  }
+
+  function missionDurationMs() {
+    if (!missionStartedAt) return null;
+    const end = missionFinishedAt || new Date();
+    const ms = end.getTime() - missionStartedAt.getTime();
+    return Number.isFinite(ms) && ms >= 0 ? ms : null;
+  }
+
+  function selfAssessmentChoices() {
+    const age = portal.childAge || parseAge(getStudent()?.profile?.child_age) || null;
+    if (age && age <= 10) {
+      return [
+        { value: "calm", label: "Foi tranquilo" },
+        { value: "needed_thinking", label: "Precisei pensar" },
+        { value: "try_again", label: "Quero tentar de novo" },
+        { value: "liked", label: "Gostei" }
+      ];
+    }
+    return [
+      { value: "easy", label: "Foi fácil" },
+      { value: "right_level", label: "Foi na medida" },
+      { value: "hard_but_done", label: "Foi difícil, mas consegui" },
+      { value: "practice_more", label: "Quero treinar mais" }
+    ];
+  }
+
+  function selectedSelfAssessmentLabel() {
+    const choices = selfAssessmentChoices();
+    return choices.find((choice) => choice.value === selectedSelfAssessment)?.label || "";
+  }
+
+  function renderSelfAssessment() {
+    const choices = selfAssessmentChoices();
+    selfAssessmentOptionsEl.innerHTML = choices.map((choice) => `
+      <button type="button" data-self-assessment="${choice.value}" class="${selectedSelfAssessment === choice.value ? "active" : ""}">
+        ${choice.label}
+      </button>
+    `).join("");
   }
 
   async function handleReturnToPortal(button) {
@@ -292,9 +335,17 @@
     const recentEvents = lastN(student.events, 20);
     const summary = tabuadaSummary(student);
     const lastEvent = student.events[student.events.length - 1] || {};
+    const durationSeconds = missionDurationMs() !== null ? Math.round(missionDurationMs() / 1000) : null;
+    const durationText = durationSeconds !== null
+      ? ` Tempo total: ${Math.max(1, Math.round(durationSeconds / 60))} min.`
+      : "";
+    const selfText = selectedSelfAssessmentLabel()
+      ? ` A criança marcou: ${selectedSelfAssessmentLabel()}.`
+      : "";
     const adultSummary = summary.total
       ? `Nas últimas ${summary.total} tentativas, acertou ${summary.correct} (${summary.acc}%). ${summary.hard ? `Foque um pouco em: ${summary.hard}.` : "Continue com treinos curtos."}`
       : "Ainda há poucos dados para uma leitura pedagógica.";
+    const adultSummaryWithSignals = `${adultSummary}${durationText}${selfText}`;
 
     const headers = { "Content-Type": "application/json" };
     if (portal.token) headers["X-Portal-Activity-Token"] = portal.token;
@@ -311,7 +362,7 @@
         service: "tabuada",
         activity_type: force ? "treino_finalizado" : "bloco_de_treino",
         title: "Treino de tabuada",
-        duration_ms: Number.isFinite(lastEvent.ms) ? lastEvent.ms : null,
+        duration_ms: missionDurationMs() ?? (Number.isFinite(lastEvent.ms) ? lastEvent.ms : null),
         metrics: {
           total_attempts: student.events.length,
           recent_attempts: summary.total,
@@ -321,7 +372,13 @@
           child_age: student.profile?.child_age ?? portal.childAge ?? null,
           target_attempts: missionTargetAttempts,
           selected_tabs: getSelectedTabsArray(),
-          training_mode: modeEl.value
+          training_mode: modeEl.value,
+          started_at: missionStartedAt ? missionStartedAt.toISOString() : null,
+          finished_at: missionFinishedAt ? missionFinishedAt.toISOString() : null,
+          duration_seconds: durationSeconds,
+          completed: force || missionCompleted,
+          child_self_assessment: selectedSelfAssessment || null,
+          child_self_assessment_label: selectedSelfAssessmentLabel() || null
         },
         feedback: {
           child: {
@@ -330,7 +387,7 @@
             next_step: "Entregar o treino para o adulto acompanhar no portal."
           },
           adult: {
-            summary: adultSummary,
+            summary: adultSummaryWithSignals,
             strengths: summary.acc >= 80 ? ["boa precisão recente"] : [],
             attention_points: summary.acc < 80 ? ["precisão recente ainda em construção"] : [],
             recipe: [
@@ -1122,6 +1179,7 @@
   // =========================
   function finishMission(student) {
     missionCompleted = true;
+    missionFinishedAt = new Date();
     paused = true;
     current = null;
     stopTimer();
@@ -1138,12 +1196,9 @@
       ? `Você completou ${missionTargetAttempts} respostas. Acertou ${summary.correct} das últimas ${summary.total}. Agora entregue para o adulto acompanhar.`
       : "Você completou o treino combinado. Agora entregue para o adulto acompanhar.";
     missionCompleteEl.classList.remove("hidden");
+    renderSelfAssessment();
     missionCompleteEl.scrollIntoView({ behavior: "smooth", block: "center" });
     returnPortalBtn.textContent = "Retornar à missão";
-    missionSavePromise = sendPortalEventIfNeeded(student, true).catch((err) => {
-      console.warn("Falha ao salvar treino completo no Portal:", err);
-      return false;
-    });
   }
 
   function showQuestion(student) {
@@ -1276,9 +1331,13 @@
     previewHandle = null;
     missionStartTotal = student.events.length;
     missionAttempts = 0;
+    missionStartedAt = new Date();
+    missionFinishedAt = null;
+    selectedSelfAssessment = null;
     updateMissionProgress();
     missionSavePromise = null;
     missionCompleteEl.classList.add("hidden");
+    renderSelfAssessment();
     questionEl.classList.remove("complete");
     answerbarEl.classList.remove("hidden");
     answerEl.disabled = false;
@@ -1385,6 +1444,12 @@
   resetBtn.addEventListener("click", onResetStudent);
   sendBtn.addEventListener("click", onSend);
   answerEl.addEventListener("keydown", (e) => { if (e.key === "Enter") onSend(); });
+  selfAssessmentOptionsEl.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-self-assessment]");
+    if (!button) return;
+    selectedSelfAssessment = button.dataset.selfAssessment;
+    renderSelfAssessment();
+  });
 
   allBtn.addEventListener("click", () => { markAllTabs(); refreshPanels(getStudent()); });
   noneBtn.addEventListener("click", () => { unmarkAllTabs(); refreshPanels(getStudent()); });

@@ -1771,6 +1771,13 @@
       if (Number.isFinite(Number(metrics.target_attempts))) {
         signals.push(`meta ${Number(metrics.target_attempts)}`);
       }
+      if (Number.isFinite(Number(metrics.duration_seconds))) {
+        const minutes = Math.max(1, Math.round(Number(metrics.duration_seconds) / 60));
+        signals.push(`${minutes} min`);
+      }
+      if (metrics.child_self_assessment_label) {
+        signals.push(metrics.child_self_assessment_label);
+      }
 
       return uniqueList(signals, 5);
     }
@@ -3477,6 +3484,15 @@
       }
       if (Number.isFinite(Number(metrics.child_age))) {
         rows.push(["Idade no registro", `${Number(metrics.child_age)} anos`]);
+      }
+      if (Number.isFinite(Number(metrics.duration_seconds))) {
+        const totalSeconds = Math.max(0, Number(metrics.duration_seconds));
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        rows.push(["Tempo da missão", minutes ? `${minutes}min ${seconds}s` : `${seconds}s`]);
+      }
+      if (metrics.child_self_assessment_label) {
+        rows.push(["Como a criança marcou", metrics.child_self_assessment_label]);
       }
 
       if (!rows.length) return "";
