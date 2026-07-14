@@ -125,7 +125,9 @@ Essa etapa exige revisao cuidadosa de rotas, APIs, rewrites e variaveis de ambie
 - Interpretacao copiada para `apps/interpretacao`.
 - Deploy antigo de Interpretacao deve continuar ativo.
 - Portal ainda deve apontar para a URL antiga ate a nova copia ser validada em Vercel.
-- Redacao ainda nao foi copiada para o monorepo.
+- Redacao copiada para `apps/redacao`.
+- Deploy antigo de Redacao deve continuar ativo.
+- Portal ainda deve apontar para a URL antiga ate a nova copia ser validada em Vercel.
 
 ### Fase 1: Inventario
 
@@ -185,6 +187,35 @@ Testes minimos depois do deploy:
 - abrir `/api` e confirmar a mensagem `OK - Interpretacao de Texto backend rodando`;
 - criar uma missao de Interpretacao com perfil ficticio;
 - concluir a atividade infantil;
+- confirmar evidencia no historico adulto;
+- confirmar que a missao saiu da lista de pendentes.
+
+Configuracao inicial para a Redacao:
+
+```text
+Root Directory: apps/redacao
+Framework Preset: Other
+Build Command: deixe vazio
+Output Directory: deixe vazio
+Install Command: npm install
+```
+
+Variaveis:
+
+```text
+OPENAI_API_KEY
+OPENAI_MODEL=gpt-4.1-mini
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+Testes minimos depois do deploy:
+
+- abrir `/`;
+- abrir `/api/status` e confirmar que OpenAI/Supabase estao configurados;
+- criar uma missao de Redacao com perfil ficticio;
+- concluir a redacao por etapas;
+- confirmar analise final;
 - confirmar evidencia no historico adulto;
 - confirmar que a missao saiu da lista de pendentes.
 

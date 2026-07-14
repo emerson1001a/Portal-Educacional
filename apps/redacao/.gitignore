@@ -1,0 +1,10 @@
+node_modules/
+.npm-cache/
+.vercel/
+.vercel-config/
+.env
+.env.local
+*.log
+Chaves.txt
+.static-server-job
+.static-server-pid

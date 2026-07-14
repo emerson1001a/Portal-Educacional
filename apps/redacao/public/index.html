@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Missão Redação</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d8e0ef;
+      --paper: #fffdf7;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --orange: #f97316;
+      --rose: #e11d48;
+      --soft-blue: #eaf2ff;
+      --soft-green: #eaf8ef;
+      --soft-orange: #fff3e8;
+      --shadow: 0 18px 45px rgba(31, 41, 55, .12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, system-ui, sans-serif;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, .10), transparent 30%),
+        linear-gradient(315deg, rgba(249, 115, 22, .12), transparent 32%),
+        #f7fafc;
+      color: var(--ink);
+    }
+
+    .app { min-height: 100vh; }
+    .shell { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 40px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center;
+      background: var(--blue); color: #fff; font-weight: 900; box-shadow: var(--shadow);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 2px; font-size: 28px; letter-spacing: 0; }
+    .muted { color: var(--muted); }
+
+    .modeBar { display: flex; gap: 8px; flex-wrap: wrap; }
+    button {
+      min-height: 42px; border: 0; border-radius: 10px; padding: 10px 14px;
+      background: var(--blue); color: #fff; font-weight: 800; cursor: pointer;
+    }
+    button.secondary { background: #e8edf7; color: var(--ink); }
+    button.good { background: var(--green); }
+    button.ghost { background: transparent; color: var(--blue); border: 1px solid var(--blue); }
+    button.blank { background: #fff; color: var(--muted); border: 1px solid var(--line); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: start; }
+    .panel {
+      background: rgba(255, 255, 255, .88); border: 1px solid var(--line);
+      border-radius: 16px; box-shadow: var(--shadow);
+    }
+    .pad { padding: 18px; }
+    .cardTitle { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .progress { height: 12px; background: #e8edf7; border-radius: 999px; overflow: hidden; }
+    .bar { height: 100%; width: 20%; background: var(--green); transition: width .2s ease; }
+    .mission { background: var(--paper); border: 1px solid #efe2c5; border-radius: 14px; padding: 16px; }
+    .balloon {
+      position: relative; padding: 14px 16px; border-radius: 14px; background: var(--soft-blue);
+      border: 1px solid #c9ddff; line-height: 1.45; margin-bottom: 14px;
+    }
+    .balloon:after {
+      content: ""; position: absolute; left: 28px; bottom: -9px; width: 16px; height: 16px;
+      background: var(--soft-blue); border-right: 1px solid #c9ddff; border-bottom: 1px solid #c9ddff;
+      transform: rotate(45deg);
+    }
+    .field { margin-top: 14px; }
+    label { display: block; font-weight: 900; margin-bottom: 6px; }
+    input, textarea, select {
+      width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px;
+      background: #fff; color: var(--ink); font-size: 16px;
+    }
+    textarea { min-height: 180px; resize: vertical; line-height: 1.45; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      border: 1px solid #93b4ff;
+      background: #e0ecff;
+      color: #1746a2;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, .10);
+    }
+    .chip:hover { background: #d3e2ff; }
+    .chip.active {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+      box-shadow: 0 10px 22px rgba(249, 115, 22, .22);
+    }
+    .hidden { display: none !important; }
+    .notice { padding: 12px; border-radius: 12px; background: var(--soft-green); border: 1px solid #ccebd6; margin-top: 12px; }
+    .warning { background: var(--soft-orange); border-color: #fed7aa; }
+    .portalIdentitySummary {
+      display: none;
+      padding: 12px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .portalIdentitySummary strong { display: block; color: #172554; margin-bottom: 2px; }
+    body.portal-mode .portalIdentitySummary { display: block; }
+    #childFeedback { white-space: pre-wrap; line-height: 1.5; }
+    .finalText { white-space: pre-wrap; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+    .reviewText {
+      min-height: 260px;
+      margin-top: 12px;
+      background: #fff;
+      border: 2px solid #bfdbfe;
+      box-shadow: 0 10px 24px rgba(59, 130, 246, .08);
+    }
+    .reviewHint {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1e3a8a;
+    }
+
+    .missionSupport {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f8fbff;
+    }
+    .supportHeader { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+    .supportHeader h3 { margin-bottom: 2px; }
+    .stepList { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
+    .stepItem { display: flex; gap: 8px; align-items: center; color: var(--muted); }
+    .dot { width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center; background: #e8edf7; color: var(--muted); font-size: 12px; font-weight: 900; }
+    .stepItem.active { color: var(--ink); font-weight: 900; }
+    .stepItem.active .dot { background: var(--blue); color: #fff; }
+
+    .adultGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .historyItem { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fff; margin-top: 10px; }
+    .worksheetActions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .printArea { display: none; }
+
+    @media print {
+      body { background: #fff; color: #111827; }
+      .app { display: none; }
+      .printArea { display: block; padding: 0; font-family: Arial, system-ui, sans-serif; }
+      @page { size: A4; margin: 10mm; }
+      .sheet { page-break-after: avoid; }
+      .sheetHeader { border: 2px solid #111827; border-radius: 10px; padding: 8px; margin-bottom: 6px; }
+      .sheetHeader h1 { font-size: 22px; margin: 0 0 4px; }
+      .sheetHeader p { margin-bottom: 6px; font-size: 12px; }
+      .sheetMeta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; font-size: 13px; }
+      .sheetMission { border: 1px solid #9ca3af; border-radius: 10px; padding: 7px; margin-top: 6px; break-inside: avoid; }
+      .sheetMission h2 { font-size: 15px; margin-bottom: 3px; }
+      .sheetTip { font-size: 12px; margin-bottom: 5px; }
+      .drawBox { height: 42px; border: 1px dashed #9ca3af; border-radius: 8px; margin-bottom: 5px; display: grid; place-items: center; color: #6b7280; font-size: 11px; }
+      .writeLines { display: grid; gap: 5px; }
+      .writeLine { border-bottom: 1px solid #6b7280; height: 15px; }
+      .sheetChecklist { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 10px; margin-top: 7px; font-size: 11px; }
+    }
+
+    @media (max-width: 860px) {
+      .grid, .adultGrid { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">MR</div>
+          <div>
+            <h1>Missão Redação</h1>
+            <div class="muted">Uma etapa por vez, com ajuda no momento certo.</div>
+          </div>
+        </div>
+        <nav class="modeBar">
+          <button id="childMode">Criança</button>
+          <button id="adultMode" class="secondary">Pai ou professor</button>
+        </nav>
+      </header>
+
+      <main id="childView" class="grid">
+        <section class="panel pad">
+          <div class="cardTitle">
+            <div>
+              <h2 id="missionTitle">Missão Redação</h2>
+              <div class="muted" id="missionSubtitle">Vamos preparar sua aventura de escrita.</div>
+            </div>
+            <strong id="missionCount">1/6</strong>
+          </div>
+          <div class="progress"><div id="progressBar" class="bar"></div></div>
+          <div class="missionSupport">
+            <div class="supportHeader">
+              <div>
+                <h3>Etapas da redação</h3>
+                <p class="muted" id="quickTip">Uma frase boa já abre caminho para outra.</p>
+              </div>
+              <button id="printWorksheetSideBtn" type="button" class="secondary">Imprimir folha</button>
+            </div>
+            <div class="stepList" id="stepList"></div>
+          </div>
+
+          <div class="mission" style="margin-top:16px">
+            <div id="portalIdentitySummary" class="portalIdentitySummary">
+              <strong>Atividade da missão</strong>
+              <span id="portalIdentityText">Nome e idade vieram do Portal Educacional.</span>
+            </div>
+
+            <div class="balloon" id="bubble">Escreva seu nome e sua idade para eu te conhecer melhor.</div>
+
+            <div id="stepStudent">
+              <div class="field">
+                <label>Seu nome</label>
+                <input id="studentName" placeholder="Ex.: Miguel">
+              </div>
+              <div class="field">
+                <label>Sua idade</label>
+                <input id="studentAge" type="number" min="6" max="18" placeholder="Ex.: 11">
+              </div>
+            </div>
+
+            <div id="stepType" class="hidden">
+              <label>O que você quer escrever?</label>
+              <div class="chips">
+                <button class="chip" data-type="historia">Uma história</button>
+                <button class="chip" data-type="relato">Algo que aconteceu comigo</button>
+                <button class="chip" data-type="opiniao">Minha opinião</button>
+              </div>
+            </div>
+
+            <div id="stepTheme" class="hidden">
+              <div class="field">
+                <label>Tema</label>
+                <input id="theme" placeholder="Ex.: Uma aventura no recreio">
+              </div>
+              <div class="field">
+                <label>Titulo</label>
+                <input id="title" placeholder="Ex.: O recreio misterioso">
+              </div>
+              <div class="worksheetActions">
+                <button id="printWorksheetBtn" type="button" class="secondary">Imprimir folha</button>
+              </div>
+            </div>
+
+            <div id="stepBegin" class="hidden">
+              <div class="field">
+                <label>Comeco</label>
+                <textarea id="begin" placeholder="Conte quem aparece e onde tudo começa."></textarea>
+              </div>
+            </div>
+
+            <div id="stepMiddle" class="hidden">
+              <div class="field">
+                <label>Meio</label>
+                <textarea id="middle" placeholder="Conte o que aconteceu depois."></textarea>
+              </div>
+            </div>
+
+            <div id="stepEnd" class="hidden">
+              <div class="field">
+                <label>Final</label>
+                <textarea id="end" placeholder="Conte como terminou e o que mudou."></textarea>
+              </div>
+            </div>
+
+            <div id="stepReview" class="hidden">
+              <div class="notice">
+                <strong>Redação montada!</strong>
+                <p class="muted">Leia o texto e, se quiser, melhore só uma coisa antes da análise.</p>
+              </div>
+              <div class="notice reviewHint">
+                <strong>Revisão rápida:</strong>
+                <span id="reviewSuggestion">Escolha uma melhoria pequena.</span>
+              </div>
+              <textarea id="fullText" class="reviewText" aria-label="Texto final da redação"></textarea>
+              <div id="childFeedback" class="notice hidden"></div>
+            </div>
+
+            <div id="message" class="notice warning hidden"></div>
+
+            <div class="actions">
+              <button id="backBtn" class="secondary" disabled>Voltar</button>
+              <button id="nextBtn">Continuar</button>
+              <button id="validateBtn" class="ghost hidden">Validar etapa</button>
+              <button id="finishBtn" class="good hidden">Analisar redação</button>
+              <button id="returnPortalBtn" class="good hidden" type="button">Retornar à missão</button>
+              <button id="resetBtn" class="secondary">Limpar</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <main id="adultView" class="panel pad hidden">
+        <div class="cardTitle">
+          <div>
+            <h2>Painel do pai ou professor</h2>
+            <div class="muted">Aqui ficam histórico e orientações para ajudar sem pressionar.</div>
+          </div>
+          <button id="loadHistory" class="secondary">Atualizar</button>
+        </div>
+        <div class="adultGrid">
+          <section>
+            <h3>Aluno</h3>
+            <div class="field">
+              <label>Nome</label>
+              <input id="adultName" placeholder="Miguel">
+            </div>
+            <div class="field">
+              <label>Idade</label>
+              <input id="adultAge" type="number" min="6" max="18" placeholder="11">
+            </div>
+          </section>
+          <section>
+            <h3>Como usar</h3>
+            <div class="notice">
+              Leia a orientação antes de corrigir. A ideia é conversar com uma pergunta simples, não reescrever pela criança.
+            </div>
+          </section>
+        </div>
+
+        <div class="adultGrid" style="margin-top:14px">
+          <section class="historyItem">
+            <h3>Orientação do momento</h3>
+            <p id="adultGuidance">Preencha nome e idade para receber uma orientação adequada.</p>
+          </section>
+          <section class="historyItem">
+            <h3>Frase para usar</h3>
+            <p id="adultPhrase">"Me conta com suas palavras antes de escrever."</p>
+          </section>
+          <section class="historyItem">
+            <h3>Evite dizer</h3>
+            <p id="adultAvoid">"Isso está errado" ou "não ficou bom". Prefira uma pergunta pequena.</p>
+          </section>
+          <section class="historyItem">
+            <h3>Atividade rápida</h3>
+            <p id="adultActivity">Peça para a criança desenhar três quadrinhos: começo, meio e final.</p>
+          </section>
+        </div>
+
+        <div id="history"></div>
+      </main>
+    </div>
+  </div>
+  <div id="printArea" class="printArea"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const steps = [
+      { id: "student", title: "Missão Redação", subtitle: "Vamos preparar sua aventura de escrita.", bubble: "Escreva seu nome e sua idade para eu te conhecer melhor.", tip: "Preencha nome e idade para eu adaptar as dicas." },
+      { id: "type", title: "Tipo de redação", subtitle: "Cada tipo pede um jeito diferente de escrever.", bubble: "Agora escolha o tipo de redação que você quer escrever: história, relato ou opinião.", tip: "Se tiver personagem e acontecimentos, escolha história." },
+      { id: "theme", title: "Tema e título", subtitle: "Agora damos nome para a ideia.", bubble: "Tema é o assunto da redação. Título é o nome bonito que você dá para o seu texto.", tip: "Exemplo: o tema pode ser amizade. O título pode ser Meu melhor amigo." },
+      { id: "begin", title: "Começo", subtitle: "Mostre onde tudo começa.", bubble: "Escreva o começo. Conte quem aparece, onde está e como tudo começa.", tip: "Pergunte: quem? onde? quando?" },
+      { id: "middle", title: "Meio", subtitle: "A parte em que as coisas acontecem.", bubble: "Escreva o meio. Conte o que aconteceu depois ou explique melhor sua ideia.", tip: "Use depois, então, por isso ou por exemplo." },
+      { id: "end", title: "Final", subtitle: "Feche a redação com calma.", bubble: "Escreva o final. Mostre como terminou ou qual ideia você quer deixar.", tip: "Não precisa inventar coisa nova. Feche o que você já contou." },
+      { id: "review", title: "Revisão final", subtitle: "Hora de olhar o texto inteiro.", bubble: "Leia sua redação inteira e veja se quer mudar alguma coisa antes da análise.", tip: "Melhorar uma coisa por vez funciona melhor." }
+    ];
+
+    const HISTORY_KEY = "missao-redacao-historico";
+    const params = new URLSearchParams(window.location.search);
+    const portal = {
+      childId: params.get("child_id") || "",
+      childName: params.get("child_name") || "",
+      childAge: params.get("child_age") || params.get("age") || params.get("idade") || "",
+      childBirthDate: params.get("child_birth_date") || params.get("birth_date") || "",
+      token: params.get("portal_event_token") || "",
+      childToken: params.get("portal_child_token") || "",
+      assignmentId: params.get("assignment_id") || "",
+      assignmentItemId: params.get("assignment_item_id") || "",
+      returnUrl: params.get("portal_return_url") || ""
+    };
+    portal.enabled = Boolean((portal.token || portal.childToken) && portal.returnUrl);
+
+    const state = { step: 0, type: "", validating: false, analyzing: false, validatedSteps: {}, portalEventSaved: false, reviewDirty: false, reviewSource: "" };
+    const PORTAL_START_STEP = 1;
+
+    function activeStep() { return steps[state.step]; }
+    function firstStepIndex() { return portal.enabled ? PORTAL_START_STEP : 0; }
+    function visibleStepNumber() {
+      return Math.min(portal.enabled ? state.step : state.step + 1, 6);
+    }
+    function isWritingStep(id = activeStep().id) {
+      return ["begin", "middle", "end"].includes(id);
+    }
+    function textValue(id) { return ($(id).value || "").trim(); }
+    function ageFromPortal() {
+      const directAge = Number(portal.childAge);
+      if (Number.isFinite(directAge) && directAge >= 6 && directAge <= 18) return directAge;
+      const rawDate = String(portal.childBirthDate || "").slice(0, 10);
+      if (!rawDate) return null;
+      const [year, month, day] = rawDate.split("-").map(Number);
+      if (!year || !month || !day) return null;
+      const today = new Date();
+      let age = today.getFullYear() - year;
+      const hadBirthday =
+        today.getMonth() + 1 > month ||
+        (today.getMonth() + 1 === month && today.getDate() >= day);
+      if (!hadBirthday) age -= 1;
+      return age >= 6 && age <= 18 ? age : null;
+    }
+    function applyPortalIdentity() {
+      if (!portal.enabled) return;
+      if (portal.childName) $("studentName").value = portal.childName;
+      const portalAge = ageFromPortal();
+      if (portalAge) $("studentAge").value = String(portalAge);
+      if (!textValue("studentAge")) $("studentAge").value = "11";
+      const name = textValue("studentName") || "Aluno da missão";
+      const age = Number(textValue("studentAge"));
+      const ageText = Number.isFinite(age) && age >= 6 && age <= 18 ? `, ${age} anos` : "";
+      $("portalIdentityText").textContent = `${name}${ageText}. Esta missão veio pronta do Portal Educacional.`;
+    }
+    function currentAge() {
+      const age = Number(textValue("studentAge"));
+      return Number.isFinite(age) && age >= 6 && age <= 18 ? age : 11;
+    }
+    function ageProfile() {
+      const age = currentAge();
+      if (age <= 8) return { min: 12, label: "frases bem pequenas" };
+      if (age <= 11) return { min: 20, label: "ideias curtas e organizadas" };
+      if (age <= 14) return { min: 35, label: "ideias com exemplo" };
+      return { min: 50, label: "argumentos mais completos" };
+    }
+    function sampleFromText(text) {
+      const clean = String(text || "").replace(/\s+/g, " ").trim();
+      if (!clean) return "";
+      return clean.length <= 55 ? clean : `${clean.slice(0, 55).trim()}...`;
+    }
+    function localValidation(stepId, text) {
+      const profile = ageProfile();
+      const aluno = student().aluno;
+      const trecho = sampleFromText(text);
+      const isFinal = stepId === "end";
+      if (text.length >= profile.min) {
+        if (isFinal) {
+          return {
+            titulo: "Final pronto",
+            mensagem: `${aluno}, seu final já fecha a redação. Gostei de ver esta parte: "${trecho}". Agora clique em Continuar para ir para a revisão final.`
+          };
+        }
+        return {
+          titulo: "Pode continuar",
+          mensagem: `${aluno}, sua ideia já apareceu nesta parte: "${trecho}". Agora clique em Continuar para seguir.`
+        };
+      }
+      const detail = stepId === "begin"
+        ? "quem aparece e onde tudo começa"
+        : stepId === "middle"
+          ? "o que aconteceu depois"
+          : "como terminou";
+      return {
+        titulo: "Só mais um pouco",
+        mensagem: currentAge() <= 8
+          ? `Gostei da sua ideia. Conte mais uma coisa sobre ${detail}.`
+          : `Sua ideia já começou. Acrescente um detalhe sobre ${detail}, mantendo o que você escreveu.`
+      };
+    }
+    function localReview() {
+      const age = currentAge();
+      const typeName = displayType();
+      const adult = adultProfile(age);
+      const childTip = age <= 8
+        ? "Gostei de ver sua ideia aparecendo. Agora escolha uma frase e veja se dá para colocar mais um detalhe."
+        : age <= 11
+          ? "Sua redação já tem uma sequência. Agora veja se o começo, o meio e o final estão bem ligados."
+          : "Seu texto já tem uma base. Escolha uma parte para melhorar com mais detalhe, exemplo ou ligação entre ideias.";
+      return {
+        review_crianca: `${childTip} Tipo escolhido: ${typeName}.`,
+        orientacao_adulto: adult.guidance
+      };
+    }
+    function adultProfile(age) {
+      if (age <= 8) {
+        return {
+          guidance: "Nesta idade, o mais importante é transformar fala em escrita. Primeiro deixe a criança contar oralmente, depois ajude a escolher uma frase para escrever.",
+          phrase: "\"Me conta primeiro. Quem apareceu? Onde estava? O que aconteceu?\"",
+          avoid: "\"Escreve direito\" ou corrigir tudo ao mesmo tempo.",
+          activity: "Peça um desenho com 3 partes. Depois a criança escreve uma frase para cada desenho."
+        };
+      }
+      if (age <= 11) {
+        return {
+          guidance: "Nesta idade, foque em organização simples: começo, meio e final. Corrija uma coisa por vez e preserve a ideia original da criança.",
+          phrase: "\"O que aconteceu primeiro? E depois? Como terminou?\"",
+          avoid: "\"Está confuso\". Troque por: \"vamos colocar em ordem?\"",
+          activity: "Use três cartões: começo, meio e final. A criança coloca uma frase em cada cartão antes de escrever o texto."
+        };
+      }
+      if (age <= 14) {
+        return {
+          guidance: "Nesta idade, trabalhe ligação entre ideias, exemplos e conclusão. Peça que a criança prove uma ideia com um detalhe do texto.",
+          phrase: "\"Qual exemplo mostra melhor essa ideia?\"",
+          avoid: "Reescrever o parágrafo para a criança. Ajude com perguntas, não com a resposta pronta.",
+          activity: "Escolha um parágrafo e peça para adicionar um exemplo, uma explicação ou uma frase de ligação."
+        };
+      }
+      return {
+        guidance: "Nesta idade, incentive autonomia: objetivo do texto, argumento, coesão e revisão. Combine uma meta de melhoria por versão.",
+        phrase: "\"Qual é a ideia principal deste parágrafo? Ela conversa com a conclusão?\"",
+        avoid: "Corrigir estilo antes de discutir estrutura e argumento.",
+        activity: "Peça uma revisão em duas passagens: primeiro estrutura, depois linguagem."
+      };
+    }
+    function updateAdultCards() {
+      const age = Number(textValue("adultAge") || textValue("studentAge")) || 11;
+      const profile = adultProfile(age);
+      $("adultGuidance").textContent = profile.guidance;
+      $("adultPhrase").textContent = profile.phrase;
+      $("adultAvoid").textContent = profile.avoid;
+      $("adultActivity").textContent = profile.activity;
+    }
+    function student() {
+      return {
+        aluno: textValue("studentName") || "Miguel",
+        idade: currentAge()
+      };
+    }
+    function essayText() {
+      return [textValue("begin"), textValue("middle"), textValue("end")].filter(Boolean).join("\n\n");
+    }
+    function finalEssayText() {
+      if (activeStep().id === "review") return textValue("fullText") || essayText();
+      return essayText();
+    }
+    function reviewSuggestion(text) {
+      const clean = String(text || "").trim();
+      const paragraphs = clean.split(/\n\s*\n/).filter(Boolean);
+      const lower = clean.toLowerCase();
+      if (paragraphs.length < 3) return "Veja se dá para separar começo, meio e final em partes bem claras.";
+      if (!/[.!?]\s*$/.test(clean)) return "Confira se o final termina com uma frase completa.";
+      if (!/\b(depois|então|quando|no final|por fim|porque|por isso)\b/i.test(lower)) {
+        return "Veja se uma palavra de ligação, como depois, então ou por fim, ajuda o leitor.";
+      }
+      if (clean.length < ageProfile().min * 5) return "Escolha uma frase importante e acrescente um detalhe.";
+      return "Leia com calma e escolha apenas uma frase para deixar mais clara.";
+    }
+    function displayType() {
+      return { historia: "história", relato: "relato", opiniao: "opinião" }[state.type] || "(não escolhido)";
+    }
+    function payload() {
+      return { ...student(), tipo: state.type, tema: textValue("theme"), titulo: textValue("title"), texto: finalEssayText() };
+    }
+    function portalReturnUrl(status = "activity_saved") {
+      if (!portal.returnUrl) return "";
+      const url = new URL(portal.returnUrl);
+      url.searchParams.set("portal_status", status);
+      url.searchParams.set("service", "redacao");
+      if (portal.childId) url.searchParams.set("child_id", portal.childId);
+      return url.toString();
+    }
+    function returnToPortal(status = "activity_saved") {
+      const url = portalReturnUrl(status);
+      if (url) window.location.href = url;
+    }
+
+    function syncReturnPortalButton() {
+      $("returnPortalBtn").classList.toggle("hidden", !portal.enabled);
+    }
+
+    async function sendPortalEvent(data) {
+      if (!portal.enabled || state.portalEventSaved) return false;
+      const returnUrl = new URL(portal.returnUrl);
+      const finalText = finalEssayText();
+      const words = finalText.split(/\s+/).filter(Boolean).length;
+      const headers = { "Content-Type": "application/json" };
+      if (portal.token) headers["X-Portal-Activity-Token"] = portal.token;
+      if (portal.childToken) headers["X-Portal-Child-Token"] = portal.childToken;
+      const response = await fetch(`${returnUrl.origin}/api/activity-events`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          portal_event_token: portal.token,
+          portal_child_token: portal.childToken,
+          child_id: portal.childId,
+          service: "redacao",
+          assignment_id: portal.assignmentId,
+          assignment_item_id: portal.assignmentItemId,
+          activity_type: "analise_final",
+          title: textValue("title") || textValue("theme") || "Redação concluída",
+          metrics: {
+            words,
+            chars: finalText.length,
+            type: state.type || "",
+            theme: textValue("theme") || ""
+          },
+          feedback: {
+            child: {
+              tone: "positive",
+              message: data.review_crianca || "",
+              next_step: "Retornar à missão para continuar o percurso."
+            },
+            adult: {
+              summary: data.orientacao_adulto || "",
+              strengths: [],
+              attention_points: [],
+              recipe: data.orientacao_adulto ? [data.orientacao_adulto] : [],
+              avoid_saying: ["Não reescreva tudo pela criança. Escolha uma melhoria pequena por vez."]
+            }
+          },
+          artifacts: {
+            text: finalText,
+            title: textValue("title") || "",
+            theme: textValue("theme") || "",
+            type: state.type || ""
+          }
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.ok === false) throw new Error(result.message || "Não foi possível enviar ao portal.");
+      state.portalEventSaved = true;
+      return true;
+    }
+    function storageGet(key, fallback = "") {
+      try {
+        return window.localStorage ? localStorage.getItem(key) || fallback : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+    function storageSet(key, value) {
+      try {
+        if (window.localStorage) localStorage.setItem(key, value);
+      } catch {
+        // O app continua funcionando mesmo se o navegador bloquear armazenamento local.
+      }
+    }
+    function storageRemove(key) {
+      try {
+        if (window.localStorage) localStorage.removeItem(key);
+      } catch {
+        // Nada a fazer: rascunho local e historico sao apenas conveniencia.
+      }
+    }
+    function readLocalHistory() {
+      try {
+        return JSON.parse(storageGet(HISTORY_KEY, "[]"));
+      } catch {
+        return [];
+      }
+    }
+    function localHistoryFor(aluno, idade) {
+      const cleanName = String(aluno || "").trim().toLowerCase();
+      const cleanAge = Number(idade) || 11;
+      return readLocalHistory().filter((row) => {
+        return String(row.aluno || "").trim().toLowerCase() === cleanName && (Number(row.idade) || 11) === cleanAge;
+      });
+    }
+    function mergeHistoryRows(remoteRows, localRows) {
+      const seen = new Set();
+      return [...(remoteRows || []), ...(localRows || [])]
+        .filter((row) => {
+          const key = [
+            row.id || "",
+            row.created_at || "",
+            row.titulo || "",
+            row.texto_original || row.texto || ""
+          ].join("|");
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    }
+    function saveLocalEssay(review, adultGuidance) {
+      const row = {
+        ...payload(),
+        id: Date.now(),
+        created_at: new Date().toISOString(),
+        texto_original: finalEssayText(),
+        review,
+        orientacao_adulto: adultGuidance
+      };
+      const rows = [row, ...readLocalHistory()].slice(0, 12);
+      storageSet(HISTORY_KEY, JSON.stringify(rows));
+    }
+    function renderHistoryRows(rows) {
+      if (!Array.isArray(rows) || !rows.length) {
+        $("history").innerHTML = "<div class='historyItem muted'>Ainda não há redações salvas para esse aluno.</div>";
+        return;
+      }
+      $("history").innerHTML = rows.map((row) => `
+        <article class="historyItem">
+          <strong>${escapeHtml(row.titulo || row.tema || "Redação")}</strong>
+          <p class="muted">${new Date(row.created_at).toLocaleString("pt-BR")}</p>
+          <h3>Orientação para o adulto</h3>
+          <p>${escapeHtml(row.orientacao_adulto || "Sem orientação registrada.")}</p>
+          <details>
+            <summary>Ver texto e feedback</summary>
+            <pre class="finalText">${escapeHtml(row.texto_original || row.texto || "")}</pre>
+            <div class="notice">${escapeHtml(row.review || "")}</div>
+          </details>
+        </article>
+      `).join("");
+    }
+    function showMessage(text) {
+      $("message").textContent = text;
+      $("message").classList.remove("hidden");
+    }
+    function hideMessage() { $("message").classList.add("hidden"); }
+    function textKeyForStep(id) {
+      return { begin: "begin", middle: "middle", end: "end" }[id] || "";
+    }
+    function validationSignature(id) {
+      return `${id}:${textValue(textKeyForStep(id))}`;
+    }
+    function isCurrentStepValidated() {
+      const id = activeStep().id;
+      return isWritingStep(id) && state.validatedSteps[id] === validationSignature(id);
+    }
+    function resetValidationFor(id) {
+      if (id) delete state.validatedSteps[id];
+    }
+
+    function worksheetProfile(age) {
+      if (age <= 8) {
+        return {
+          lines: 3,
+          intro: "Use desenhos e frases pequenas. Uma boa frase já vale muito.",
+          begin: "Desenhe quem aparece e escreva onde a história começa.",
+          middle: "Mostre o que aconteceu depois. Pode ser uma surpresa, uma descoberta ou um problema.",
+          end: "Conte como terminou. O personagem ficou feliz, aprendeu algo ou resolveu o problema?"
+        };
+      }
+      if (age <= 11) {
+        return {
+          lines: 4,
+          intro: "Organize a redação em começo, meio e final, com calma.",
+          begin: "Apresente quem aparece, onde está e como tudo começa.",
+          middle: "Conte o acontecimento principal. Mostre o que mudou ou o que deixou a história interessante.",
+          end: "Feche a redação mostrando como terminou e qual sensação ficou."
+        };
+      }
+      if (age <= 14) {
+        return {
+          lines: 4,
+          intro: "Use detalhes para ligar as ideias e deixar o leitor acompanhar seu pensamento.",
+          begin: "Mostre a situação inicial e dê um detalhe que ajude o leitor a imaginar a cena.",
+          middle: "Desenvolva o acontecimento principal com ação, explicação ou exemplo.",
+          end: "Retome a ideia principal e termine sem abrir uma nova história."
+        };
+      }
+      return {
+        lines: 5,
+        intro: "Planeje o objetivo do texto e cuide da ligação entre as partes.",
+        begin: "Apresente o contexto e a ideia que vai guiar a redação.",
+        middle: "Desenvolva com detalhes, exemplos ou argumentos ligados ao tema.",
+        end: "Conclua retomando o ponto principal e deixando uma ideia clara para o leitor."
+      };
+    }
+
+    function worksheetHtml() {
+      const name = textValue("studentName");
+      const age = currentAge();
+      const theme = textValue("theme");
+      const title = textValue("title") || "A escolher";
+      const type = displayType();
+      const profile = worksheetProfile(age);
+      const themeText = theme ? `No tema "${theme}", pense no que o leitor precisa imaginar ou entender.` : "Escolha um tema antes de começar.";
+      const mission = (number, titleText, tip) => `
+        <section class="sheetMission">
+          <h2>Missão ${number}: ${escapeHtml(titleText)}</h2>
+          <p class="sheetTip">${escapeHtml(themeText)} ${escapeHtml(tip)}</p>
+          <div class="drawBox">Espaço para desenho ou plano da ideia</div>
+          <div class="writeLines">${Array.from({ length: profile.lines }, () => '<div class="writeLine"></div>').join("")}</div>
+        </section>
+      `;
+
+      return `
+        <article class="sheet">
+          <header class="sheetHeader">
+            <h1>Missão Redação</h1>
+            <p>${escapeHtml(profile.intro)}</p>
+            <div class="sheetMeta">
+              <div><strong>Nome:</strong> ${escapeHtml(name || "________________")}</div>
+              <div><strong>Idade:</strong> ${escapeHtml(String(age))}</div>
+              <div><strong>Tema:</strong> ${escapeHtml(theme || "________________")}</div>
+              <div><strong>Título:</strong> ${escapeHtml(title)}</div>
+              <div><strong>Tipo:</strong> ${escapeHtml(type)}</div>
+              <div><strong>Data:</strong> ____ / ____ / ______</div>
+            </div>
+          </header>
+          ${mission(1, "começo", profile.begin)}
+          ${mission(2, "meio", profile.middle)}
+          ${mission(3, "final", profile.end)}
+          <section class="sheetChecklist">
+            <label><input type="checkbox"> Coloquei título.</label>
+            <label><input type="checkbox"> Meu texto tem começo.</label>
+            <label><input type="checkbox"> Meu texto tem meio.</label>
+            <label><input type="checkbox"> Meu texto tem final.</label>
+            <label><input type="checkbox"> Reli com atenção.</label>
+            <label><input type="checkbox"> Fiz meu melhor hoje.</label>
+          </section>
+        </article>
+      `;
+    }
+
+    function printWorksheet() {
+      hideMessage();
+      if (!textValue("studentName") || !textValue("studentAge") || !textValue("theme")) {
+        showMessage("Preencha pelo menos nome, idade e tema para gerar a folha.");
+        return;
+      }
+      $("printArea").innerHTML = worksheetHtml();
+      window.setTimeout(() => window.print(), 50);
+    }
+
+    function render() {
+      const current = activeStep();
+      ["Student", "Type", "Theme", "Begin", "Middle", "End", "Review"].forEach((name) => {
+        $("step" + name).classList.toggle("hidden", current.id !== name.toLowerCase());
+      });
+      $("missionTitle").textContent = current.title;
+      $("missionSubtitle").textContent = current.subtitle;
+      const visibleStep = visibleStepNumber();
+      $("missionCount").textContent = `${visibleStep}/6`;
+      $("bubble").textContent = current.bubble;
+      $("quickTip").textContent = current.tip;
+      $("progressBar").style.width = `${Math.min((visibleStep / 6) * 100, 100)}%`;
+      $("backBtn").disabled = state.step <= firstStepIndex();
+      $("nextBtn").classList.toggle("hidden", current.id === "review");
+      $("validateBtn").classList.toggle("hidden", !["begin", "middle", "end"].includes(current.id));
+      $("finishBtn").classList.toggle("hidden", current.id !== "review");
+      const needsValidation = isWritingStep(current.id);
+      const validated = isCurrentStepValidated();
+      $("nextBtn").disabled = needsValidation && !validated;
+      $("nextBtn").classList.toggle("blank", needsValidation && !validated);
+      $("validateBtn").classList.toggle("ghost", needsValidation && validated);
+      $("validateBtn").disabled = needsValidation && validated;
+      if (current.id === "review") {
+        const baseText = essayText();
+        if (!state.reviewDirty && state.reviewSource !== baseText) {
+          $("fullText").value = baseText;
+          state.reviewSource = baseText;
+        }
+        $("reviewSuggestion").textContent = reviewSuggestion(baseText);
+      }
+      renderSteps();
+    }
+
+    function renderSteps() {
+      const visibleSteps = portal.enabled ? steps.slice(PORTAL_START_STEP) : steps.slice(0, 6);
+      $("stepList").innerHTML = visibleSteps.map((step, index) => {
+        const realIndex = portal.enabled ? index + PORTAL_START_STEP : index;
+        return `
+        <div class="stepItem ${realIndex === state.step ? "active" : ""}">
+          <span class="dot">${index + 1}</span>
+          <span>${step.title}</span>
+        </div>
+      `;
+      }).join("");
+    }
+
+    function canAdvance() {
+      const id = activeStep().id;
+      if (isWritingStep(id)) return isCurrentStepValidated();
+      if (id === "student") return portal.enabled || (textValue("studentName") && textValue("studentAge"));
+      if (id === "type") return Boolean(state.type);
+      if (id === "theme") return textValue("theme");
+      if (id === "begin") return textValue("begin").length >= ageProfile().min;
+      if (id === "middle") return textValue("middle").length >= ageProfile().min;
+      if (id === "end") return textValue("end").length >= ageProfile().min;
+      return true;
+    }
+
+    function next() {
+      hideMessage();
+      if (!canAdvance()) {
+        showMessage(`Complete esta missão antes de continuar. Para esta idade, espero ${ageProfile().label}.`);
+        return;
+      }
+      state.step = Math.min(state.step + 1, steps.length - 1);
+      render();
+    }
+
+    function back() {
+      hideMessage();
+      state.step = Math.max(state.step - 1, firstStepIndex());
+      render();
+    }
+
+    async function validateStep() {
+      const current = activeStep();
+      const map = { begin: "começo", middle: "meio", end: "final" };
+      const textMap = { begin: "begin", middle: "middle", end: "end" };
+      $("validateBtn").disabled = true;
+      $("validateBtn").textContent = "Olhando...";
+      try {
+        const response = await fetch("/api/validar-etapa", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...payload(), etapa: map[current.id], textoEtapa: textValue(textMap[current.id]) })
+        });
+        const data = await response.json();
+        showMessage(data.mensagem || data.balao || "Pode continuar.");
+        if (data.ok === true) state.validatedSteps[current.id] = validationSignature(current.id);
+      } catch (error) {
+        const data = localValidation(current.id, textValue(textMap[current.id]));
+        showMessage(data.mensagem);
+        if (textValue(textMap[current.id]).length >= ageProfile().min) state.validatedSteps[current.id] = validationSignature(current.id);
+      } finally {
+        $("validateBtn").disabled = false;
+        $("validateBtn").textContent = "Validar etapa";
+        render();
+      }
+    }
+
+    async function analyze() {
+      $("finishBtn").disabled = true;
+      $("finishBtn").textContent = "Analisando...";
+      $("childFeedback").classList.add("hidden");
+      syncReturnPortalButton();
+      try {
+        const response = await fetch("/api/analisar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload())
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.details || data.error || "Erro");
+        $("childFeedback").innerHTML = `<strong>Dica para você:</strong><br>${escapeHtml(data.review_crianca || "")}`;
+        $("childFeedback").classList.remove("hidden");
+        saveLocalEssay(data.review_crianca || "", data.orientacao_adulto || "");
+        if (portal.enabled) {
+          try {
+            await sendPortalEvent(data);
+            $("returnPortalBtn").classList.remove("hidden");
+            showMessage("Redação registrada no Portal Educacional.");
+          } catch (portalError) {
+            $("returnPortalBtn").classList.remove("hidden");
+            showMessage(`A redação ficou pronta, mas ainda não consegui registrar no portal: ${portalError.message}`);
+          }
+        }
+        if (data.fallback && !portal.enabled) {
+          showMessage("Usei uma analise segura para finalizar. A redacao ficou registrada para acompanhamento.");
+        }
+      } catch (error) {
+        const data = localReview();
+        $("childFeedback").innerHTML = `<strong>Dica para você:</strong><br>${escapeHtml(data.review_crianca)}`;
+        $("childFeedback").classList.remove("hidden");
+        saveLocalEssay(data.review_crianca, data.orientacao_adulto);
+        if (portal.enabled) {
+          try {
+            await sendPortalEvent(data);
+            $("returnPortalBtn").classList.remove("hidden");
+            showMessage("Redação registrada no Portal Educacional.");
+          } catch (portalError) {
+            $("returnPortalBtn").classList.remove("hidden");
+            showMessage(`Usei uma análise simples, mas ainda não consegui registrar no portal: ${portalError.message}`);
+          }
+        } else {
+          showMessage("Usei uma análise simples para finalizar. Depois tentamos uma análise mais completa.");
+        }
+      } finally {
+        $("finishBtn").disabled = false;
+        $("finishBtn").textContent = "Analisar redação";
+      }
+    }
+
+    async function loadHistory() {
+      const aluno = textValue("adultName") || textValue("studentName") || "Miguel";
+      const idade = Number(textValue("adultAge") || textValue("studentAge")) || 11;
+      $("history").innerHTML = "<div class='historyItem muted'>Carregando...</div>";
+      const localRows = localHistoryFor(aluno, idade);
+      try {
+        const response = await fetch(`/api/ultimas?aluno=${encodeURIComponent(aluno)}&idade=${encodeURIComponent(idade)}`);
+        const rows = await response.json();
+        renderHistoryRows(mergeHistoryRows(Array.isArray(rows) ? rows : [], localRows));
+      } catch {
+        renderHistoryRows(localRows);
+      }
+    }
+
+    function reset() {
+      ["studentName", "studentAge", "theme", "title", "begin", "middle", "end"].forEach((id) => {
+        if (portal.enabled && (id === "studentName" || id === "studentAge")) return;
+        $(id).value = "";
+      });
+      state.step = firstStepIndex();
+      state.type = "";
+      state.validatedSteps = {};
+      state.reviewDirty = false;
+      state.reviewSource = "";
+      $("fullText").value = "";
+      document.querySelectorAll("[data-type]").forEach((button) => button.classList.remove("active"));
+      hideMessage();
+      $("childFeedback").classList.add("hidden");
+      syncReturnPortalButton();
+      render();
+    }
+
+    function escapeHtml(text) {
+      return String(text || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    $("nextBtn").addEventListener("click", next);
+    $("backBtn").addEventListener("click", back);
+    $("resetBtn").addEventListener("click", reset);
+    $("validateBtn").addEventListener("click", validateStep);
+    $("finishBtn").addEventListener("click", analyze);
+    $("returnPortalBtn").addEventListener("click", () => returnToPortal(state.portalEventSaved ? "activity_saved" : "activity_pending"));
+    $("printWorksheetBtn").addEventListener("click", printWorksheet);
+    $("printWorksheetSideBtn").addEventListener("click", printWorksheet);
+    $("loadHistory").addEventListener("click", loadHistory);
+    $("childMode").addEventListener("click", () => {
+      $("childView").classList.remove("hidden");
+      $("adultView").classList.add("hidden");
+      $("childMode").classList.remove("secondary");
+      $("adultMode").classList.add("secondary");
+    });
+    $("adultMode").addEventListener("click", () => {
+      $("childView").classList.add("hidden");
+      $("adultView").classList.remove("hidden");
+      $("adultMode").classList.remove("secondary");
+      $("childMode").classList.add("secondary");
+      $("adultName").value = textValue("studentName");
+      $("adultAge").value = textValue("studentAge");
+      updateAdultCards();
+      loadHistory();
+    });
+    document.querySelectorAll("[data-type]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.type = button.dataset.type;
+        document.querySelectorAll("[data-type]").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        hideMessage();
+      });
+    });
+
+    ["studentName", "studentAge", "theme", "title", "begin", "middle", "end"].forEach((id) => {
+      $(id).addEventListener("input", () => {
+        const stepByInput = { begin: "begin", middle: "middle", end: "end" }[id];
+        if (stepByInput) {
+          resetValidationFor(stepByInput);
+          state.reviewDirty = false;
+          state.reviewSource = "";
+        }
+        if (id === "studentAge") updateAdultCards();
+        render();
+      });
+    });
+    $("fullText").addEventListener("input", () => {
+      state.reviewDirty = true;
+    });
+    $("adultAge").addEventListener("input", updateAdultCards);
+    $("adultName").addEventListener("input", updateAdultCards);
+
+    function setupPortalMode() {
+      if (!portal.enabled) return;
+      document.body.classList.add("portal-mode");
+      $("adultMode").classList.add("hidden");
+      $("childMode").classList.add("hidden");
+      applyPortalIdentity();
+      state.step = Math.max(state.step, firstStepIndex());
+      syncReturnPortalButton();
+    }
+
+    setupPortalMode();
+    render();
+    updateAdultCards();
+  </script>
+</body>
+</html>

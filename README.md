@@ -19,6 +19,7 @@ PortalEducacional/
   apps/
     portal/              # Portal web principal
     interpretacao/       # Copia paralela do modulo de Interpretacao
+    redacao/             # Copia paralela do modulo de Redacao
   docs/                  # Decisões de produto e arquitetura
   supabase/              # Schema e políticas do banco
   modules/               # Contratos e futuros módulos plugáveis
@@ -57,4 +58,4 @@ Novos módulos devem seguir o contrato em `modules/module-contract.md`.
 
 ## Consolidação dos módulos
 
-A Interpretação de Texto já foi copiada para `apps/interpretacao` como primeira etapa da consolidação em monorepo. O deploy antigo continua ativo até a nova versão ser publicada, testada e conectada ao Portal.
+Interpretação de Texto e Missão Redação já foram copiadas para `apps/interpretacao` e `apps/redacao` como etapas da consolidação em monorepo. Os deploys antigos continuam ativos até as novas versões serem publicadas, testadas e conectadas ao Portal.
