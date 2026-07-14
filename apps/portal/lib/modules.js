@@ -5,7 +5,7 @@ const defaultModules = [
     short_name: "Interpretação",
     area: "leitura",
     description: "Leitura, perguntas e feedback para compreensão.",
-    url: "https://interpretacao-de-texto.vercel.app",
+    url: "https://interpretacao-portal.vercel.app",
     status: "available",
     accent: "reading",
     icon: "L"
