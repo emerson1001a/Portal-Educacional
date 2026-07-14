@@ -50,6 +50,42 @@ O módulo deve enviar evidências para:
 POST /api/activity-events
 ```
 
+## Sinais transversais da missão
+
+Todos os módulos devem tratar a missão como uma experiência curta, concluível e observável. Além das métricas próprias de cada área, o módulo deve enviar sinais transversais em `metrics` sempre que possível:
+
+```json
+{
+  "started_at": "2026-07-14T10:00:00.000Z",
+  "finished_at": "2026-07-14T10:08:30.000Z",
+  "duration_seconds": 510,
+  "completed": true,
+  "child_self_assessment": "needed_thinking",
+  "child_self_assessment_label": "Precisei pensar"
+}
+```
+
+Regras de experiência:
+
+- o tempo é invisível para a criança e não deve virar pressão;
+- a autoavaliação da criança é opcional;
+- a pergunta deve falar da missão, não da identidade da criança;
+- respostas devem ser fechadas, curtas e não diagnósticas;
+- esses sinais são contexto longitudinal, nunca julgamento isolado.
+
+Valores recomendados para `child_self_assessment`:
+
+- `calm`: Foi tranquilo;
+- `needed_thinking`: Precisei pensar;
+- `try_again`: Quero tentar de novo;
+- `liked`: Gostei;
+- `easy`: Foi fácil;
+- `right_level`: Foi na medida;
+- `hard_but_done`: Foi difícil, mas consegui;
+- `practice_more`: Quero treinar mais esse assunto.
+
+O portal pode exibir esses sinais no histórico adulto e combiná-los com acertos, tentativas, textos, feedbacks e metas. A IA deve usar essa camada para orientar o adulto com cautela, sem diagnóstico, sem ranking e sem conclusões amplas com poucos dados.
+
 ## Feedback pontual e feedback geral
 
 Cada módulo deve produzir feedback pontual da atividade. O portal usa vários feedbacks pontuais para montar um feedback geral da criança.
@@ -69,7 +105,14 @@ Com o token no corpo:
   "portal_event_token": "token",
   "activity_type": "analise_final",
   "title": "Redação sobre aventura",
-  "metrics": {},
+  "metrics": {
+    "started_at": "2026-07-14T10:00:00.000Z",
+    "finished_at": "2026-07-14T10:08:30.000Z",
+    "duration_seconds": 510,
+    "completed": true,
+    "child_self_assessment": "needed_thinking",
+    "child_self_assessment_label": "Precisei pensar"
+  },
   "feedback": {
     "child": {
       "tone": "positive",
