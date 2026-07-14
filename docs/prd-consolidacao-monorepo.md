@@ -120,6 +120,13 @@ Essa etapa exige revisao cuidadosa de rotas, APIs, rewrites e variaveis de ambie
 
 ## Plano de migracao
 
+### Estado atual
+
+- Interpretacao copiada para `apps/interpretacao`.
+- Deploy antigo de Interpretacao deve continuar ativo.
+- Portal ainda deve apontar para a URL antiga ate a nova copia ser validada em Vercel.
+- Redacao ainda nao foi copiada para o monorepo.
+
 ### Fase 1: Inventario
 
 - Listar arquivos de Redacao e Interpretacao.

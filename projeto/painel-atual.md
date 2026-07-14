@@ -17,6 +17,7 @@ O Portal Educacional ja funciona como plataforma inicial com:
 - modulos conectados: Redacao, Interpretacao e Tabuada;
 - Tabuada configuravel por missao quando a migracao `assignment_items.config` esta aplicada;
 - Ingles documentado como modulo futuro, sem implementacao imediata.
+- Consolidacao em monorepo iniciada: Interpretacao foi copiada para `apps/interpretacao`, mantendo o deploy antigo ativo ate validacao paralela.
 
 ## Principio central
 
@@ -74,10 +75,11 @@ Leitura do resultado:
 ## Proximas prioridades sugeridas
 
 1. Testar relatorio longitudinal com dados reais de Miguel e Gabriel por alguns dias.
-2. Revisar navegabilidade e identidade visual dos modulos atuais, agora partindo do fluxo de missao infantil como referencia.
-3. Melhorar dose pedagogica das missoes com base nos testes reais.
-4. Definir modelo de compartilhamento responsavel/professor sem expor dados sensiveis.
-5. Depois dos testes reais, decidir se o foco inicial comercial e pais, professores ou ambos com entradas diferentes.
+2. Validar a copia paralela da Interpretacao em `apps/interpretacao` e preparar deploy proprio na Vercel antes de trocar o apontamento do Portal.
+3. Revisar navegabilidade e identidade visual dos modulos atuais, agora partindo do fluxo de missao infantil como referencia.
+4. Melhorar dose pedagogica das missoes com base nos testes reais.
+5. Definir modelo de compartilhamento responsavel/professor sem expor dados sensiveis.
+6. Depois dos testes reais, decidir se o foco inicial comercial e pais, professores ou ambos com entradas diferentes.
 
 ## Regras que nao podemos esquecer
 
