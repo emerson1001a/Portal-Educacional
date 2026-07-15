@@ -166,7 +166,6 @@
 
     .adultGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .historyItem { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fff; margin-top: 10px; }
-    .worksheetActions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
     .printArea { display: none; }
 
     @media print {
@@ -267,9 +266,6 @@
               <div class="field">
                 <label>Título</label>
                 <input id="title" placeholder="Ex.: O recreio misterioso">
-              </div>
-              <div class="worksheetActions">
-                <button id="printWorksheetBtn" type="button" class="secondary">Imprimir folha</button>
               </div>
             </div>
 
@@ -1054,7 +1050,6 @@
     $("validateBtn").addEventListener("click", validateStep);
     $("finishBtn").addEventListener("click", analyze);
     $("returnPortalBtn").addEventListener("click", confirmReturnToPortal);
-    $("printWorksheetBtn").addEventListener("click", printWorksheet);
     $("printWorksheetSideBtn").addEventListener("click", printWorksheet);
     $("loadHistory").addEventListener("click", loadHistory);
     $("childMode").addEventListener("click", () => {
