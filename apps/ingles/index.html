@@ -362,6 +362,7 @@
           <label for="skillSelect">Habilidade principal</label>
           <select id="skillSelect">
             <option value="verb_to_be">Verb to be - am, is, are</option>
+            <option value="simple_present">Simple present - verb + s</option>
             <option value="present_continuous">Present continuous - verb + ing</option>
           </select>
         </div>
@@ -474,6 +475,32 @@
           { sentence: "Escolha a frase correta.", answer: "We are students.", options: ["We is students.", "We are students.", "We am students."], clue: "We combina com are." },
           { sentence: "Escolha a frase correta.", answer: "He is my brother.", options: ["He are my brother.", "He am my brother.", "He is my brother."], clue: "He combina com is." },
           { sentence: "Escolha a frase correta.", answer: "You are kind.", options: ["You is kind.", "You are kind.", "You am kind."], clue: "You combina com are." }
+        ]
+      },
+      simple_present: {
+        title: "Simple present",
+        childTitle: "Vamos treinar frases sobre coisas que acontecem sempre.",
+        fill: [
+          { sentence: "She ___ soccer every day.", answer: "plays", options: ["play", "plays", "playing"], clue: "Com she no simple present, geralmente colocamos s no verbo." },
+          { sentence: "My mother ___ very well.", answer: "cooks", options: ["cook", "cooks", "cooking"], clue: "My mother combina com she; usamos cooks." },
+          { sentence: "He ___ English on Mondays.", answer: "studies", options: ["study", "studies", "studying"], clue: "Com he, o verbo muda para studies." },
+          { sentence: "They ___ to school every day.", answer: "go", options: ["go", "goes", "going"], clue: "Com they, usamos o verbo base: go." },
+          { sentence: "I ___ breakfast at 7.", answer: "eat", options: ["eat", "eats", "eating"], clue: "Com I, usamos o verbo base: eat." },
+          { sentence: "The dog ___ in the garden.", answer: "runs", options: ["run", "runs", "running"], clue: "The dog combina com it; usamos runs." },
+          { sentence: "We ___ English at school.", answer: "study", options: ["study", "studies", "studying"], clue: "Com we, usamos o verbo base: study." },
+          { sentence: "My brother ___ TV after school.", answer: "watches", options: ["watch", "watches", "watching"], clue: "Com my brother/he, usamos watches." },
+          { sentence: "You ___ very fast.", answer: "read", options: ["read", "reads", "reading"], clue: "Com you, usamos o verbo base: read." },
+          { sentence: "Maria ___ her homework every day.", answer: "does", options: ["do", "does", "doing"], clue: "Maria combina com she; usamos does." },
+          { sentence: "My father ___ coffee in the morning.", answer: "drinks", options: ["drink", "drinks", "drinking"], clue: "My father combina com he; usamos drinks." },
+          { sentence: "The children ___ after lunch.", answer: "play", options: ["play", "plays", "playing"], clue: "The children esta no plural; usamos play." }
+        ],
+        choose: [
+          { sentence: "Qual frase fala de algo que acontece sempre?", answer: "She plays soccer every day.", options: ["She is playing soccer now.", "She plays soccer every day.", "She play soccer every day."], clue: "Every day mostra rotina; com she, usamos plays." },
+          { sentence: "Escolha a frase correta.", answer: "My mother cooks very well.", options: ["My mother cook very well.", "My mother cooks very well.", "My mother cooking very well."], clue: "My mother combina com she; usamos cooks." },
+          { sentence: "Qual frase esta no simple present?", answer: "They study English on Mondays.", options: ["They are studying now.", "They studies English.", "They study English on Mondays."], clue: "On Mondays mostra rotina; com they, usamos study." },
+          { sentence: "Escolha a frase correta.", answer: "He watches TV after school.", options: ["He watch TV after school.", "He watches TV after school.", "He watching TV after school."], clue: "Com he, usamos watches." },
+          { sentence: "Qual frase fala de rotina?", answer: "I eat breakfast every day.", options: ["I am eating now.", "I eats breakfast.", "I eat breakfast every day."], clue: "Every day mostra rotina; com I, usamos eat." },
+          { sentence: "Escolha a frase correta.", answer: "The dog runs in the garden.", options: ["The dog runs in the garden.", "The dog run in the garden.", "The dog is run in the garden."], clue: "The dog combina com it; usamos runs." }
         ]
       },
       present_continuous: {
