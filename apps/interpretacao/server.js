@@ -148,12 +148,17 @@ function evidenceSentences(texto) {
   return sentences.length ? sentences : [cleanText(texto).slice(0, 160)];
 }
 
+function readOpenAIKey() {
+  return String(process.env.OPENAI_API_KEY || "").trim().split(/\s+/)[0] || "";
+}
+
 async function askOpenAI(prompt) {
-  if (!process.env.OPENAI_API_KEY) return "";
+  const openAIKey = readOpenAIKey();
+  if (!openAIKey) return "";
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+      "Authorization": `Bearer ${openAIKey}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -169,11 +174,29 @@ async function askOpenAI(prompt) {
 }
 
 function fallbackText({ idade, tema, tamanho }) {
-  const assunto = tema || "amizade e escola";
-  const extra = tamanho === "longo"
-    ? " No fim do dia, eles perceberam que conversar com calma ajudava a encontrar solucoes melhores."
+  const assunto = cleanText(tema, "amizade e escola");
+  const key = normalizeForMatch(assunto);
+  const longExtra = tamanho === "longo"
+    ? " Depois da atividade, a turma conversou sobre o que aconteceu e percebeu que observar os detalhes ajuda a tomar decisoes melhores."
     : "";
-  return `Na turma de uma crianca de ${idade} anos, surgiu uma atividade sobre ${assunto}. No comeco, alguns alunos ficaram inseguros, porque cada pessoa tinha uma ideia diferente. A professora pediu que todos escutassem com atencao antes de responder. Aos poucos, o grupo percebeu que entender o texto era como montar um caminho: primeiro observar os fatos, depois pensar no que estava escondido nas entrelinhas. Quando chegou a vez de explicar, a crianca usou exemplos do texto e conseguiu defender sua opiniao com mais seguranca.${extra}`;
+
+  if (/\b(ferias|viagem|praia|campo|passeio)\b/.test(key)) {
+    return `Nas ferias, uma crianca de ${idade} anos viajou com a familia para um lugar diferente. No primeiro dia, ela guardou a mochila, observou o caminho ate a casa e anotou tres coisas que chamaram sua atencao: uma janela azul, uma arvore grande e uma rua silenciosa. Mais tarde, quando todos foram caminhar, essas pistas ajudaram a familia a encontrar o caminho de volta sem se perder.${longExtra}`;
+  }
+
+  if (/\b(aventura|exploracao|misterio|mapa|tesouro)\b/.test(key)) {
+    return `Em uma tarde tranquila, um grupo de criancas encontrou um mapa dobrado perto do patio da escola. O desenho mostrava tres pistas: uma pedra redonda, um banco antigo e uma arvore com uma fita vermelha. Elas seguiram cada pista com cuidado e descobriram uma caixa com bilhetes deixados por outra turma, dizendo que a maior aventura era aprender a observar antes de correr.${longExtra}`;
+  }
+
+  if (/\b(esporte|futebol|basquete|volei|natacao|corrida|jogo)\b/.test(key)) {
+    return `No treino de esporte da escola, uma crianca de ${idade} anos queria marcar pontos rapidamente. O professor pediu que ela observasse primeiro a posicao dos colegas e esperasse o melhor momento para passar a bola. Na jogada seguinte, a crianca respirou, olhou para o lado e fez um passe que ajudou a equipe inteira a participar do jogo.${longExtra}`;
+  }
+
+  if (/\b(animal|animais|cachorro|gato|passaro|natureza|floresta)\b/.test(key)) {
+    return `Durante uma atividade sobre natureza, uma crianca de ${idade} anos percebeu um passaro parado perto de uma arvore. Em vez de correr, ela ficou em silencio e observou o que acontecia. Depois de alguns minutos, viu que o passaro levava pequenos gravetos para construir um ninho, e entendeu que algumas descobertas aparecem quando a gente presta atencao com calma.${longExtra}`;
+  }
+
+  return `Durante uma conversa sobre ${assunto}, uma crianca de ${idade} anos recebeu uma tarefa de observacao. Primeiro, ela anotou o que ja sabia. Depois, ouviu as ideias dos colegas e comparou com as pistas do texto. No final, percebeu que entender bem um assunto exige olhar os detalhes, separar fatos de opinioes e explicar a resposta com suas proprias palavras.${longExtra}`;
 }
 
 function fallbackQuestions(texto) {
@@ -337,6 +360,14 @@ app.get(["/", "/index.html"], (_req, res) => {
 
 app.get("/api", (_req, res) => {
   res.type("text/plain; charset=utf-8").send("OK - Interpretacao de Texto backend rodando");
+});
+
+app.get("/api/status", (_req, res) => {
+  res.json({
+    openai: Boolean(readOpenAIKey()),
+    openai_model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+    checked_at: new Date().toISOString()
+  });
 });
 
 app.post("/api/leitura/start", async (req, res) => {
