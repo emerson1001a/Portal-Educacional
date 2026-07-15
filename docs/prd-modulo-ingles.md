@@ -65,6 +65,149 @@ O MVP nao deve tentar:
 
 O primeiro valor do modulo deve ser ajudar o adulto a escolher uma pratica pequena e ajudar a crianca a concluir essa pratica com clareza.
 
+## Herancas dos modulos atuais
+
+O modulo de Ingles deve herdar o conhecimento pratico acumulado nos modulos de Redacao, Interpretacao e Tabuada.
+
+Essas decisoes nao sao apenas esteticas. Elas nasceram de testes reais com criancas e devem orientar o desenho do modulo.
+
+### Estrutura visual
+
+O modulo deve usar uma estrutura familiar:
+
+- cabecalho simples com nome da missao;
+- indicador de etapa ou progresso;
+- blocos de atividade com bordas claras;
+- uma instrucao principal por vez;
+- botao principal bem visivel;
+- botao de saida/retorno menos destacado;
+- mensagem clara quando a missao terminar;
+- retorno ao portal infantil com status de missao concluida.
+
+O layout deve evitar:
+
+- muitos blocos abertos ao mesmo tempo;
+- titulos repetidos competindo entre si;
+- instrucoes longas dentro do bloco infantil;
+- botoes importantes com aparencia apagada;
+- acoes ambiguas como "retornar a missao" quando a crianca pode entender que a missao e o proprio modulo.
+
+### Ensinamentos dos testes com criancas
+
+Os testes reais mostraram regras importantes:
+
+- a crianca precisa saber qual botao apertar agora;
+- o botao pressionado deve reagir visualmente;
+- a crianca precisa entender quando a atividade terminou;
+- a missao concluida nao pode parecer pendente;
+- a linguagem deve ser concreta e curta;
+- a mesma palavra ou titulo repetido em varios lugares atrapalha;
+- no celular, a experiencia deve aceitar digitacao e recursos nativos do teclado;
+- se a crianca errar ou precisar completar, a orientacao deve explicar o proximo passo sem parecer bronca;
+- o adulto deve receber evidencias, mas a crianca deve receber apenas o necessario para continuar animada.
+
+### Padrao de blocos no Ingles
+
+O modulo de Ingles deve trabalhar com blocos de exercicio.
+
+Regra:
+
+- uma missao pode ter mais de um bloco;
+- cada bloco deve ter um unico formato de exercicio;
+- dentro do bloco, o formato se repete para criar ritmo;
+- as frases variam para evitar memorizacao mecanica;
+- ao final de cada bloco, a crianca recebe uma devolutiva curta;
+- ao final da missao, o portal recebe evidencias por bloco.
+
+Exemplo:
+
+```text
+Missao: Present continuous
+Bloco 1: completar lacuna - 10 exercicios
+Bloco 2: escolher frase correta - 10 exercicios
+```
+
+Isso preserva previsibilidade para a crianca e melhora a leitura longitudinal para o adulto.
+
+### Repeticao com variacao controlada
+
+Quando o adulto pedir para repetir a mesma habilidade em mais de uma missao, o modulo deve repetir o padrao pedagogico, mas variar os itens.
+
+O que repete:
+
+- habilidade;
+- tipo de raciocinio;
+- formato do bloco;
+- quantidade aproximada;
+- linguagem de apoio.
+
+O que varia:
+
+- sujeito;
+- verbo;
+- contexto;
+- alternativas;
+- ordem dos itens;
+- frases usadas recentemente.
+
+Exemplo:
+
+```text
+Missao 1: She is ___ a book. (read / reads / reading)
+Missao 2: They are ___ soccer. (play / plays / playing)
+Missao 3: I am ___ my homework. (do / does / doing)
+```
+
+O objetivo e treinar `verb + ing` varias vezes sem fazer a crianca decorar a mesma tela.
+
+### Geracao controlada por templates
+
+No MVP, os exercicios devem ser gerados por templates controlados, nao por IA livre.
+
+Exemplo de configuracao salva:
+
+```json
+{
+  "module_id": "ingles",
+  "skill": "present_continuous",
+  "blocks": [
+    {
+      "exercise_type": "fill_ing",
+      "target_items": 10
+    },
+    {
+      "exercise_type": "choose_now_sentence",
+      "target_items": 10
+    }
+  ],
+  "variation_mode": "controlled",
+  "avoid_recent_repetition": true
+}
+```
+
+O modulo infantil usa essa configuracao para montar exercicios no momento da atividade, variando frases e registrando os templates usados.
+
+## Papel da IA
+
+No MVP, a IA nao deve ser obrigatoria para criar a missao nem para gerar livremente os exercicios.
+
+MVP:
+
+- adulto escolhe habilidade;
+- adulto escolhe um ou mais blocos;
+- adulto define quantidade ou usa uma sugestao padrao;
+- modulo gera exercicios por templates controlados;
+- portal registra evidencias.
+
+Fase posterior:
+
+- IA pode sugerir configuracao de missao a partir da percepcao do adulto;
+- IA pode explicar por que uma dose e melhor do que outra;
+- IA pode propor novos templates para revisao humana;
+- IA pode ajudar na leitura longitudinal, com cuidado para nao diagnosticar.
+
+Essa decisao reduz custo, aumenta previsibilidade e evita que a crianca receba exercicios inconsistentes.
+
 ## Modelo de entrada do adulto
 
 O modulo de Ingles deve nascer da percepcao do adulto, nao de uma trilha fixa de curso.
@@ -74,10 +217,10 @@ Exemplo realista:
 ```text
 O adulto percebe que a crianca esta errando frases no present continuous.
 Ele registra essa percepcao no portal.
-A IA ajuda a transformar isso em uma missao curta.
+O adulto escolhe uma missao curta de present continuous.
 A crianca pratica algumas frases.
 O portal registra evidencias.
-Depois de algumas missoes, o adulto e a IA conseguem observar se houve melhoria.
+Depois de algumas missoes, o adulto consegue observar se houve melhoria com apoio da leitura longitudinal.
 ```
 
 Esse modelo evita que o produto vire um curso generico de Ingles. O foco e reforco direcionado por necessidade.
@@ -111,34 +254,15 @@ Ele nao percebe quando a frase fala de algo acontecendo agora.
 Ele tem uma lista de palavras da escola, mas ainda nao reconhece bem o significado.
 ```
 
-### Papel da IA nesse momento
-
-A IA deve ajudar o adulto a transformar percepcao em missao.
-
-Ela deve:
-
-- identificar a habilidade provavel;
-- propor uma missao pequena;
-- sugerir quantidade de itens;
-- explicar por que escolheu aquela dose;
-- pedir confirmacao do adulto antes de liberar;
-- registrar que aquilo e uma hipotese pedagogica, nao uma conclusao ampla.
-
-Exemplo de devolutiva adulta:
-
-```text
-Pelo que voce descreveu, parece fazer sentido treinar present continuous com frases curtas sobre acoes acontecendo agora. Para hoje, eu sugiro 6 itens, sem misturar simple present ainda. Depois de duas ou tres missoes, conseguimos observar se esse ponto esta ficando mais seguro.
-```
-
 Regra de produto:
 
-O adulto continua responsavel por escolher e liberar novas missoes. A IA apoia a organizacao pedagogica, mas nao deve criar uma sequencia longa automaticamente sem confirmacao.
+O adulto continua responsavel por escolher e liberar novas missoes. No MVP, a organizacao deve ser feita por opcoes guiadas e templates. A IA pode apoiar em fase posterior, mas nao deve ser dependencia inicial.
 
 O fluxo deve seguir a logica que ja existe no Portal Educacional:
 
 1. o adulto escolhe o que quer melhorar;
 2. o adulto transforma isso em uma missao para a crianca;
-3. a IA ajuda a calibrar linguagem, dose e criterio de conclusao;
+3. o sistema usa blocos e templates para manter a missao curta e consistente;
 4. a crianca pratica;
 5. o portal registra evidencias;
 6. o adulto decide o proximo assunto com apoio da leitura longitudinal.
@@ -330,12 +454,12 @@ Exemplo:
 school, pencil, teacher, homework, friend
 ```
 
-A IA deve:
+O modulo deve:
 
 1. limpar duplicidades;
 2. identificar palavras muito dificeis para o nivel;
 3. separar em blocos pequenos;
-4. sugerir um primeiro bloco de pratica;
+4. sugerir um primeiro bloco de pratica por regra padrao;
 5. criar exercicios variados;
 6. oferecer botao de ouvir para cada palavra trabalhada;
 7. registrar quais palavras foram praticadas.
@@ -349,7 +473,7 @@ Requisito de audio no vocabulario:
 
 Regra pedagogica:
 
-Se o adulto colar muitas palavras, a IA nao deve entregar tudo para a crianca de uma vez.
+Se o adulto colar muitas palavras, o modulo nao deve entregar tudo para a crianca de uma vez.
 
 Exemplo de resposta adulta:
 
@@ -386,7 +510,7 @@ Exemplos de atividade:
 - montar uma frase a partir de palavras dadas;
 - completar uma frase sobre si mesmo;
 - escrever 2 ou 3 frases guiadas;
-- revisar uma frase com uma dica da IA;
+- revisar uma frase com uma dica do sistema;
 - usar palavras treinadas em uma mini producao.
 
 Linguagem para a crianca:
@@ -409,7 +533,17 @@ Esta matriz nao fecha o desenho final. Ela registra os primeiros tipos de exerci
 
 Regra de produto:
 
-Cada missao deve escolher poucos formatos por vez. A crianca nao deve receber todos os tipos de exercicio em uma unica atividade.
+Cada missao pode ter um ou mais blocos. Cada bloco deve ter apenas um formato de exercicio.
+
+Exemplo:
+
+```text
+Missao: Present continuous
+Bloco 1: completar lacuna - 10 exercicios
+Bloco 2: escolher a frase correta - 10 exercicios
+```
+
+Dentro de cada bloco, o modulo varia frases, sujeitos, verbos e alternativas, mas mantem a mesma logica de resposta. Isso cria ritmo para a crianca e permite que o adulto compare desempenho por formato.
 
 ### Verb to be
 
@@ -726,7 +860,7 @@ O adulto deve poder escolher:
 - nivel aproximado;
 - tema opcional;
 - observacao adulta opcional;
-- se a IA deve sugerir uma divisao da tarefa.
+- blocos de exercicio da missao.
 
 Campos propostos:
 
@@ -739,7 +873,14 @@ Campos propostos:
   "topic": "rotina escolar",
   "vocabulary": ["read", "play", "eat", "study"],
   "adult_note": "Ele confunde is e are.",
-  "ai_chunking": true
+  "blocks": [
+    {
+      "exercise_type": "fill_ing",
+      "target_items": 10
+    }
+  ],
+  "variation_mode": "controlled",
+  "avoid_recent_repetition": true
 }
 ```
 
@@ -751,22 +892,23 @@ Campos propostos:
    - habilidade tecnica;
    - tema ou lista de palavras;
    - observacao opcional;
-   - quantidade desejada ou deixa a IA sugerir.
-4. A IA devolve uma proposta curta:
+   - quantidade desejada;
+   - um ou mais blocos de exercicio.
+4. O sistema mostra uma proposta curta:
    - o que sera treinado;
    - quantos itens;
-   - por que essa dose e adequada;
+   - quais blocos fazem parte da missao;
    - o que observar depois.
 5. Adulto confirma e libera a missao para a crianca.
 
 Regra importante:
 
-Se a observacao do adulto for ampla, vaga ou ansiosa, a IA pode sugerir observacao por mais algumas atividades antes de criar uma meta forte.
+Se a observacao do adulto for ampla, vaga ou ansiosa, o MVP deve permitir que o adulto escolha uma missao pequena e observavel, sem tentar transformar a observacao em conclusao ampla.
 
 Exemplo:
 
 ```text
-Ainda temos poucas evidencias. Para hoje, sugiro uma missao curta com 6 frases. Depois de duas ou tres praticas, teremos mais seguranca para definir uma meta.
+Para hoje, escolha uma missao curta. Depois de duas ou tres praticas, o portal tera mais evidencias para apoiar a proxima escolha.
 ```
 
 ## Experiencia da crianca
@@ -974,32 +1116,96 @@ Voce errou muito o present continuous.
 Voce nao sabe usar is e are.
 ```
 
-## Regras da IA
+## IA futura
 
-A IA deve:
+No MVP inicial de exercicios estruturados, a IA nao e obrigatoria para montar missoes nem gerar exercicios. O modulo deve funcionar com escolhas guiadas do adulto e templates controlados.
 
-- quebrar conteudos grandes em blocos pequenos;
+Em fase posterior, a IA pode apoiar o adulto quando houver percepcao aberta, lista grande de palavras ou duvida sobre dose. Nessa fase, ela deve:
+
 - sugerir reducao quando a missao estiver longa;
-- adaptar exemplos ao nivel informado;
 - explicar ao adulto a escolha pedagogica;
 - nao diagnosticar dificuldade;
 - nao usar tom alarmista;
-- respeitar a diferenca entre linguagem adulta e infantil.
+- respeitar a diferenca entre linguagem adulta e infantil;
 - preferir exemplos curtos e concretos;
-- adaptar a missao ao numero de evidencias existentes;
+- adaptar a sugestao ao numero de evidencias existentes;
 - indicar quando a lista de palavras esta longa demais;
-- explicar ao adulto por que reduziu a dose;
 - nunca apresentar a crianca como "fraca em Ingles".
 
-Quando houver poucos dados, a IA deve dizer:
+Quando houver poucos dados, a IA futura pode dizer:
 
 ```text
 Ainda temos poucas evidencias. Vale fazer mais duas ou tres missoes curtas antes de definir uma meta mais precisa.
 ```
 
-### Regras para transformar pedido adulto em missao
+### Excecao futura: pequena escrita guiada
 
-Quando o adulto pedir uma habilidade tecnica, a IA deve traduzir para uma missao infantil simples.
+Na pequena escrita guiada, a IA deve entrar como componente obrigatorio quando essa parte for implementada.
+
+Motivo:
+
+- a crianca pode produzir frases imprevisiveis;
+- o sistema precisa entender a tentativa;
+- a revisao deve escolher apenas um ponto pequeno de melhora;
+- o feedback precisa preservar autoria e autoestima;
+- templates fixos nao sao suficientes para orientar uma producao aberta.
+
+Essa etapa fica fora do primeiro prototipo. Antes dela, o modulo deve validar os exercicios estruturados de `verb to be` e `present continuous`.
+
+#### Niveis da escrita guiada
+
+A escrita guiada em Ingles nao deve ter um unico fluxo para todas as criancas.
+
+O modulo deve escolher ou permitir que o adulto escolha um nivel de andaime:
+
+1. **Frase unica**
+
+   Para criancas em nivel inicial ou com pouco repertorio.
+
+   Exemplo:
+
+   ```text
+   Complete uma frase pequena em Ingles.
+
+   I like ______.
+   ```
+
+2. **Tres frases guiadas**
+
+   Para criancas que ja conseguem juntar ideias simples.
+
+   Exemplo:
+
+   ```text
+   Frase 1: diga quem aparece.
+   Frase 2: diga o que esta acontecendo.
+   Frase 3: diga algo que voce gosta ou percebe.
+   ```
+
+3. **Fluxo avancado inspirado na Redacao**
+
+   Para criancas com mais repertorio em Ingles.
+
+   Esse modo pode reaproveitar principios do modulo de Redacao:
+
+   - uma etapa por vez;
+   - orientacao no momento certo;
+   - validacao antes de continuar;
+   - revisao de apenas um ponto;
+   - feedback positivo;
+   - registro da versao final no portal.
+
+Regra pedagogica:
+
+O modulo deve permitir que uma crianca comece com uma frase unica sem parecer que recebeu uma atividade "menor". A linguagem deve preservar progresso e possibilidade:
+
+```text
+Hoje vamos construir uma frase boa em Ingles. Uma frase bem feita ja e um passo importante.
+```
+
+### Traducao de pedido adulto em missao infantil
+
+Mesmo sem IA obrigatoria no MVP, o produto deve manter um mapa claro entre pedido adulto e linguagem infantil.
 
 | Pedido adulto | Missao infantil |
 | --- | --- |
@@ -1009,12 +1215,12 @@ Quando o adulto pedir uma habilidade tecnica, a IA deve traduzir para uma missao
 | `question words` | Escolher a palavra certa para fazer uma pergunta. |
 | lista de vocabulario | Treinar um bloco pequeno de palavras com significado e som. |
 
-Se o adulto trouxer varias dificuldades ao mesmo tempo, a IA deve sugerir comecar por uma.
+Se o adulto trouxer varias dificuldades ao mesmo tempo, o sistema deve sugerir comecar por uma habilidade principal.
 
 Exemplo:
 
 ```text
-Voce trouxe tres pontos. Para hoje, eu comecaria por present continuous, porque e uma pratica pequena e observavel. Depois usamos o resultado para decidir o proximo passo.
+Voce trouxe tres pontos. Para hoje, escolha uma habilidade principal. Uma missao curta de present continuous pode ser uma boa primeira observacao.
 ```
 
 ## Fora do MVP
@@ -1023,6 +1229,9 @@ Ficam fora da primeira versao:
 
 - curso completo de Ingles;
 - conversacao livre;
+- IA livre gerando exercicios diretamente para a crianca;
+- IA obrigatoria para criar missao;
+- pequena escrita guiada com IA;
 - avaliacao avancada de pronuncia;
 - audio obrigatorio em todas as atividades;
 - reconhecimento de fala;
@@ -1096,6 +1305,7 @@ Validar tambem:
 - payload de `activity_event`;
 - sinais longitudinais especificos;
 - formato de configuracao adulta.
+- local do modulo como `apps/ingles` no monorepo.
 
 ### Fase 2: Configuracao adulta
 
@@ -1103,8 +1313,8 @@ Permitir montar missao de Ingles com habilidade e lista de palavras em ambiente 
 
 Saida esperada:
 
-- proposta de missao gerada pela IA;
-- dose sugerida;
+- missao configurada por habilidade e blocos;
+- dose definida pelo adulto ou padrao do sistema;
 - texto infantil;
 - criterios de conclusao;
 - evidencias que seriam registradas.
@@ -1117,7 +1327,8 @@ Implementar atividades com audio simples de escuta no vocabulario, sem avaliacao
 - simple present;
 - present continuous;
 - question words;
-- vocabulary list.
+- vocabulary list;
+- guided short writing.
 
 ### Fase 4: Memoria longitudinal
 

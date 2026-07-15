@@ -1,0 +1,10 @@
+{
+  "name": "portal-ingles",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check-html.js",
+    "static": "node scripts/static-server.mjs"
+  }
+}
