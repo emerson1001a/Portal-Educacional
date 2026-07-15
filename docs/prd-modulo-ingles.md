@@ -44,6 +44,114 @@ Criar um modulo de reforco inicial de Ingles para:
 
 O modulo nao deve nascer como curso completo de Ingles. Ele deve nascer como reforco orientado por necessidade.
 
+## Recorte do MVP
+
+O MVP do modulo de Ingles deve ser pequeno, testavel e conectado ao mesmo modelo de missoes do portal.
+
+Ele deve responder a uma pergunta simples:
+
+```text
+Como transformar uma dificuldade concreta percebida pelo adulto em uma pratica curta de Ingles, com evidencias para acompanhar se a crianca esta ganhando seguranca?
+```
+
+O MVP nao deve tentar:
+
+- cobrir todo o curriculo escolar de Ingles;
+- substituir aula regular;
+- avaliar conversacao;
+- medir pronuncia;
+- criar trilha completa de nivelamento;
+- entregar muitas palavras ou regras de uma vez.
+
+O primeiro valor do modulo deve ser ajudar o adulto a escolher uma pratica pequena e ajudar a crianca a concluir essa pratica com clareza.
+
+## Modelo de entrada do adulto
+
+O modulo de Ingles deve nascer da percepcao do adulto, nao de uma trilha fixa de curso.
+
+Exemplo realista:
+
+```text
+O adulto percebe que a crianca esta errando frases no present continuous.
+Ele registra essa percepcao no portal.
+A IA ajuda a transformar isso em uma missao curta.
+A crianca pratica algumas frases.
+O portal registra evidencias.
+Depois de algumas missoes, o adulto e a IA conseguem observar se houve melhoria.
+```
+
+Esse modelo evita que o produto vire um curso generico de Ingles. O foco e reforco direcionado por necessidade.
+
+### O que o adulto pode informar
+
+O adulto deve poder entrar por dois caminhos:
+
+1. Escolher uma habilidade tecnica conhecida.
+2. Escrever uma percepcao em linguagem natural.
+
+Exemplos de habilidade tecnica:
+
+- `present continuous`;
+- `simple present`;
+- `verb to be`;
+- `question words`;
+- lista de vocabulario.
+
+Exemplos de percepcao em linguagem natural:
+
+```text
+Ele confunde quando usar is e are.
+```
+
+```text
+Ele nao percebe quando a frase fala de algo acontecendo agora.
+```
+
+```text
+Ele tem uma lista de palavras da escola, mas ainda nao reconhece bem o significado.
+```
+
+### Papel da IA nesse momento
+
+A IA deve ajudar o adulto a transformar percepcao em missao.
+
+Ela deve:
+
+- identificar a habilidade provavel;
+- propor uma missao pequena;
+- sugerir quantidade de itens;
+- explicar por que escolheu aquela dose;
+- pedir confirmacao do adulto antes de liberar;
+- registrar que aquilo e uma hipotese pedagogica, nao uma conclusao ampla.
+
+Exemplo de devolutiva adulta:
+
+```text
+Pelo que voce descreveu, parece fazer sentido treinar present continuous com frases curtas sobre acoes acontecendo agora. Para hoje, eu sugiro 6 itens, sem misturar simple present ainda. Depois de duas ou tres missoes, conseguimos observar se esse ponto esta ficando mais seguro.
+```
+
+Regra de produto:
+
+O adulto continua responsavel por escolher e liberar novas missoes. A IA apoia a organizacao pedagogica, mas nao deve criar uma sequencia longa automaticamente sem confirmacao.
+
+## Hipoteses pedagogicas iniciais
+
+Estas hipoteses orientam o desenho, mas devem ser validadas com uso real e, depois, com especialista:
+
+- uma crianca pode entender melhor Ingles quando a regra tecnica vira uma acao concreta;
+- missoes curtas reduzem resistencia e aumentam chance de repeticao;
+- escutar a palavra ajuda vocabulario, mas avaliacao de fala cedo demais pode aumentar ansiedade;
+- listas grandes de palavras precisam ser quebradas em blocos pequenos;
+- tempo de conclusao ajuda o adulto a calibrar dose, mas nao deve aparecer como pressao para a crianca;
+- a autoavaliacao opcional da crianca pode indicar se a missao estava facil, dificil ou na medida.
+
+Exemplo:
+
+```text
+Adulto: Miguel esta confundindo quando usar present continuous.
+Crianca: Vamos treinar frases sobre coisas que estao acontecendo agora.
+```
+
 ## Publico
 
 ### Adulto
@@ -263,6 +371,32 @@ Campos propostos:
 }
 ```
 
+### Fluxo adulto recomendado
+
+1. Adulto escolhe a crianca.
+2. Adulto escolhe o modulo `Ingles`.
+3. Adulto informa a necessidade:
+   - habilidade tecnica;
+   - tema ou lista de palavras;
+   - observacao opcional;
+   - quantidade desejada ou deixa a IA sugerir.
+4. A IA devolve uma proposta curta:
+   - o que sera treinado;
+   - quantos itens;
+   - por que essa dose e adequada;
+   - o que observar depois.
+5. Adulto confirma e libera a missao para a crianca.
+
+Regra importante:
+
+Se a observacao do adulto for ampla, vaga ou ansiosa, a IA pode sugerir observacao por mais algumas atividades antes de criar uma meta forte.
+
+Exemplo:
+
+```text
+Ainda temos poucas evidencias. Para hoje, sugiro uma missao curta com 6 frases. Depois de duas ou tres praticas, teremos mais seguranca para definir uma meta.
+```
+
 ## Experiencia da crianca
 
 A crianca deve receber:
@@ -284,6 +418,26 @@ Vamos treinar frases sobre coisas que estao acontecendo agora.
 Faca uma parte pequena. Quando terminar, o adulto acompanha seu progresso.
 ```
 
+### Fluxo infantil recomendado
+
+1. A crianca entra pela missao liberada.
+2. Ve uma explicacao curta, sem excesso tecnico.
+3. Resolve um item por vez.
+4. Recebe feedback imediato simples.
+5. Pode ouvir palavras ou frases curtas quando fizer sentido.
+6. Ao final, recebe uma mensagem clara de conclusao.
+7. Opcionalmente responde como se sentiu na missao, com botoes simples.
+8. Retorna ao portal infantil com a missao marcada como concluida.
+
+Exemplos de autoavaliacao infantil:
+
+- Foi tranquilo.
+- Precisei pensar.
+- Quero treinar mais.
+- Foi dificil, mas consegui.
+
+Essa resposta nao deve virar nota. Ela e um sinal para o adulto calibrar a proxima dose.
+
 ## Tipos de exercicio
 
 O MVP pode usar exercicios textuais com apoio simples de audio:
@@ -299,6 +453,29 @@ O MVP pode usar exercicios textuais com apoio simples de audio:
 O audio do MVP deve ser apenas um apoio de escuta, acionado por um botao pequeno como "ouvir". A crianca pode ouvir a pronuncia, repetir se quiser e seguir a atividade.
 
 Ficam fora do MVP gravacao de voz, avaliacao automatica de pronuncia e pontuacao de fala.
+
+## Politica de audio
+
+O audio no MVP deve ser de escuta, nao de avaliacao.
+
+Permitido:
+
+- botao `Ouvir` em palavras de vocabulario;
+- botao `Ouvir` em frases curtas quando isso ajudar a atividade;
+- repetir o audio quantas vezes a crianca quiser;
+- usar audio como apoio antes de responder.
+
+Nao permitido no MVP:
+
+- gravar voz da crianca;
+- avaliar pronuncia;
+- dar nota de fala;
+- comparar pronuncia com padrao nativo;
+- pedir que a crianca fale obrigatoriamente.
+
+Ponderacao:
+
+Ouvir pode ajudar muito. Avaliar fala cedo demais pode mudar a atividade de pratica para exposicao. Isso deve ficar para uma fase posterior, depois de validacao pedagogica.
 
 ## Evidencias enviadas ao portal
 
@@ -316,7 +493,11 @@ O modulo deve enviar ao portal um `activity_event` com:
     "correct_items": 8,
     "accuracy_pct": 80,
     "vocabulary_count": 4,
-    "retry_count": 2
+    "retry_count": 2,
+    "duration_seconds": 420,
+    "completed": true,
+    "child_self_assessment": "needed_thinking",
+    "child_self_assessment_label": "Precisei pensar"
   },
   "feedback": {
     "child": {
@@ -340,6 +521,35 @@ O modulo deve enviar ao portal um `activity_event` com:
   }
 }
 ```
+
+## Sinais longitudinais especificos de Ingles
+
+O portal deve conseguir acompanhar a evolucao por sinais pequenos e acumulaveis.
+
+Sinais recomendados:
+
+- habilidade treinada;
+- palavras praticadas;
+- palavras que precisaram de repeticao;
+- estruturas com mais erro;
+- quantidade de itens;
+- acertos;
+- tentativas;
+- tempo invisivel de conclusao;
+- autoavaliacao opcional da crianca;
+- se a missao foi concluida sem abandono;
+- se a mesma habilidade apareceu em missoes anteriores.
+
+Exemplos de `common_errors`:
+
+- `is_are_confusion`;
+- `am_is_confusion`;
+- `missing_third_person_s`;
+- `present_simple_vs_continuous`;
+- `question_word_choice`;
+- `word_meaning_confusion`.
+
+O feedback longitudinal nao deve concluir dificuldade ampla com uma unica missao. Deve combinar evidencias ao longo do tempo.
 
 ## Feedback ao adulto
 
@@ -403,11 +613,36 @@ A IA deve:
 - nao diagnosticar dificuldade;
 - nao usar tom alarmista;
 - respeitar a diferenca entre linguagem adulta e infantil.
+- preferir exemplos curtos e concretos;
+- adaptar a missao ao numero de evidencias existentes;
+- indicar quando a lista de palavras esta longa demais;
+- explicar ao adulto por que reduziu a dose;
+- nunca apresentar a crianca como "fraca em Ingles".
 
 Quando houver poucos dados, a IA deve dizer:
 
 ```text
 Ainda temos poucas evidencias. Vale fazer mais duas ou tres missoes curtas antes de definir uma meta mais precisa.
+```
+
+### Regras para transformar pedido adulto em missao
+
+Quando o adulto pedir uma habilidade tecnica, a IA deve traduzir para uma missao infantil simples.
+
+| Pedido adulto | Missao infantil |
+| --- | --- |
+| `verb to be` | Completar frases com `am`, `is` e `are`. |
+| `simple present` | Treinar frases sobre coisas que acontecem sempre. |
+| `present continuous` | Treinar frases sobre coisas que estao acontecendo agora. |
+| `question words` | Escolher a palavra certa para fazer uma pergunta. |
+| lista de vocabulario | Treinar um bloco pequeno de palavras com significado e som. |
+
+Se o adulto trouxer varias dificuldades ao mesmo tempo, a IA deve sugerir comecar por uma.
+
+Exemplo:
+
+```text
+Voce trouxe tres pontos. Para hoje, eu comecaria por present continuous, porque e uma pratica pequena e observavel. Depois usamos o resultado para decidir o proximo passo.
 ```
 
 ## Fora do MVP
@@ -433,7 +668,7 @@ Catalogo futuro:
   "id": "ingles",
   "name": "Ingles Inicial",
   "short_name": "Ingles",
-  "area": "ingles",
+  "area": "idiomas",
   "journey": "ingles_inicial",
   "description": "Vocabulario e frases simples com missoes curtas.",
   "url": "",
@@ -449,11 +684,17 @@ Observacao:
 
 O campo `area` hoje pode exigir ampliacao do schema, pois as areas atuais foram desenhadas para leitura, escrita, matematica, organizacao e outro. Antes da implementacao, decidir se Ingles sera:
 
-- uma nova area `ingles`; ou
+- uma nova area ampla `idiomas`; ou
 - uma jornada dentro de `outro`; ou
-- uma area academica generica com dominio especifico.
+- uma area especifica `ingles`.
 
-Recomendacao inicial: preparar `area = "ingles"` quando o modulo sair do PRD para implementacao.
+Recomendacao inicial: usar `area = "idiomas"` e `journey = "ingles_inicial"`.
+
+Motivo:
+
+- permite Ingles agora sem fechar a arquitetura contra Espanhol ou outro idioma no futuro;
+- preserva `ingles` como modulo ou jornada, nao como categoria rigida;
+- combina melhor com a ideia de modulos plugaveis comercializaveis por dominio.
 
 ## Criterios de aceite do PRD
 
@@ -464,7 +705,7 @@ O modulo de Ingles so deve ser implementado quando:
 - o historico unificado conseguir exibir evidencias por habilidade;
 - houver clareza sobre como armazenar `skill`, `vocabulary` e `common_errors`;
 - a linguagem infantil e adulta estiver alinhada ao guia pedagogico;
-- houver decisao sobre area/jornada `ingles`.
+- houver decisao sobre area/jornada `idiomas` e `ingles_inicial`.
 
 ## Roadmap sugerido
 
@@ -472,13 +713,29 @@ O modulo de Ingles so deve ser implementado quando:
 
 Documento conceitual, sem implementacao.
 
-### Fase 1: Catalogo planejado
+### Fase 1: Catalogo planejado e contrato
 
 Adicionar Ingles como modulo `planned`, sem botao infantil ativo.
 
+Validar tambem:
+
+- `area = idiomas`;
+- `journey = ingles_inicial`;
+- payload de `activity_event`;
+- sinais longitudinais especificos;
+- formato de configuracao adulta.
+
 ### Fase 2: Configuracao adulta
 
-Permitir montar missao de Ingles com habilidade e lista de palavras, ainda sem modulo completo.
+Permitir montar missao de Ingles com habilidade e lista de palavras em ambiente interno, ainda sem liberar para criancas reais.
+
+Saida esperada:
+
+- proposta de missao gerada pela IA;
+- dose sugerida;
+- texto infantil;
+- criterios de conclusao;
+- evidencias que seriam registradas.
 
 ### Fase 3: MVP do modulo
 
