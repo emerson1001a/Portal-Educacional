@@ -81,7 +81,13 @@
     }
     textarea { min-height: 180px; resize: vertical; line-height: 1.45; }
     .voiceHint { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.4; }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+    .exitPortal {
+      margin-left: auto;
+      background: #edf2f7;
+      color: #52637a;
+      border: 1px solid #d8e0ef;
+    }
     .chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .chip {
       border: 1px solid #93b4ff;
@@ -99,18 +105,6 @@
     .hidden { display: none !important; }
     .notice { padding: 12px; border-radius: 12px; background: var(--soft-green); border: 1px solid #ccebd6; margin-top: 12px; }
     .warning { background: var(--soft-orange); border-color: #fed7aa; }
-    .portalIdentitySummary {
-      display: none;
-      padding: 12px;
-      border-radius: 12px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: #1e3a8a;
-      margin-bottom: 12px;
-      line-height: 1.4;
-    }
-    .portalIdentitySummary strong { display: block; color: #172554; margin-bottom: 2px; }
-    body.portal-mode .portalIdentitySummary { display: block; }
     #childFeedback { white-space: pre-wrap; line-height: 1.5; }
     .finalText { white-space: pre-wrap; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
     .reviewText {
@@ -142,6 +136,16 @@
     .dot { width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center; background: #e8edf7; color: var(--muted); font-size: 12px; font-weight: 900; }
     .stepItem.active { color: var(--ink); font-weight: 900; }
     .stepItem.active .dot { background: var(--blue); color: #fff; }
+    .stepHelp {
+      padding: 12px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+    .stepHelp strong { display: block; color: #172554; margin-bottom: 4px; }
 
     .adultGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .historyItem { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fff; margin-top: 10px; }
@@ -170,6 +174,7 @@
     @media (max-width: 860px) {
       .grid, .adultGrid { grid-template-columns: 1fr; }
       .topbar { align-items: flex-start; flex-direction: column; }
+      .exitPortal { margin-left: 0; flex-basis: 100%; }
     }
   </style>
 </head>
@@ -212,11 +217,6 @@
           </div>
 
           <div class="mission" style="margin-top:16px">
-            <div id="portalIdentitySummary" class="portalIdentitySummary">
-              <strong>Atividade da missão</strong>
-              <span id="portalIdentityText">Nome e idade vieram do Portal Educacional.</span>
-            </div>
-
             <div class="balloon" id="bubble">Escreva seu nome e sua idade para eu te conhecer melhor.</div>
 
             <div id="stepStudent">
@@ -245,7 +245,7 @@
                 <input id="theme" placeholder="Ex.: Uma aventura no recreio">
               </div>
               <div class="field">
-                <label>Titulo</label>
+                <label>Título</label>
                 <input id="title" placeholder="Ex.: O recreio misterioso">
               </div>
               <div class="worksheetActions">
@@ -254,14 +254,22 @@
             </div>
 
             <div id="stepBegin" class="hidden">
+              <div class="stepHelp">
+                <strong>Começo</strong>
+                Conte quem aparece, onde a cena acontece e como tudo começa. Uma frase simples já pode ser suficiente para começar.
+              </div>
               <div class="field">
-                <label>Comeco</label>
+                <label>Começo</label>
                 <textarea id="begin" placeholder="Conte quem aparece e onde tudo começa."></textarea>
                 <p class="voiceHint">No celular, você pode digitar ou tocar no microfone do teclado para falar sua ideia.</p>
               </div>
             </div>
 
             <div id="stepMiddle" class="hidden">
+              <div class="stepHelp">
+                <strong>Meio</strong>
+                Conte o que aconteceu depois. Pense em uma ação, um problema ou uma descoberta.
+              </div>
               <div class="field">
                 <label>Meio</label>
                 <textarea id="middle" placeholder="Conte o que aconteceu depois."></textarea>
@@ -270,6 +278,10 @@
             </div>
 
             <div id="stepEnd" class="hidden">
+              <div class="stepHelp">
+                <strong>Final</strong>
+                Mostre como terminou. Feche a ideia que você já contou, sem precisar inventar uma história nova.
+              </div>
               <div class="field">
                 <label>Final</label>
                 <textarea id="end" placeholder="Conte como terminou e o que mudou."></textarea>
@@ -293,12 +305,12 @@
             <div id="message" class="notice warning hidden"></div>
 
             <div class="actions">
-              <button id="backBtn" class="secondary" disabled>Voltar</button>
               <button id="nextBtn">Continuar</button>
               <button id="validateBtn" class="ghost hidden">Validar etapa</button>
               <button id="finishBtn" class="good hidden">Analisar redação</button>
-              <button id="returnPortalBtn" class="good hidden" type="button">Retornar à missão</button>
+              <button id="backBtn" class="secondary" disabled>Voltar</button>
               <button id="resetBtn" class="secondary">Limpar</button>
+              <button id="returnPortalBtn" class="exitPortal hidden" type="button">Sair para o portal</button>
             </div>
           </div>
         </section>
@@ -418,10 +430,6 @@
       const portalAge = ageFromPortal();
       if (portalAge) $("studentAge").value = String(portalAge);
       if (!textValue("studentAge")) $("studentAge").value = "11";
-      const name = textValue("studentName") || "Aluno da missão";
-      const age = Number(textValue("studentAge"));
-      const ageText = Number.isFinite(age) && age >= 6 && age <= 18 ? `, ${age} anos` : "";
-      $("portalIdentityText").textContent = `${name}${ageText}. Esta missão veio pronta do Portal Educacional.`;
     }
     function currentAge() {
       const age = Number(textValue("studentAge"));
@@ -565,6 +573,12 @@
       const url = portalReturnUrl(status);
       if (url) window.location.href = url;
     }
+    function confirmReturnToPortal() {
+      const text = state.portalEventSaved
+        ? "Você vai voltar para o portal da criança. A redação já foi registrada para o adulto acompanhar. Deseja sair?"
+        : "Você vai sair da redação e voltar para o portal da criança. Se ainda não entregou, esta redação pode não ficar salva para o adulto. Deseja sair mesmo assim?";
+      if (window.confirm(text)) returnToPortal(state.portalEventSaved ? "activity_saved" : "activity_pending");
+    }
 
     function syncReturnPortalButton() {
       $("returnPortalBtn").classList.toggle("hidden", !portal.enabled);
@@ -600,7 +614,7 @@
             child: {
               tone: "positive",
               message: data.review_crianca || "",
-              next_step: "Retornar à missão para continuar o percurso."
+              next_step: "Voltar ao portal da criança para continuar o percurso."
             },
             adult: {
               summary: data.orientacao_adulto || "",
@@ -908,10 +922,11 @@
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.details || data.error || "Erro ao validar");
-        showMessage(data.mensagem || data.balao || "Pode continuar.");
+        const message = data.mensagem || data.balao || "Pode continuar.";
+        showMessage(data.ok === true || locallyReady ? message : `${message} Complete mais um detalhe e aperte Validar etapa novamente.`);
         if (data.ok === true || locallyReady) state.validatedSteps[current.id] = validationSignature(current.id);
       } catch (error) {
-        showMessage(localData.mensagem);
+        showMessage(locallyReady ? localData.mensagem : `${localData.mensagem} Depois, aperte Validar etapa novamente.`);
         if (locallyReady) state.validatedSteps[current.id] = validationSignature(current.id);
       } finally {
         $("validateBtn").disabled = false;
@@ -1018,7 +1033,7 @@
     $("resetBtn").addEventListener("click", reset);
     $("validateBtn").addEventListener("click", validateStep);
     $("finishBtn").addEventListener("click", analyze);
-    $("returnPortalBtn").addEventListener("click", () => returnToPortal(state.portalEventSaved ? "activity_saved" : "activity_pending"));
+    $("returnPortalBtn").addEventListener("click", confirmReturnToPortal);
     $("printWorksheetBtn").addEventListener("click", printWorksheet);
     $("printWorksheetSideBtn").addEventListener("click", printWorksheet);
     $("loadHistory").addEventListener("click", loadHistory);
