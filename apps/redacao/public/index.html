@@ -260,11 +260,10 @@
 
             <div id="stepBegin" class="hidden">
               <div class="stepHelp">
-                <strong>Começo</strong>
-                Escreva o começo. Conte quem aparece, onde está e como tudo começa. Uma frase simples já pode ser suficiente para começar.
+                Mostre onde tudo começa. Conte quem aparece, onde está e como tudo começa. Uma frase simples já pode ser suficiente para começar.
               </div>
               <div class="field">
-                <label>Começo</label>
+                <label>Agora vamos começar a escrever sua ideia</label>
                 <textarea id="begin" placeholder="Conte quem aparece e onde tudo começa."></textarea>
                 <p class="voiceHint">No celular, você pode digitar ou tocar no microfone do teclado para falar sua ideia.</p>
               </div>
@@ -381,7 +380,7 @@
       { id: "student", title: "Missão Redação", subtitle: "Vamos preparar sua aventura de escrita.", tip: "Preencha nome e idade para eu adaptar as dicas." },
       { id: "type", title: "Tipo de redação", subtitle: "Cada tipo pede um jeito diferente de escrever.", tip: "Se tiver personagem e acontecimentos, escolha história." },
       { id: "theme", title: "Tema e título", subtitle: "Agora damos nome para a ideia.", tip: "Exemplo: o tema pode ser amizade. O título pode ser Meu melhor amigo." },
-      { id: "begin", title: "Começo", subtitle: "Mostre onde tudo começa.", tip: "Pergunte: quem? onde? quando?" },
+      { id: "begin", title: "Começo", subtitle: "", tip: "Pergunte: quem? onde? quando?" },
       { id: "middle", title: "Meio", subtitle: "A parte em que as coisas acontecem.", tip: "Use depois, então, por isso ou por exemplo." },
       { id: "end", title: "Final", subtitle: "Feche a redação com calma.", tip: "Não precisa inventar coisa nova. Feche o que você já contou." },
       { id: "review", title: "Revisão final", subtitle: "Hora de olhar o texto inteiro.", tip: "Melhorar uma coisa por vez funciona melhor." }
@@ -843,6 +842,7 @@
       });
       $("missionTitle").textContent = current.title;
       $("missionSubtitle").textContent = current.subtitle;
+      $("missionSubtitle").classList.toggle("hidden", !current.subtitle);
       const visibleStep = visibleStepNumber();
       $("missionCount").textContent = `${visibleStep}/6`;
       $("quickTip").textContent = current.tip;
