@@ -134,6 +134,17 @@ Regra de produto:
 
 O adulto continua responsavel por escolher e liberar novas missoes. A IA apoia a organizacao pedagogica, mas nao deve criar uma sequencia longa automaticamente sem confirmacao.
 
+O fluxo deve seguir a logica que ja existe no Portal Educacional:
+
+1. o adulto escolhe o que quer melhorar;
+2. o adulto transforma isso em uma missao para a crianca;
+3. a IA ajuda a calibrar linguagem, dose e criterio de conclusao;
+4. a crianca pratica;
+5. o portal registra evidencias;
+6. o adulto decide o proximo assunto com apoio da leitura longitudinal.
+
+Isso vale para Ingles do mesmo modo que ja vale para leitura, redacao e tabuada. O modulo nao deve assumir que existe uma sequencia fixa para todas as criancas.
+
 ## Hipoteses pedagogicas iniciais
 
 Estas hipoteses orientam o desenho, mas devem ser validadas com uso real e, depois, com especialista:
@@ -181,7 +192,16 @@ A crianca deve ver:
 
 ## Escopo MVP
 
-O MVP deve conter cinco tipos de missao.
+O MVP deve comecar com um pacote pequeno de missoes. A prioridade inicial sera:
+
+- `verb_to_be`;
+- `simple_present`;
+- `present_continuous`;
+- `question_words` / perguntas em ingles;
+- `vocabulary_list`;
+- `guided_short_writing`.
+
+O MVP deve conter seis tipos de missao.
 
 ### 1. Verb to be
 
@@ -342,6 +362,358 @@ Linguagem para a crianca:
 ```text
 Vamos treinar algumas palavras de hoje, uma parte pequena por vez.
 ```
+
+### 6. Pequena escrita guiada
+
+Habilidade adulta:
+
+- `guided_short_writing`
+
+Objetivo:
+
+Ajudar a crianca a produzir uma frase ou pequeno paragrafo em Ingles com apoio de etapas, sem transformar a atividade em redacao longa.
+
+Conteudos iniciais:
+
+- frase sobre rotina;
+- frase sobre algo acontecendo agora;
+- mini apresentacao pessoal;
+- descricao simples de pessoa, lugar ou objeto;
+- uso de vocabulario praticado anteriormente.
+
+Exemplos de atividade:
+
+- montar uma frase a partir de palavras dadas;
+- completar uma frase sobre si mesmo;
+- escrever 2 ou 3 frases guiadas;
+- revisar uma frase com uma dica da IA;
+- usar palavras treinadas em uma mini producao.
+
+Linguagem para a crianca:
+
+```text
+Vamos escrever uma frase pequena em Ingles, uma parte de cada vez.
+```
+
+Regra pedagogica:
+
+A pequena escrita guiada deve nascer depois de alguma pratica de estrutura ou vocabulario. Ela nao deve pedir producao livre grande no inicio. A crianca precisa sentir que consegue construir algo pequeno.
+
+Regra de evidencia:
+
+O portal deve registrar a frase final, a habilidade relacionada e se houve apoio de revisao. A leitura longitudinal deve observar se a crianca passa a usar mais palavras e estruturas com menos ajuda ao longo do tempo.
+
+## Matriz inicial de exercicios por assunto
+
+Esta matriz nao fecha o desenho final. Ela registra os primeiros tipos de exercicio que parecem coerentes com cada assunto, para evitar que o modulo fique generico demais.
+
+Regra de produto:
+
+Cada missao deve escolher poucos formatos por vez. A crianca nao deve receber todos os tipos de exercicio em uma unica atividade.
+
+### Verb to be
+
+Objetivo da missao:
+
+- reconhecer quando usar `am`, `is` e `are`;
+- praticar afirmativa, negativa e pergunta simples.
+
+Exercicios iniciais:
+
+1. Completar lacuna:
+
+```text
+She ___ happy.
+
+( ) am
+( ) is
+( ) are
+```
+
+2. Escolher a frase correta:
+
+```text
+Qual frase esta melhor?
+
+( ) He are my friend.
+( ) He is my friend.
+( ) He am my friend.
+```
+
+3. Transformar em pergunta com alternativas:
+
+```text
+Frase: You are ready.
+Pergunta:
+
+( ) Are you ready?
+( ) You are ready?
+( ) Is you ready?
+```
+
+Evidencias:
+
+- erros entre `is` e `are`;
+- erros entre `am` e `is`;
+- dificuldade maior em pergunta ou negativa.
+
+### Simple present
+
+Objetivo da missao:
+
+- reconhecer frases sobre rotina ou habito;
+- praticar o `s` em `he`, `she` e `it`;
+- diferenciar sujeito singular e plural em frases simples.
+
+Exercicios iniciais:
+
+1. Completar verbo:
+
+```text
+She ___ soccer every day.
+
+( ) play
+( ) plays
+( ) playing
+```
+
+2. Escolher frase de rotina:
+
+```text
+Qual frase fala de algo que acontece sempre?
+
+( ) I am eating now.
+( ) I eat breakfast every day.
+( ) I ate breakfast yesterday.
+```
+
+3. Corrigir uma frase curta:
+
+```text
+He play tennis.
+
+Qual fica melhor?
+
+( ) He plays tennis.
+( ) He playing tennis.
+( ) He are play tennis.
+```
+
+Evidencias:
+
+- esquecimento do `s` na terceira pessoa;
+- confusao entre rotina e acao acontecendo agora;
+- acertos por sujeito.
+
+### Present continuous
+
+Objetivo da missao:
+
+- reconhecer acoes acontecendo agora;
+- praticar `am/is/are + verb-ing`;
+- comparar, de forma inicial, acao atual e rotina.
+
+Exercicios iniciais:
+
+1. Completar a frase:
+
+```text
+They ___ playing now.
+
+( ) am
+( ) is
+( ) are
+```
+
+2. Escolher a melhor forma com `-ing`:
+
+```text
+She is ___ a book.
+
+( ) read
+( ) reads
+( ) reading
+```
+
+3. Escolher a frase que fala de agora:
+
+```text
+Qual frase fala de algo acontecendo agora?
+
+( ) He plays every day.
+( ) He is playing now.
+( ) He played yesterday.
+```
+
+4. Montar frase guiada:
+
+```text
+Palavras: is / Maria / studying / now
+
+Resposta esperada: Maria is studying now.
+```
+
+Evidencias:
+
+- confusao entre `is` e `are`;
+- ausencia de `-ing`;
+- confusao entre `simple_present` e `present_continuous`;
+- necessidade de apoio para ordenar frase.
+
+### Question words / perguntas em ingles
+
+Objetivo da missao:
+
+- escolher a palavra de pergunta adequada;
+- relacionar pergunta com tipo de resposta;
+- praticar perguntas curtas.
+
+Exercicios iniciais:
+
+1. Completar pergunta com alternativa:
+
+```text
+___ is your name?
+
+( ) What
+( ) Where
+( ) When
+```
+
+2. Escolher pergunta para uma resposta:
+
+```text
+Resposta: I live in Brazil.
+
+Qual pergunta combina?
+
+( ) Where do you live?
+( ) When do you live?
+( ) Who do you live?
+```
+
+3. Ligar palavra ao tipo de resposta:
+
+```text
+Where -> lugar
+Who -> pessoa
+When -> tempo
+```
+
+4. Completar parte da frase:
+
+```text
+___ are you sad?
+Because I lost my pencil.
+
+( ) Why
+( ) Where
+( ) Who
+```
+
+Evidencias:
+
+- troca entre `where` e `when`;
+- dificuldade com `why`;
+- dificuldade em associar pergunta e resposta;
+- habilidade de identificar pessoa, lugar, tempo, motivo e modo.
+
+### Lista de vocabulario
+
+Objetivo da missao:
+
+- reconhecer significado;
+- associar palavra escrita e som;
+- praticar um bloco pequeno de palavras.
+
+Exercicios iniciais:
+
+1. Ouvir e escolher a palavra:
+
+```text
+[Ouvir]
+
+( ) school
+( ) pencil
+( ) teacher
+```
+
+2. Escolher significado:
+
+```text
+teacher
+
+( ) professor
+( ) caderno
+( ) recreio
+```
+
+3. Completar frase simples com palavra do bloco:
+
+```text
+My ___ is very kind.
+
+( ) teacher
+( ) pencil
+( ) book
+```
+
+4. Revisao espaçada:
+
+```text
+Palavra vista ontem: homework
+O que significa?
+```
+
+Evidencias:
+
+- palavras reconhecidas;
+- palavras que exigiram mais repeticao de audio;
+- palavras confundidas;
+- palavras reutilizadas em frase.
+
+### Pequena escrita guiada
+
+Objetivo da missao:
+
+- usar uma estrutura ou vocabulario em uma pequena producao;
+- preservar autoria da crianca;
+- orientar revisao curta, sem transformar em redacao longa.
+
+Exercicios iniciais:
+
+1. Completar frase pessoal:
+
+```text
+I like ___.
+```
+
+2. Montar frase com palavras dadas:
+
+```text
+Palavras: I / am / studying / English
+```
+
+3. Escrever duas frases com apoio:
+
+```text
+Escreva uma frase dizendo o que voce faz todos os dias.
+Depois escreva uma frase dizendo o que voce esta fazendo agora.
+```
+
+4. Revisao guiada de uma coisa:
+
+```text
+Sua frase ja tem uma boa ideia. Agora vamos melhorar apenas o verbo.
+```
+
+Evidencias:
+
+- estrutura usada;
+- quantidade de apoio necessario;
+- vocabulario reutilizado;
+- melhora depois da revisao;
+- diferenca entre primeira tentativa e versao final, quando fizer sentido registrar.
 
 ## Configuracao da missao pelo adulto
 
@@ -675,7 +1047,7 @@ Catalogo futuro:
   "status": "planned",
   "accent": "english",
   "icon": "I",
-  "skills": ["verb_to_be", "simple_present", "present_continuous", "question_words", "vocabulary_list"],
+  "skills": ["verb_to_be", "simple_present", "present_continuous", "question_words", "vocabulary_list", "guided_short_writing"],
   "commercial_key": "module_english"
 }
 ```
