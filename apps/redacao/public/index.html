@@ -64,15 +64,6 @@
     .progress { height: 12px; background: #e8edf7; border-radius: 999px; overflow: hidden; }
     .bar { height: 100%; width: 20%; background: var(--green); transition: width .2s ease; }
     .mission { background: var(--paper); border: 1px solid #efe2c5; border-radius: 14px; padding: 16px; }
-    .balloon {
-      position: relative; padding: 14px 16px; border-radius: 14px; background: var(--soft-blue);
-      border: 1px solid #c9ddff; line-height: 1.45; margin-bottom: 14px;
-    }
-    .balloon:after {
-      content: ""; position: absolute; left: 28px; bottom: -9px; width: 16px; height: 16px;
-      background: var(--soft-blue); border-right: 1px solid #c9ddff; border-bottom: 1px solid #c9ddff;
-      transform: rotate(45deg);
-    }
     .field { margin-top: 14px; }
     label { display: block; font-weight: 900; margin-bottom: 6px; }
     input, textarea, select {
@@ -236,8 +227,6 @@
                 <div class="muted" id="missionSubtitle">Vamos preparar sua aventura de escrita.</div>
               </div>
             </div>
-            <div class="balloon" id="bubble">Escreva seu nome e sua idade para eu te conhecer melhor.</div>
-
             <div id="stepStudent">
               <div class="field">
                 <label>Seu nome</label>
@@ -272,7 +261,7 @@
             <div id="stepBegin" class="hidden">
               <div class="stepHelp">
                 <strong>Começo</strong>
-                Conte quem aparece, onde a cena acontece e como tudo começa. Uma frase simples já pode ser suficiente para começar.
+                Escreva o começo. Conte quem aparece, onde está e como tudo começa. Uma frase simples já pode ser suficiente para começar.
               </div>
               <div class="field">
                 <label>Começo</label>
@@ -321,8 +310,8 @@
             <div id="message" class="notice warning hidden"></div>
 
             <div class="actions">
-              <button id="nextBtn">Continuar</button>
               <button id="validateBtn" class="ghost hidden">Validar etapa</button>
+              <button id="nextBtn">Continuar</button>
               <button id="finishBtn" class="good hidden">Analisar redação</button>
               <button id="backBtn" class="secondary" disabled>Voltar</button>
               <button id="resetBtn" class="secondary">Limpar</button>
@@ -389,13 +378,13 @@
   <script>
     const $ = (id) => document.getElementById(id);
     const steps = [
-      { id: "student", title: "Missão Redação", subtitle: "Vamos preparar sua aventura de escrita.", bubble: "Escreva seu nome e sua idade para eu te conhecer melhor.", tip: "Preencha nome e idade para eu adaptar as dicas." },
-      { id: "type", title: "Tipo de redação", subtitle: "Cada tipo pede um jeito diferente de escrever.", bubble: "Agora escolha o tipo de redação que você quer escrever: história, relato ou opinião.", tip: "Se tiver personagem e acontecimentos, escolha história." },
-      { id: "theme", title: "Tema e título", subtitle: "Agora damos nome para a ideia.", bubble: "Tema é o assunto da redação. Título é o nome bonito que você dá para o seu texto.", tip: "Exemplo: o tema pode ser amizade. O título pode ser Meu melhor amigo." },
-      { id: "begin", title: "Começo", subtitle: "Mostre onde tudo começa.", bubble: "Escreva o começo. Conte quem aparece, onde está e como tudo começa.", tip: "Pergunte: quem? onde? quando?" },
-      { id: "middle", title: "Meio", subtitle: "A parte em que as coisas acontecem.", bubble: "Escreva o meio. Conte o que aconteceu depois ou explique melhor sua ideia.", tip: "Use depois, então, por isso ou por exemplo." },
-      { id: "end", title: "Final", subtitle: "Feche a redação com calma.", bubble: "Escreva o final. Mostre como terminou ou qual ideia você quer deixar.", tip: "Não precisa inventar coisa nova. Feche o que você já contou." },
-      { id: "review", title: "Revisão final", subtitle: "Hora de olhar o texto inteiro.", bubble: "Leia sua redação inteira e veja se quer mudar alguma coisa antes da análise.", tip: "Melhorar uma coisa por vez funciona melhor." }
+      { id: "student", title: "Missão Redação", subtitle: "Vamos preparar sua aventura de escrita.", tip: "Preencha nome e idade para eu adaptar as dicas." },
+      { id: "type", title: "Tipo de redação", subtitle: "Cada tipo pede um jeito diferente de escrever.", tip: "Se tiver personagem e acontecimentos, escolha história." },
+      { id: "theme", title: "Tema e título", subtitle: "Agora damos nome para a ideia.", tip: "Exemplo: o tema pode ser amizade. O título pode ser Meu melhor amigo." },
+      { id: "begin", title: "Começo", subtitle: "Mostre onde tudo começa.", tip: "Pergunte: quem? onde? quando?" },
+      { id: "middle", title: "Meio", subtitle: "A parte em que as coisas acontecem.", tip: "Use depois, então, por isso ou por exemplo." },
+      { id: "end", title: "Final", subtitle: "Feche a redação com calma.", tip: "Não precisa inventar coisa nova. Feche o que você já contou." },
+      { id: "review", title: "Revisão final", subtitle: "Hora de olhar o texto inteiro.", tip: "Melhorar uma coisa por vez funciona melhor." }
     ];
 
     const HISTORY_KEY = "missao-redacao-historico";
@@ -856,7 +845,6 @@
       $("missionSubtitle").textContent = current.subtitle;
       const visibleStep = visibleStepNumber();
       $("missionCount").textContent = `${visibleStep}/6`;
-      $("bubble").textContent = current.bubble;
       $("quickTip").textContent = current.tip;
       $("progressBar").style.width = `${Math.min((visibleStep / 6) * 100, 100)}%`;
       $("backBtn").disabled = state.step <= firstStepIndex();
