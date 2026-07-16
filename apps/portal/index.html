@@ -1932,14 +1932,21 @@
     }
 
     function eventDate(event) {
-      return new Date(event.occurred_at || event.created_at || Date.now());
+      const rawDate = event.occurred_at || event.created_at;
+      const parsed = rawDate ? new Date(rawDate) : new Date();
+      return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+    }
+
+    function localDay(date) {
+      const day = new Date(date);
+      day.setHours(0, 0, 0, 0);
+      return day;
     }
 
     function eventsSince(days) {
-      const start = new Date();
-      start.setHours(0, 0, 0, 0);
+      const start = localDay(new Date());
       start.setDate(start.getDate() - days + 1);
-      return state.events.filter((event) => eventDate(event) >= start);
+      return state.events.filter((event) => localDay(eventDate(event)) >= start);
     }
 
     function weekLabel(weekIndex) {
@@ -1949,11 +1956,10 @@
     function buildTimeEvolution() {
       const recent = eventsSince(28);
       const weeks = [0, 1, 2, 3].map((index) => ({ index, events: [] }));
-      const today = new Date();
-      today.setHours(23, 59, 59, 999);
+      const today = localDay(new Date());
 
       recent.forEach((event) => {
-        const ageDays = Math.floor((today - eventDate(event)) / 86400000);
+        const ageDays = Math.floor((today - localDay(eventDate(event))) / 86400000);
         const weekIndex = Math.min(3, Math.max(0, Math.floor(ageDays / 7)));
         weeks[weekIndex].events.push(event);
       });
@@ -3968,7 +3974,7 @@
         .select("*")
         .eq("child_id", child.id)
         .order("occurred_at", { ascending: false })
-        .limit(30);
+        .limit(120);
       state.events = error ? [] : data || [];
       if (error) message(`Histórico ainda não disponível: ${error.message}`, true);
     }
