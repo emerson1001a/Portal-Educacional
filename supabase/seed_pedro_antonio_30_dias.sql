@@ -234,7 +234,19 @@ begin
             when v_service = 'redacao' then 'redacao_sem_evolucao_clara'
             else 'evolucao_gradual'
           end
-        );
+        ) || case
+          when v_service = 'redacao' then jsonb_build_object(
+            'title', v_title,
+            'theme', 'historia guiada',
+            'type', 'historia',
+            'text', format(
+              'Pedro começou uma história sobre um menino na escola. Ele teve uma ideia interessante, mas o começo, o meio e o final ficaram misturados. Na semana %s, tentativa %s, ele contou que algo aconteceu, passou rápido pelo problema e terminou sem explicar bem como tudo se resolveu.',
+              v_week,
+              v_attempt
+            )
+          )
+          else '{}'::jsonb
+        end;
 
         insert into public.activity_events
           (

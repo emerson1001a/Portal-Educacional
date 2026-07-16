@@ -3545,8 +3545,13 @@
       if (Number.isFinite(Number(metrics.target_attempts))) {
         rows.push(["Meta combinada", `${Number(metrics.target_attempts)} respostas`]);
       }
-      if (Array.isArray(metrics.selected_tabs) && metrics.selected_tabs.length) {
-        rows.push(["Tabuadas praticadas", metrics.selected_tabs.join(", ")]);
+      const practicedTabs = Array.isArray(metrics.selected_tabs) && metrics.selected_tabs.length
+        ? metrics.selected_tabs
+        : Array.isArray(metrics.tabs) && metrics.tabs.length
+          ? metrics.tabs
+          : [];
+      if (practicedTabs.length) {
+        rows.push(["Tabuadas praticadas", practicedTabs.join(", ")]);
       }
       if (metrics.training_mode) {
         rows.push(["Modo de treino", metrics.training_mode === "random" ? "Aleatório" : "Adaptativo"]);
@@ -3591,7 +3596,8 @@
         els.timeline.innerHTML = '<div class="notice">Ainda não há registros. Ao conectar os módulos, as evidências aparecerão aqui.</div>';
         return;
       }
-      state.events.slice(0, 12).forEach((event) => {
+      const timelineEvents = state.events.slice(0, 40);
+      timelineEvents.forEach((event) => {
         const item = document.createElement("article");
         item.className = "event";
         const adultSummary = eventAdultSummary(event);
@@ -3616,6 +3622,12 @@
         `;
         els.timeline.appendChild(item);
       });
+      if (state.events.length > timelineEvents.length) {
+        const more = document.createElement("div");
+        more.className = "notice";
+        more.textContent = `Mostrando ${timelineEvents.length} registros mais recentes de ${state.events.length} carregados.`;
+        els.timeline.appendChild(more);
+      }
     }
 
     function reportList(items) {
