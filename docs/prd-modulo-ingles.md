@@ -1168,7 +1168,7 @@ Motivo:
 - o feedback precisa preservar autoria e autoestima;
 - templates fixos nao sao suficientes para orientar uma producao aberta.
 
-Essa etapa fica fora do primeiro prototipo. Antes dela, o modulo deve validar os exercicios estruturados de `verb to be`, `simple present` e `present continuous`.
+Essa etapa fica fora do primeiro prototipo. Antes dela, o modulo deve validar os exercicios estruturados de `verb to be`, `simple present`, `present continuous` e `question words`.
 
 #### Niveis da escrita guiada
 

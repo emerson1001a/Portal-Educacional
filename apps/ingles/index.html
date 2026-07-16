@@ -364,6 +364,7 @@
             <option value="verb_to_be">Verb to be - am, is, are</option>
             <option value="simple_present">Simple present - verb + s</option>
             <option value="present_continuous">Present continuous - verb + ing</option>
+            <option value="question_words">Question words - what, where, when</option>
           </select>
         </div>
 
@@ -555,6 +556,32 @@
           { sentence: "Qual frase fala de algo acontecendo agora?", answer: "We are learning English now.", options: ["We learn English on Mondays.", "We are learning English now.", "We learns English."], clue: "Are learning now indica agora." },
           { sentence: "Qual frase esta correta?", answer: "The dog is running.", options: ["The dog are running.", "The dog is running.", "The dog running."], clue: "The dog combina com is." }
         ]
+      },
+      question_words: {
+        title: "Question words",
+        childTitle: "Vamos escolher a melhor palavra para fazer a pergunta.",
+        fill: [
+          { sentence: "___ is your name?", answer: "What", options: ["What", "Where", "When"], clue: "What pergunta sobre coisa, nome ou informacao." },
+          { sentence: "___ do you live?", answer: "Where", options: ["Who", "Where", "Why"], clue: "Where pergunta sobre lugar." },
+          { sentence: "___ is your birthday?", answer: "When", options: ["When", "What", "How"], clue: "When pergunta sobre tempo ou data." },
+          { sentence: "___ is your teacher?", answer: "Who", options: ["Who", "Where", "When"], clue: "Who pergunta sobre pessoa." },
+          { sentence: "___ are you sad?", answer: "Why", options: ["What", "Why", "Who"], clue: "Why pergunta o motivo." },
+          { sentence: "___ do you go to school?", answer: "How", options: ["How", "When", "Where"], clue: "How pergunta o jeito ou a forma." },
+          { sentence: "___ is your pencil?", answer: "Where", options: ["Where", "Who", "Why"], clue: "Where pergunta sobre lugar." },
+          { sentence: "___ is your favorite color?", answer: "What", options: ["What", "When", "How"], clue: "What pergunta sobre coisa, nome ou informacao." },
+          { sentence: "___ is at the door?", answer: "Who", options: ["When", "Who", "Where"], clue: "Who pergunta sobre pessoa." },
+          { sentence: "___ do you study English?", answer: "When", options: ["When", "Who", "Why"], clue: "When pergunta sobre tempo ou data." },
+          { sentence: "___ are you happy?", answer: "Why", options: ["Why", "What", "Where"], clue: "Why pergunta o motivo." },
+          { sentence: "___ do you spell your name?", answer: "How", options: ["Where", "How", "Who"], clue: "How pergunta o jeito ou a forma." }
+        ],
+        choose: [
+          { sentence: "A resposta e: My name is Ana.", answer: "What is your name?", options: ["What is your name?", "Where is your name?", "When is your name?"], clue: "What pergunta nome ou informacao." },
+          { sentence: "A resposta e: I live in Brazil.", answer: "Where do you live?", options: ["Who do you live?", "Where do you live?", "Why do you live?"], clue: "Where pergunta lugar." },
+          { sentence: "A resposta e: My birthday is in May.", answer: "When is your birthday?", options: ["When is your birthday?", "Who is your birthday?", "How is your birthday?"], clue: "When pergunta tempo ou data." },
+          { sentence: "A resposta e: My teacher is Miss Paula.", answer: "Who is your teacher?", options: ["Where is your teacher?", "Who is your teacher?", "Why is your teacher?"], clue: "Who pergunta pessoa." },
+          { sentence: "A resposta e: I am happy because I won.", answer: "Why are you happy?", options: ["Why are you happy?", "When are you happy?", "Who are you happy?"], clue: "Why pergunta o motivo." },
+          { sentence: "A resposta e: I go by bus.", answer: "How do you go to school?", options: ["What do you go to school?", "How do you go to school?", "Who do you go to school?"], clue: "How pergunta o jeito ou a forma." }
+        ]
       }
     };
 
@@ -744,6 +771,7 @@
         if (["I", "You", "We", "They", "The children"].includes(subject)) return `${subject} usa o verbo base ${item.answer}`;
         return `${subject} usa a forma ${item.answer}`;
       }
+      if (item.skill === "question_words") return item.clue.replace(/[.?!]$/, "");
       return item.clue.replace(/[.?!]$/, "");
     }
 

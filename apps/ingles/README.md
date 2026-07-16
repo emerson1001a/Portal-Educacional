@@ -8,7 +8,7 @@ Prototipo inicial do modulo de Ingles do Portal Educacional.
 - Exercicios gerados por templates controlados.
 - Missao com blocos.
 - Cada bloco tem um unico formato.
-- Primeiro teste com `verb to be`, `simple present` e `present continuous`.
+- Primeiro teste com `verb to be`, `simple present`, `present continuous` e `question words`.
 - Nivel de apoio configuravel pelo adulto.
 - Feedback curto de erro com regra e resposta modelo.
 
