@@ -11,6 +11,7 @@ Prototipo inicial do modulo de Ingles do Portal Educacional.
 - Primeiro teste com `verb to be`, `simple present`, `present continuous` e `question words`.
 - Nivel de apoio configuravel pelo adulto.
 - Feedback curto de erro com regra e resposta modelo.
+- Apoio baixo usa mais comandos e devolutivas em Ingles.
 
 ## Rodar localmente
 

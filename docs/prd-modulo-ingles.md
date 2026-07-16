@@ -892,7 +892,7 @@ Niveis iniciais:
 
 - `high`: instrucoes em portugues, frases em Ingles e feedback em portugues;
 - `medium`: comandos mais curtos, ainda com feedback em portugues;
-- `low`: mais comandos em Ingles, mantendo dica em portugues quando houver erro.
+- `low`: mais comandos e devolutivas em Ingles, mantendo a regra curta e objetiva quando houver erro.
 
 Exemplo de feedback no erro:
 
@@ -901,6 +901,12 @@ Quase. They combina com are: They are.
 ```
 
 Esse feedback deve ser curto, positivo e util no momento do erro. O sistema tambem deve registrar o padrao do erro para acompanhamento longitudinal, por exemplo `verb_to_be.choose.they_are.am_vs_are`.
+
+No apoio baixo, a mesma ideia pode aparecer mais em Ingles:
+
+```text
+Almost. Use are with They: They are.
+```
 
 ### Fluxo adulto recomendado
 

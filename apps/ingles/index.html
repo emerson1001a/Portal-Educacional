@@ -464,17 +464,26 @@
       high: {
         label: "Apoio alto",
         fillInstruction: "Escolha a palavra que completa melhor a frase.",
-        chooseInstruction: "Leia com calma e escolha a melhor frase."
+        chooseInstruction: "Leia com calma e escolha a melhor frase.",
+        correctFeedback: "Boa! Essa combinou muito bem.",
+        almostLabel: "Quase.",
+        doneText: "Voce terminou o treino de hoje. O adulto ja consegue ver o que foi praticado."
       },
       medium: {
         label: "Apoio medio",
         fillInstruction: "Complete a frase.",
-        chooseInstruction: "Escolha a frase correta."
+        chooseInstruction: "Escolha a frase correta.",
+        correctFeedback: "Boa! Essa combinou muito bem.",
+        almostLabel: "Quase.",
+        doneText: "Voce terminou o treino de hoje. O adulto ja consegue ver o que foi praticado."
       },
       low: {
         label: "Apoio baixo",
         fillInstruction: "Choose the correct word.",
-        chooseInstruction: "Choose the correct sentence."
+        chooseInstruction: "Choose the correct sentence.",
+        correctFeedback: "Good! This sentence works.",
+        almostLabel: "Almost.",
+        doneText: "Great work. Show your result to the adult."
       }
     };
 
@@ -482,6 +491,7 @@
       verb_to_be: {
         title: "Verb to be",
         childTitle: "Vamos combinar a pessoa com am, is ou are.",
+        childTitleLow: "Let's match the person with am, is, or are.",
         fill: [
           { sentence: "I ___ happy.", answer: "am", options: ["am", "is", "are"], clue: "Com I, usamos am." },
           { sentence: "She ___ my sister.", answer: "is", options: ["am", "is", "are"], clue: "Com she, usamos is." },
@@ -508,6 +518,7 @@
       simple_present: {
         title: "Simple present",
         childTitle: "Vamos treinar frases sobre coisas que acontecem sempre.",
+        childTitleLow: "Let's practice things that happen every day.",
         fill: [
           { sentence: "She ___ soccer every day.", answer: "plays", options: ["play", "plays", "playing"], clue: "Com she no simple present, geralmente colocamos s no verbo." },
           { sentence: "My mother ___ very well.", answer: "cooks", options: ["cook", "cooks", "cooking"], clue: "My mother combina com she; usamos cooks." },
@@ -534,6 +545,7 @@
       present_continuous: {
         title: "Present continuous",
         childTitle: "Vamos treinar coisas acontecendo agora.",
+        childTitleLow: "Let's practice things happening now.",
         fill: [
           { sentence: "She is ___ a book.", answer: "reading", options: ["read", "reads", "reading"], clue: "Depois de is, usamos o verbo com ing." },
           { sentence: "They are ___ soccer.", answer: "playing", options: ["play", "plays", "playing"], clue: "Depois de are, usamos o verbo com ing." },
@@ -560,6 +572,7 @@
       question_words: {
         title: "Question words",
         childTitle: "Vamos escolher a melhor palavra para fazer a pergunta.",
+        childTitleLow: "Let's choose the best question word.",
         fill: [
           { sentence: "___ is your name?", answer: "What", options: ["What", "Where", "When"], clue: "What pergunta sobre coisa, nome ou informacao." },
           { sentence: "___ do you live?", answer: "Where", options: ["Who", "Where", "Why"], clue: "Where pergunta sobre lugar." },
@@ -662,7 +675,7 @@
       const pool = pools[state.config.skill];
       const support = supportLevels[state.config.support_level] || supportLevels.high;
       show("exerciseView");
-      $("missionTitle").textContent = pool.childTitle;
+      $("missionTitle").textContent = state.config.support_level === "low" && pool.childTitleLow ? pool.childTitleLow : pool.childTitle;
       $("blockBadge").textContent = `Bloco ${item.blockIndex + 1}: ${item.blockLabel}`;
       $("blockText").textContent = `Bloco ${item.blockIndex + 1}: ${item.blockLabel}`;
       $("progressText").textContent = `Questao ${state.index + 1} de ${state.items.length}`;
@@ -697,7 +710,8 @@
       const item = currentItem();
       const isCorrect = state.selected === item.answer;
       state.checked = true;
-      const errorFeedback = buildErrorFeedback(item, state.selected);
+      const support = supportLevels[state.config.support_level] || supportLevels.high;
+      const errorFeedback = buildErrorFeedback(item, state.selected, support);
       document.querySelectorAll(".optionBtn").forEach((button) => {
         const option = button.dataset.option;
         button.classList.toggle("correct", option === item.answer);
@@ -713,12 +727,12 @@
         answer: item.answer,
         correct: isCorrect,
         support_level: state.config.support_level,
-        feedback_message: isCorrect ? "Boa! Essa combinou muito bem." : errorFeedback.text,
+        feedback_message: isCorrect ? support.correctFeedback : errorFeedback.text,
         error_pattern: isCorrect ? null : errorFeedback.pattern
       });
       $("feedback").classList.add(isCorrect ? "good" : "try");
       if (isCorrect) {
-        $("feedback").textContent = "Boa! Essa combinou muito bem.";
+        $("feedback").textContent = support.correctFeedback;
       } else {
         $("feedback").innerHTML = errorFeedback.html;
       }
@@ -727,13 +741,13 @@
       $("nextBtn").textContent = state.index === state.items.length - 1 ? "Finalizar" : "Proxima";
     }
 
-    function buildErrorFeedback(item, selected) {
+    function buildErrorFeedback(item, selected, support) {
       const model = buildModelAnswer(item);
-      const rule = buildRuleText(item, model);
-      const text = `Quase. ${rule}: ${model}.`;
+      const rule = support.label === "Apoio baixo" ? buildRuleTextEn(item, model) : buildRuleText(item, model);
+      const text = `${support.almostLabel} ${rule}: ${model}.`;
       return {
         text,
-        html: `Quase. ${escapeHtml(rule)}: <strong>${escapeHtml(model)}</strong>.`,
+        html: `${escapeHtml(support.almostLabel)} ${escapeHtml(rule)}: <strong>${escapeHtml(model)}</strong>.`,
         pattern: buildErrorPattern(item, selected)
       };
     }
@@ -773,6 +787,44 @@
       }
       if (item.skill === "question_words") return item.clue.replace(/[.?!]$/, "");
       return item.clue.replace(/[.?!]$/, "");
+    }
+
+    function buildRuleTextEn(item, model) {
+      const words = model.split(/\s+/);
+      if (item.skill === "verb_to_be" && words.length >= 2) {
+        const helperIndex = words.findIndex((word) => ["am", "is", "are"].includes(word));
+        const helper = helperIndex >= 0 ? words[helperIndex] : item.answer;
+        const subject = helperIndex > 0 ? words.slice(0, helperIndex).join(" ") : words[0];
+        return `Use ${helper} with ${subject}`;
+      }
+      if (item.skill === "present_continuous") {
+        const helperIndex = words.findIndex((word) => ["am", "is", "are"].includes(word));
+        const helper = helperIndex >= 0 ? words[helperIndex] : "am/is/are";
+        const action = item.blockType === "choose" && helperIndex >= 0 && words[helperIndex + 1]
+          ? words[helperIndex + 1]
+          : item.answer;
+        return `After ${helper}, use ${action}`;
+      }
+      if (item.skill === "simple_present") {
+        const subject = words.length > 2 ? words.slice(0, -1).join(" ") : words[0];
+        if (["I", "You", "We", "They", "The children"].includes(subject)) return `Use the base verb ${item.answer} with ${subject}`;
+        return `Use ${item.answer} with ${subject}`;
+      }
+      if (item.skill === "question_words") return questionWordRuleEn(item.answer);
+      return item.clue.replace(/[.?!]$/, "");
+    }
+
+    function questionWordRuleEn(answer) {
+      const word = String(answer).split(/\s+/)[0].replace(/[^A-Za-z]/g, "");
+      const rules = {
+        What: "What asks about information",
+        Where: "Where asks about place",
+        When: "When asks about time",
+        Who: "Who asks about a person",
+        Why: "Why asks about reason",
+        How: "How asks about manner"
+      };
+      return rules[word] || `${word} is the best question word`;
     }
 
     function buildErrorPattern(item, selected) {
@@ -849,7 +901,8 @@
         }
       };
       $("doneTitle").textContent = `Muito bem, ${state.config.student_name}!`;
-      $("doneText").textContent = "Voce terminou o treino de hoje. O adulto ja consegue ver o que foi praticado.";
+      const support = supportLevels[state.config.support_level] || supportLevels.high;
+      $("doneText").textContent = support.doneText;
       $("correctStat").textContent = correct;
       $("totalStat").textContent = total;
       $("blockStat").textContent = state.config.blocks.length;
