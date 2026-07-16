@@ -1294,6 +1294,36 @@
                 </label>
                 <p class="muted small">Comece curto. A ideia é terminar com sensação de missão cumprida, não cansar.</p>
               </div>
+              <div class="module-settings hidden" id="inglesAssignmentSettings">
+                <strong>Configuração do Inglês</strong>
+                <div class="row">
+                  <label style="flex:1 1 220px">
+                    Habilidade
+                    <select id="inglesSkillInput">
+                      <option value="verb_to_be" selected>Verb to be - am, is, are</option>
+                      <option value="simple_present">Simple present - verb + s</option>
+                      <option value="present_continuous">Present continuous - verb + ing</option>
+                      <option value="question_words">Question words - what, where, when</option>
+                    </select>
+                  </label>
+                  <label style="flex:1 1 220px">
+                    Nível de apoio
+                    <select id="inglesSupportInput">
+                      <option value="high" selected>Apoio alto - mais português</option>
+                      <option value="medium">Apoio médio - comandos curtos</option>
+                      <option value="low">Apoio baixo - mais inglês</option>
+                    </select>
+                  </label>
+                </div>
+                <label style="max-width:260px">
+                  Questões por bloco
+                  <select id="inglesItemsInput">
+                    <option value="5" selected>5 por bloco</option>
+                    <option value="10">10 por bloco</option>
+                  </select>
+                </label>
+                <p class="muted small">Comece com uma dose curta. O objetivo é praticar o ponto exato sem virar uma aula longa.</p>
+              </div>
             </div>
             <button class="button blue" type="submit">Liberar missão</button>
           </form>
@@ -1575,6 +1605,10 @@
       tabuadaTabsInput: document.querySelector("#tabuadaTabsInput"),
       tabuadaDoseSuggestion: document.querySelector("#tabuadaDoseSuggestion"),
       applyTabuadaSuggestionButton: document.querySelector("#applyTabuadaSuggestionButton"),
+      inglesAssignmentSettings: document.querySelector("#inglesAssignmentSettings"),
+      inglesSkillInput: document.querySelector("#inglesSkillInput"),
+      inglesSupportInput: document.querySelector("#inglesSupportInput"),
+      inglesItemsInput: document.querySelector("#inglesItemsInput"),
       assignmentsList: document.querySelector("#assignmentsList"),
       modulesGrid: document.querySelector("#modulesGrid"),
       timeline: document.querySelector("#timeline"),
@@ -2483,9 +2517,9 @@
       `).join("");
       renderTabuadaSettings();
       els.assignmentModuleChoices.querySelectorAll('input[name="assignmentModule"]').forEach((input) => {
-        input.addEventListener("change", updateTabuadaSettingsVisibility);
+        input.addEventListener("change", updateModuleSettingsVisibility);
       });
-      updateTabuadaSettingsVisibility();
+      updateModuleSettingsVisibility();
     }
 
     function renderTabuadaSettings() {
@@ -2554,11 +2588,26 @@
       message(`Sugestão aplicada: ${dose.target} respostas em modo adaptativo.`);
     }
 
+    function assignmentModuleSelected(moduleId) {
+      if (!els.assignmentModuleChoices) return false;
+      return Boolean(els.assignmentModuleChoices.querySelector(`input[name="assignmentModule"][value="${moduleId}"]:checked`));
+    }
+
+    function updateModuleSettingsVisibility() {
+      updateTabuadaSettingsVisibility();
+      updateInglesSettingsVisibility();
+    }
+
     function updateTabuadaSettingsVisibility() {
       if (!els.tabuadaAssignmentSettings) return;
-      const selected = Boolean(els.assignmentModuleChoices.querySelector('input[name="assignmentModule"][value="tabuada"]:checked'));
+      const selected = assignmentModuleSelected("tabuada");
       els.tabuadaAssignmentSettings.classList.toggle("hidden", !selected);
       if (selected) renderTabuadaDoseSuggestion();
+    }
+
+    function updateInglesSettingsVisibility() {
+      if (!els.inglesAssignmentSettings) return;
+      els.inglesAssignmentSettings.classList.toggle("hidden", !assignmentModuleSelected("ingles"));
     }
 
     function tabuadaAssignmentConfig() {
@@ -2576,8 +2625,22 @@
       };
     }
 
+    function inglesAssignmentConfig() {
+      const skill = els.inglesSkillInput?.value || "verb_to_be";
+      const supportLevel = els.inglesSupportInput?.value || "high";
+      const itemsPerBlock = Number.parseInt(els.inglesItemsInput?.value || "5", 10);
+      return {
+        ingles: {
+          skill: ["verb_to_be", "simple_present", "present_continuous", "question_words"].includes(skill) ? skill : "verb_to_be",
+          support_level: ["high", "medium", "low"].includes(supportLevel) ? supportLevel : "high",
+          items_per_block: [5, 10].includes(itemsPerBlock) ? itemsPerBlock : 5
+        }
+      };
+    }
+
     function assignmentItemConfig(moduleId) {
       if (moduleId === "tabuada") return tabuadaAssignmentConfig();
+      if (moduleId === "ingles") return inglesAssignmentConfig();
       return null;
     }
 

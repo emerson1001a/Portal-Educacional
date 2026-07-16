@@ -344,7 +344,7 @@
     </div>
 
     <div class="grid">
-      <aside class="card">
+      <aside class="card" id="setupPanel">
         <div class="hero">
           <span class="pill">adulto configura</span>
           <div>
@@ -448,7 +448,7 @@
             <div class="stat"><span class="muted">Blocos</span><strong id="blockStat">0</strong></div>
           </div>
 
-          <h3 style="margin-top:18px">Evidencia que o portal receberia</h3>
+          <h3 id="evidenceTitle" style="margin-top:18px">Evidencia que o portal receberia</h3>
           <div id="evidence" class="evidence"></div>
           <div class="actions">
             <button id="againBtn" class="success" type="button">Fazer outra missao</button>
@@ -652,6 +652,11 @@
       if (portal.supportLevel && supportLevels[portal.supportLevel]) $("supportLevel").value = portal.supportLevel;
       if (["5", "10"].includes(portal.itemsPerBlock)) $("itemsPerBlock").value = portal.itemsPerBlock;
       $("returnPortalBtn").classList.toggle("hidden", !portal.returnUrl);
+      if (portal.enabled) {
+        $("setupPanel").classList.add("hidden");
+        $("evidenceTitle").classList.add("hidden");
+        $("evidence").classList.add("hidden");
+      }
     }
 
     function shuffle(items) {
