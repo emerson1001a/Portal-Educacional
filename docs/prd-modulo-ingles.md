@@ -857,7 +857,7 @@ O adulto deve poder escolher:
 - conteudo principal;
 - lista de palavras, quando aplicavel;
 - quantidade de itens;
-- nivel aproximado;
+- nivel de apoio da missao;
 - tema opcional;
 - observacao adulta opcional;
 - blocos de exercicio da missao.
@@ -868,7 +868,7 @@ Campos propostos:
 {
   "module_id": "ingles",
   "skill": "present_continuous",
-  "level": "iniciante",
+  "support_level": "high",
   "target_items": 10,
   "topic": "rotina escolar",
   "vocabulary": ["read", "play", "eat", "study"],
@@ -883,6 +883,24 @@ Campos propostos:
   "avoid_recent_repetition": true
 }
 ```
+
+### Nivel de apoio
+
+O produto deve evitar rotular a crianca como fraca ou forte em Ingles. A escolha feita pelo adulto deve ser tratada como `nivel de apoio` da missao, nao como capacidade fixa da crianca.
+
+Niveis iniciais:
+
+- `high`: instrucoes em portugues, frases em Ingles e feedback em portugues;
+- `medium`: comandos mais curtos, ainda com feedback em portugues;
+- `low`: mais comandos em Ingles, mantendo dica em portugues quando houver erro.
+
+Exemplo de feedback no erro:
+
+```text
+Quase. They combina com are: They are.
+```
+
+Esse feedback deve ser curto, positivo e util no momento do erro. O sistema tambem deve registrar o padrao do erro para acompanhamento longitudinal, por exemplo `verb_to_be.choose.they_are.am_vs_are`.
 
 ### Fluxo adulto recomendado
 

@@ -368,6 +368,15 @@
         </div>
 
         <div class="field">
+          <label for="supportLevel">Nivel de apoio</label>
+          <select id="supportLevel">
+            <option value="high" selected>Apoio alto - instrucoes em portugues</option>
+            <option value="medium">Apoio medio - comandos mais curtos</option>
+            <option value="low">Apoio baixo - mais ingles na tela</option>
+          </select>
+        </div>
+
+        <div class="field">
           <label>Blocos da missao</label>
           <label class="blockOption">
             <input id="blockA" type="checkbox" checked>
@@ -450,6 +459,24 @@
 
   <script>
     const $ = (id) => document.getElementById(id);
+    const supportLevels = {
+      high: {
+        label: "Apoio alto",
+        fillInstruction: "Escolha a palavra que completa melhor a frase.",
+        chooseInstruction: "Leia com calma e escolha a melhor frase."
+      },
+      medium: {
+        label: "Apoio medio",
+        fillInstruction: "Complete a frase.",
+        chooseInstruction: "Escolha a frase correta."
+      },
+      low: {
+        label: "Apoio baixo",
+        fillInstruction: "Choose the correct word.",
+        chooseInstruction: "Choose the correct sentence."
+      }
+    };
+
     const pools = {
       verb_to_be: {
         title: "Verb to be",
@@ -579,6 +606,8 @@
         module_id: "ingles",
         skill,
         skill_label: pool.title,
+        support_level: $("supportLevel").value,
+        support_label: supportLevels[$("supportLevel").value].label,
         student_name: $("studentName").value.trim() || "Aluno",
         blocks: selectedBlocks.map((block) => ({ exercise_type: block.type, label: block.label, target_items: count })),
         variation_mode: "controlled",
@@ -604,15 +633,14 @@
     function renderExercise() {
       const item = currentItem();
       const pool = pools[state.config.skill];
+      const support = supportLevels[state.config.support_level] || supportLevels.high;
       show("exerciseView");
       $("missionTitle").textContent = pool.childTitle;
       $("blockBadge").textContent = `Bloco ${item.blockIndex + 1}: ${item.blockLabel}`;
       $("blockText").textContent = `Bloco ${item.blockIndex + 1}: ${item.blockLabel}`;
       $("progressText").textContent = `Questao ${state.index + 1} de ${state.items.length}`;
       $("bar").style.width = `${((state.index) / state.items.length) * 100}%`;
-      $("instruction").textContent = item.blockType === "fill"
-        ? "Escolha a palavra que completa melhor a frase."
-        : "Leia com calma e escolha a melhor frase.";
+      $("instruction").textContent = item.blockType === "fill" ? support.fillInstruction : support.chooseInstruction;
       $("sentence").textContent = item.sentence;
       $("feedback").textContent = "";
       $("feedback").className = "feedback";
@@ -642,6 +670,7 @@
       const item = currentItem();
       const isCorrect = state.selected === item.answer;
       state.checked = true;
+      const errorFeedback = buildErrorFeedback(item, state.selected);
       document.querySelectorAll(".optionBtn").forEach((button) => {
         const option = button.dataset.option;
         button.classList.toggle("correct", option === item.answer);
@@ -655,15 +684,74 @@
         prompt: item.sentence,
         selected: state.selected,
         answer: item.answer,
-        correct: isCorrect
+        correct: isCorrect,
+        support_level: state.config.support_level,
+        feedback_message: isCorrect ? "Boa! Essa combinou muito bem." : errorFeedback.text,
+        error_pattern: isCorrect ? null : errorFeedback.pattern
       });
       $("feedback").classList.add(isCorrect ? "good" : "try");
-      $("feedback").textContent = isCorrect
-        ? "Boa! Essa combinou muito bem."
-        : `Quase. ${item.clue}`;
+      if (isCorrect) {
+        $("feedback").textContent = "Boa! Essa combinou muito bem.";
+      } else {
+        $("feedback").innerHTML = errorFeedback.html;
+      }
       $("checkBtn").classList.add("hidden");
       $("nextBtn").classList.remove("hidden");
       $("nextBtn").textContent = state.index === state.items.length - 1 ? "Finalizar" : "Proxima";
+    }
+
+    function buildErrorFeedback(item, selected) {
+      const model = buildModelAnswer(item);
+      const rule = buildRuleText(item, model);
+      const text = `Quase. ${rule}: ${model}.`;
+      return {
+        text,
+        html: `Quase. ${escapeHtml(rule)}: <strong>${escapeHtml(model)}</strong>.`,
+        pattern: buildErrorPattern(item, selected)
+      };
+    }
+
+    function buildModelAnswer(item) {
+      if (item.blockType === "choose") return item.answer.replace(/[.?!]$/, "");
+      const completed = item.sentence.replace("___", item.answer).replace(/[.?!]$/, "").trim();
+      const words = completed.split(/\s+/);
+      if (["I", "You", "He", "She", "They", "We", "It", "Maria"].includes(words[0])) {
+        if (["am", "is", "are"].includes(words[1]) && words[2] && words[2].endsWith("ing")) return words.slice(0, 3).join(" ");
+        return words.slice(0, 2).join(" ");
+      }
+      if (["My", "The"].includes(words[0])) return words.slice(0, 3).join(" ");
+      return completed;
+    }
+
+    function buildRuleText(item, model) {
+      const words = model.split(/\s+/);
+      if (item.skill === "verb_to_be" && words.length >= 2) {
+        const helperIndex = words.findIndex((word) => ["am", "is", "are"].includes(word));
+        const helper = helperIndex >= 0 ? words[helperIndex] : item.answer;
+        const subject = helperIndex > 0 ? words.slice(0, helperIndex).join(" ") : words[0];
+        return `${subject} combina com ${helper}`;
+      }
+      if (item.skill === "present_continuous") {
+        const helperIndex = words.findIndex((word) => ["am", "is", "are"].includes(word));
+        const helper = helperIndex >= 0 ? words[helperIndex] : "am/is/are";
+        const action = item.blockType === "choose" && helperIndex >= 0 && words[helperIndex + 1]
+          ? words[helperIndex + 1]
+          : item.answer;
+        return `Depois de ${helper}, usamos ${action}`;
+      }
+      if (item.skill === "simple_present" && item.blockType === "fill") {
+        const subject = words.length > 2 ? words.slice(0, -1).join(" ") : words[0];
+        if (["I", "You", "We", "They", "The children"].includes(subject)) return `${subject} usa o verbo base ${item.answer}`;
+        return `${subject} usa a forma ${item.answer}`;
+      }
+      return item.clue.replace(/[.?!]$/, "");
+    }
+
+    function buildErrorPattern(item, selected) {
+      const model = buildModelAnswer(item).toLowerCase().replace(/[^a-z ]/g, "").replace(/\s+/g, "_");
+      const wrong = String(selected || "").toLowerCase().replace(/[^a-z]/g, "");
+      const right = String(item.answer || "").toLowerCase().replace(/[^a-z]/g, "");
+      return `${item.skill}.${item.blockType}.${model}.${wrong}_vs_${right}`;
     }
 
     function nextItem() {
@@ -691,18 +779,27 @@
           accuracy_pct: answers.length ? Math.round((blockCorrect / answers.length) * 100) : 0
         };
       });
+      const errorPatterns = state.answers
+        .filter((answer) => answer.error_pattern)
+        .reduce((acc, answer) => {
+          acc[answer.error_pattern] = (acc[answer.error_pattern] || 0) + 1;
+          return acc;
+        }, {});
       const evidence = {
         service: "ingles",
         activity_type: "grammar_practice",
         title: `Treino de Ingles - ${state.config.skill_label}`,
         metrics: {
           skill: state.config.skill,
+          support_level: state.config.support_level,
+          support_label: state.config.support_label,
           total_items: total,
           correct_items: correct,
           accuracy_pct: total ? Math.round((correct / total) * 100) : 0,
           completed: true,
           duration_seconds: Math.max(1, Math.round((new Date() - state.startedAt) / 1000)),
           blocks: blockStats,
+          error_patterns: errorPatterns,
           templates_used: [...new Set(state.answers.map((answer) => answer.template_id))]
         },
         feedback: {
@@ -767,6 +864,7 @@
     $("blockA").addEventListener("change", buildMission);
     $("blockB").addEventListener("change", buildMission);
     $("itemsPerBlock").addEventListener("change", buildMission);
+    $("supportLevel").addEventListener("change", buildMission);
 
     buildMission();
   </script>

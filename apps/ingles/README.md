@@ -9,6 +9,8 @@ Prototipo inicial do modulo de Ingles do Portal Educacional.
 - Missao com blocos.
 - Cada bloco tem um unico formato.
 - Primeiro teste com `verb to be`, `simple present` e `present continuous`.
+- Nivel de apoio configuravel pelo adulto.
+- Feedback curto de erro com regra e resposta modelo.
 
 ## Rodar localmente
 
