@@ -455,7 +455,8 @@
       return {
         redacao: "Redação",
         interpretacao: "Interpretação",
-        tabuada: "Tabuada"
+        tabuada: "Tabuada",
+        ingles: "Inglês"
       }[service] || "Atividade";
     }
 
@@ -517,9 +518,24 @@
           params.set("training_mode", String(tabuada.mode));
         }
       }
+      if (item?.module_id === "ingles" && config.ingles) {
+        const ingles = config.ingles;
+        if (ingles.skill) params.set("english_skill", String(ingles.skill));
+        if (ingles.support_level) params.set("support_level", String(ingles.support_level));
+        if (ingles.items_per_block) params.set("items_per_block", String(ingles.items_per_block));
+      }
     }
 
     function assignmentConfigSummary(item) {
+      if (item?.module_id === "ingles") {
+        const ingles = item.config?.ingles;
+        if (!ingles) return "";
+        const parts = [];
+        if (ingles.skill) parts.push(String(ingles.skill).replaceAll("_", " "));
+        if (ingles.support_level) parts.push(`apoio ${ingles.support_level}`);
+        if (ingles.items_per_block) parts.push(`${ingles.items_per_block} por bloco`);
+        return parts.join(" · ");
+      }
       if (item?.module_id !== "tabuada") return "";
       const tabuada = item.config?.tabuada;
       if (!tabuada) return "";

@@ -1,7 +1,7 @@
 import { createHmac } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 
-const allowedServices = new Set(["redacao", "interpretacao", "tabuada"]);
+const allowedServices = new Set(["redacao", "interpretacao", "tabuada", "ingles"]);
 
 function json(res, status, body) {
   return res.status(status).json(body);
