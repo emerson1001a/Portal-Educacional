@@ -210,24 +210,23 @@
     .workspace { display: grid; gap: 18px; }
 
     .intro-card { order: 1; }
-    .registry-label { order: 2; }
-    .goals-topic { order: 3; }
-    .assignments-topic { order: 4; }
-    .analysis-label { order: 5; }
-    .signals-topic { order: 6; }
-    .time-topic { order: 7; }
-    .area-topic { order: 8; }
-    .history-topic { order: 9; }
-    .guide-topic { order: 10; }
-    .modules-topic { order: 11; }
+    .registry-group { order: 2; }
+    .analysis-group { order: 3; }
+    .guide-topic { order: 4; }
+    .modules-topic { order: 5; }
     .plan-topic { display: none; }
 
-    .section-label {
-      padding: 18px 20px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
+    .section-group {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid #cfe1ea;
+      border-radius: 16px;
       background: linear-gradient(135deg, #f8fcfd, #eef8f6);
       box-shadow: 0 14px 35px rgba(8, 32, 48, .06);
+    }
+    .section-label {
+      padding: 2px 4px 4px;
     }
     .section-label h2 {
       margin: 0 0 4px;
@@ -1565,6 +1564,36 @@
       events: [],
       activeChildId: localStorage.getItem("portal.activeChildId") || ""
     };
+
+    function groupAdultDashboardSections() {
+      const workspace = document.querySelector(".workspace");
+      const registryLabel = document.querySelector(".registry-label");
+      const goalsTopic = document.querySelector(".goals-topic");
+      const assignmentsTopic = document.querySelector(".assignments-topic");
+      const analysisLabel = document.querySelector(".analysis-label");
+      const signalsTopic = document.querySelector(".signals-topic");
+      const timeTopic = document.querySelector(".time-topic");
+      const areaTopic = document.querySelector(".area-topic");
+      const historyTopic = document.querySelector(".history-topic");
+
+      if (!workspace || document.querySelector(".registry-group") || document.querySelector(".analysis-group")) return;
+
+      const registryGroup = document.createElement("section");
+      registryGroup.className = "section-group registry-group";
+      workspace.insertBefore(registryGroup, registryLabel);
+      [registryLabel, goalsTopic, assignmentsTopic].forEach((section) => {
+        if (section) registryGroup.appendChild(section);
+      });
+
+      const analysisGroup = document.createElement("section");
+      analysisGroup.className = "section-group analysis-group";
+      workspace.insertBefore(analysisGroup, analysisLabel);
+      [analysisLabel, signalsTopic, timeTopic, areaTopic, historyTopic].forEach((section) => {
+        if (section) analysisGroup.appendChild(section);
+      });
+    }
+
+    groupAdultDashboardSections();
 
     const els = {
       publicView: document.querySelector("#publicView"),
