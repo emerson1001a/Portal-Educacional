@@ -209,6 +209,32 @@
 
     .workspace { display: grid; gap: 18px; }
 
+    .intro-card { order: 1; }
+    .registry-label { order: 2; }
+    .goals-topic { order: 3; }
+    .assignments-topic { order: 4; }
+    .analysis-label { order: 5; }
+    .signals-topic { order: 6; }
+    .time-topic { order: 7; }
+    .area-topic { order: 8; }
+    .history-topic { order: 9; }
+    .guide-topic { order: 10; }
+    .modules-topic { order: 11; }
+    .plan-topic { display: none; }
+
+    .section-label {
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f8fcfd, #eef8f6);
+      box-shadow: 0 14px 35px rgba(8, 32, 48, .06);
+    }
+    .section-label h2 {
+      margin: 0 0 4px;
+      font-size: 22px;
+    }
+    .section-label p { margin: 0; }
+
     .pill {
       display: inline-flex;
       align-items: center;
@@ -1119,7 +1145,7 @@
       <div class="workspace">
         <div class="notice hidden" id="appMessage" role="status"></div>
 
-        <section class="card">
+        <section class="card intro-card">
           <div class="row between">
             <div>
               <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
@@ -1127,12 +1153,12 @@
             </div>
             <div class="quick-actions">
               <div class="row">
-                <button class="button" id="openChildModeButton" type="button">Abrir missão infantil</button>
-                <button class="button blue" id="generateChildLinkButton" type="button">Gerar link infantil</button>
-                <button class="button secondary" id="openReportButton" type="button">Relatório longitudinal</button>
+                <button class="button" id="openChildModeButton" type="button">Abrir Bloco Infantil</button>
+                <button class="button blue" id="generateChildLinkButton" type="button">Gerar e copiar link</button>
+                <button class="button secondary hidden" id="openReportButton" type="button">Relatório longitudinal</button>
                 <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
               </div>
-              <p class="muted small">Use “Abrir missão infantil” para testar neste computador. Use “Gerar link infantil” para enviar a missão para a criança.</p>
+              <p class="muted small">Use “Abrir Bloco Infantil” para testar a área da criança em outra aba. Use “Gerar e copiar link” para enviar a missão pelo celular.</p>
             </div>
           </div>
           <div class="child-access-panel hidden" id="childAccessPanel">
@@ -1141,9 +1167,9 @@
             <p class="muted small" id="childAccessCopy">Este link abre somente a área infantil e não mostra percepções, relatórios ou orientações do adulto.</p>
             <p class="child-access-warning hidden" id="childCodeUnavailableNote">Código curto indisponível neste banco. Rode a migração <strong>20260710_child_short_codes.sql</strong>; enquanto isso, o link infantil continua funcionando.</p>
             <div class="child-access-fields">
-              <label>
+              <label class="hidden" aria-hidden="true">
                 Link infantil
-                <input id="childAccessLink" readonly aria-label="Link infantil">
+                <input id="childAccessLink" readonly aria-label="Link infantil" tabindex="-1">
               </label>
               <label class="child-access-code hidden" id="childAccessCodeWrap">
                 Código curto
@@ -1169,11 +1195,21 @@
           </div>
         </section>
 
-        <details class="card topic">
+        <section class="section-label registry-label">
+          <h2>Registro da Meta e das Missões</h2>
+          <p class="muted">Primeiro registre o que a criança precisa desenvolver. Depois libere uma missão curta e positiva.</p>
+        </section>
+
+        <section class="section-label analysis-label">
+          <h2>Acompanhamento da Criança</h2>
+          <p class="muted">Depois das atividades, veja os sinais principais, a evolução no tempo, as áreas praticadas e as evidências salvas.</p>
+        </section>
+
+        <details class="card topic signals-topic">
           <summary>
             <div class="topic-title">
-              <h2 class="title-with-help">Resumo do desenvolvimento <span class="info-tip" tabindex="0" data-tip="Mostra uma síntese geral do aluno selecionado, usando atividades concluídas, metas e evidências registradas no histórico.">?</span></h2>
-              <p class="muted">Aqui o adulto vê o que foi praticado, em quais áreas há evidências e o que fazer em seguida.</p>
+              <h2 class="title-with-help">Sinais principais <span class="info-tip" tabindex="0" data-tip="Mostra uma síntese curta para o adulto saber se precisa olhar alguma área com mais atenção.">?</span></h2>
+              <p class="muted">Uma leitura rápida do momento, sem precisar abrir todos os detalhes.</p>
             </div>
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
@@ -1221,7 +1257,7 @@
           </div>
         </details>
 
-        <details class="card topic">
+        <details class="card topic plan-topic">
           <summary>
             <div class="topic-title">
               <h2 class="title-with-help">Plano dos próximos 7 dias <span class="info-tip" tabindex="0" data-tip="Sugere uma rotina curta para o adulto praticar com a criança. É uma orientação de apoio, não uma obrigação rígida.">?</span></h2>
@@ -1234,11 +1270,11 @@
           </div>
         </details>
 
-        <details class="card topic">
+        <details class="card topic assignments-topic">
           <summary>
             <div class="topic-title">
-              <h2 class="title-with-help">Missões para as crianças <span class="info-tip" tabindex="0" data-tip="Aqui o adulto libera tarefas que aparecem no link infantil. A criança vê apenas a missão e os módulos escolhidos, sem acessar a área do adulto.">?</span></h2>
-              <p class="muted">Monte uma tarefa curta. Depois, teste neste computador ou gere o link para a criança.</p>
+              <h2 class="title-with-help">Missões para a criança <span class="info-tip" tabindex="0" data-tip="Aqui o adulto libera tarefas que aparecem no link infantil. A criança vê apenas a missão e os módulos escolhidos, sem acessar a área do adulto.">?</span></h2>
+              <p class="muted">Baseado na meta pedagógica, quais atividades propor à criança.</p>
             </div>
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
@@ -1331,7 +1367,7 @@
           </div>
         </details>
 
-        <details class="card topic">
+        <details class="card topic time-topic">
           <summary>
             <div class="topic-title">
               <h2>Evolução no tempo</h2>
@@ -1345,7 +1381,7 @@
           </div>
         </details>
 
-        <details class="card topic">
+        <details class="card topic area-topic">
           <summary>
             <div class="topic-title">
               <h2>Evolução por área</h2>
@@ -1358,11 +1394,11 @@
           </div>
         </details>
 
-        <details class="card topic">
+        <details class="card topic goals-topic">
           <summary>
             <div class="topic-title">
               <h2>Metas pedagógicas</h2>
-              <p class="muted">Registre o que precisa de reforço e acompanhe evidências relacionadas.</p>
+              <p class="muted">O que a criança precisa praticar ou desenvolver.</p>
             </div>
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
@@ -1404,7 +1440,7 @@
           </div>
         </details>
 
-        <details class="card topic">
+        <details class="card topic guide-topic">
           <summary>
             <div class="topic-title">
               <h2>Guia para o adulto</h2>
@@ -1428,7 +1464,7 @@
           </div>
         </details>
 
-        <details class="card topic">
+        <details class="card topic modules-topic">
           <summary>
             <div class="topic-title">
               <h2 class="title-with-help">Módulos de aprendizagem <span class="info-tip" tabindex="0" data-tip="Lista os aplicativos conectados ao portal. Abrir por aqui é útil para o adulto testar ou acompanhar os módulos disponíveis.">?</span></h2>
@@ -1441,7 +1477,7 @@
           </div>
         </details>
 
-        <details class="card topic">
+        <details class="card topic history-topic">
           <summary>
             <div class="topic-title">
               <h2 class="title-with-help">Histórico unificado <span class="info-tip" tabindex="0" data-tip="Aqui aparecem as atividades concluídas nos módulos, como leitura, redação e tabuada, com feedback e evidências para acompanhar evolução.">?</span></h2>
@@ -2330,8 +2366,8 @@
 
     function renderDashboard() {
       const child = activeChild();
-      els.welcomeTitle.textContent = child ? `Acompanhamento de ${child.full_name}` : "Bem-vindo ao Portal Educacional";
-      els.welcomeCopy.textContent = child ? "Registre metas, abra módulos e acompanhe evidências de evolução." : "Cadastre ou selecione uma criança para iniciar.";
+      els.welcomeTitle.textContent = child ? `Bloco Infantil de ${child.full_name}` : "Bem-vindo ao Portal Educacional";
+      els.welcomeCopy.textContent = child ? "Abra a área da criança, gere o link infantil e organize as próximas atividades." : "Cadastre ou selecione uma criança para iniciar.";
       els.metricActivities.textContent = state.events.length;
       els.metricGoals.textContent = state.goals.length;
       els.metricLast.textContent = state.events[0] ? formatDate(state.events[0].occurred_at || state.events[0].created_at) : "-";
@@ -3232,12 +3268,19 @@
           throw new Error(data.message || "Não foi possível gerar o link infantil.");
         }
         showChildAccessPanel(data.child_url, child, data.access_code || "", data.access_code_unavailable);
-        if (data.access_code) {
-          message("Link e código infantil gerados. Eles abrem somente a área da criança.");
+        let copied = false;
+        try {
+          await navigator.clipboard.writeText(data.child_url);
+          copied = true;
+        } catch {
+          copied = false;
+        }
+        if (copied) {
+          message(data.access_code ? "Link infantil copiado. O código curto também ficou disponível." : "Link infantil gerado e copiado.");
         } else if (data.access_code_unavailable) {
-          message("Link infantil gerado. O código curto depende da migração no Supabase.");
+          message("Link infantil gerado. Clique em Copiar link para enviar. O código curto depende da migração no Supabase.");
         } else {
-          message("Link infantil gerado. Ele abre somente a área da criança.");
+          message("Link infantil gerado. Clique em Copiar link para enviar.");
         }
       } catch (error) {
         message(childAccessErrorMessage(error), true);
@@ -3395,15 +3438,54 @@
       });
     }
 
-    function openChildMode() {
-      if (!activeChild()) {
+    async function openChildMode() {
+      const child = activeChild();
+      if (!child) {
         message("Selecione uma criança antes de abrir a área da criança.", true);
         return;
       }
-      hideAdultConfirm();
-      renderChildModules();
-      els.childOverlay.classList.remove("hidden");
-      document.body.style.overflow = "hidden";
+      if (!state.session?.access_token) {
+        message("Sessão do adulto não encontrada. Entre novamente no portal.", true);
+        return;
+      }
+
+      const childTab = window.open("about:blank", "_blank");
+      if (!childTab) {
+        message("O navegador bloqueou a nova aba. Libere pop-ups para este site ou use “Gerar e copiar link”.", true);
+        return;
+      }
+      childTab.opener = null;
+      childTab.document.title = "Abrindo Bloco Infantil";
+      childTab.document.body.innerHTML = '<p style="font-family: Arial, sans-serif; padding: 24px;">Abrindo Bloco Infantil...</p>';
+
+      setButtonBusy(els.openChildModeButton, true, "Abrindo...");
+      try {
+        const response = await fetch("/api/child-access-token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.session.access_token}`
+          },
+          body: JSON.stringify({
+            child_id: child.id,
+            purpose: "child_area",
+            expires_in_hours: 24,
+            include_access_code: true
+          })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.child_url) {
+          throw new Error(data.message || "Não foi possível abrir o Bloco Infantil.");
+        }
+        showChildAccessPanel(data.child_url, child, data.access_code || "", data.access_code_unavailable);
+        childTab.location.href = data.child_url;
+        message("Bloco Infantil aberto em nova aba. A área do adulto continua aberta aqui.");
+      } catch (error) {
+        childTab.close();
+        message(childAccessErrorMessage(error), true);
+      } finally {
+        setButtonBusy(els.openChildModeButton, false);
+      }
     }
 
     function closeChildMode() {
