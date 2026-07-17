@@ -1108,7 +1108,7 @@
         <form class="stack hidden" id="newPasswordForm">
           <label>
             Nova senha
-            <input id="newPasswordInput" type="password" autocomplete="new-password">
+            <input id="newPasswordInput" type="password" autocomplete="new-password" minlength="6" required placeholder="Mínimo de 6 caracteres">
           </label>
           <button class="button blue" type="submit">Atualizar senha</button>
         </form>
@@ -1553,6 +1553,7 @@
     const state = {
       supabase: null,
       session: null,
+      passwordRecovery: false,
       mode: "login",
       children: [],
       goals: [],
@@ -1695,7 +1696,7 @@
     };
 
     function message(text, isError = false) {
-      const target = state.session?.user ? els.appMessage : els.authMessage;
+      const target = state.session?.user && !state.passwordRecovery ? els.appMessage : els.authMessage;
       target.textContent = text;
       target.classList.toggle("error", isError);
       target.classList.remove("hidden");
@@ -4027,11 +4028,12 @@
     }
 
     function render() {
-      const signedIn = Boolean(state.session?.user);
+      const signedIn = Boolean(state.session?.user) && !state.passwordRecovery;
       els.publicView.classList.toggle("hidden", signedIn);
       els.appView.classList.toggle("hidden", !signedIn);
       els.logoutButton.classList.toggle("hidden", !signedIn);
       els.sessionLabel.textContent = signedIn ? state.session.user.email : "Ambiente de acompanhamento";
+      els.newPasswordForm.classList.toggle("hidden", !state.passwordRecovery);
       renderChildren();
       renderDashboard();
       renderGeneralFeedback();
@@ -4257,9 +4259,14 @@
       state.supabase.auth.onAuthStateChange(async (event, session) => {
         state.session = session;
         if (event === "PASSWORD_RECOVERY") {
+          state.passwordRecovery = true;
           els.newPasswordForm.classList.remove("hidden");
           message("Digite a nova senha para concluir a recuperação.");
+          render();
+          window.setTimeout(() => els.newPasswordInput.focus(), 0);
+          return;
         }
+        state.passwordRecovery = false;
         if (session) {
           clearMessage();
           await refreshAll();
@@ -4352,9 +4359,22 @@
 
     els.newPasswordForm.addEventListener("submit", async (event) => {
       event.preventDefault();
+      if (els.newPasswordInput.value.length < 6) {
+        message("A nova senha precisa ter pelo menos 6 caracteres.", true);
+        return;
+      }
       const { error } = await state.supabase.auth.updateUser({ password: els.newPasswordInput.value });
-      message(error ? error.message : "Senha atualizada com sucesso.", Boolean(error));
-      if (!error) els.newPasswordForm.classList.add("hidden");
+      if (error) {
+        message(error.message, true);
+        return;
+      }
+      state.passwordRecovery = false;
+      els.newPasswordInput.value = "";
+      els.newPasswordForm.classList.add("hidden");
+      await state.supabase.auth.signOut();
+      state.session = null;
+      render();
+      message("Senha atualizada com sucesso. Entre novamente usando a nova senha.");
     });
 
     els.adultConfirmForm.addEventListener("submit", async (event) => {
