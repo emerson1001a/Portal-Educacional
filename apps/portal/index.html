@@ -1554,6 +1554,7 @@
       supabase: null,
       session: null,
       passwordRecovery: false,
+      resetRequest: false,
       mode: "login",
       children: [],
       goals: [],
@@ -1696,7 +1697,7 @@
     };
 
     function message(text, isError = false) {
-      const target = state.session?.user && !state.passwordRecovery ? els.appMessage : els.authMessage;
+      const target = state.session?.user && !state.passwordRecovery && !state.resetRequest ? els.appMessage : els.authMessage;
       target.textContent = text;
       target.classList.toggle("error", isError);
       target.classList.remove("hidden");
@@ -4028,7 +4029,7 @@
     }
 
     function render() {
-      const signedIn = Boolean(state.session?.user) && !state.passwordRecovery;
+      const signedIn = Boolean(state.session?.user) && !state.passwordRecovery && !state.resetRequest;
       els.publicView.classList.toggle("hidden", signedIn);
       els.appView.classList.toggle("hidden", !signedIn);
       els.logoutButton.classList.toggle("hidden", !signedIn);
@@ -4259,6 +4260,7 @@
       state.supabase.auth.onAuthStateChange(async (event, session) => {
         state.session = session;
         if (event === "PASSWORD_RECOVERY") {
+          state.resetRequest = false;
           state.passwordRecovery = true;
           els.newPasswordForm.classList.remove("hidden");
           message("Digite a nova senha para concluir a recuperação.");
@@ -4337,6 +4339,7 @@
     els.authForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       clearMessage();
+      state.resetRequest = false;
       const email = els.emailInput.value.trim();
       const password = els.passwordInput.value;
       const fullName = els.fullNameInput.value.trim();
@@ -4348,13 +4351,28 @@
     });
 
     els.resetButton.addEventListener("click", async () => {
+      clearMessage();
       const email = els.emailInput.value.trim();
       if (!email) {
         message("Digite seu e-mail para receber o link de redefinição.", true);
         return;
       }
-      const { error } = await state.supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-      message(error ? error.message : "Enviamos o link de redefinição para seu e-mail.", Boolean(error));
+      state.resetRequest = true;
+      state.passwordRecovery = false;
+      state.session = null;
+      render();
+      setButtonBusy(els.resetButton, true, "Enviando...");
+      try {
+        try {
+          await state.supabase.auth.signOut({ scope: "local" });
+        } catch {
+          // Mesmo sem sessão válida, o pedido de redefinição pode seguir.
+        }
+        const { error } = await state.supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+        message(error ? error.message : "Enviamos o link de redefinição para seu e-mail. Abra o e-mail para criar uma nova senha.", Boolean(error));
+      } finally {
+        setButtonBusy(els.resetButton, false);
+      }
     });
 
     els.newPasswordForm.addEventListener("submit", async (event) => {
@@ -4369,6 +4387,7 @@
         return;
       }
       state.passwordRecovery = false;
+      state.resetRequest = false;
       els.newPasswordInput.value = "";
       els.newPasswordForm.classList.add("hidden");
       await state.supabase.auth.signOut();
