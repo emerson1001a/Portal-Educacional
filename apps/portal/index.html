@@ -418,14 +418,126 @@
     }
     .child-button.active { border-color: rgba(11,143,134,.42); background: #e9f8f6; }
 
+    .child-access-shell {
+      align-content: start;
+      min-width: min(520px, 100%);
+    }
+    .child-access-toolbar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .child-access-picker {
+      width: 100%;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfd;
+    }
+    .child-access-question {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+    .child-access-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .child-access-option {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 28px;
+      gap: 6px;
+      align-items: stretch;
+    }
+    .child-access-option .button {
+      min-height: 42px;
+      padding: 9px 10px;
+      white-space: normal;
+      line-height: 1.15;
+    }
+    .child-access-option.active .button:first-child {
+      border-color: rgba(11,143,134,.45);
+      background: #e7f6f4;
+      color: #075f59;
+    }
+    .child-access-help {
+      width: 28px;
+      min-height: 42px;
+      padding: 0;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 900;
+      position: relative;
+    }
+    .child-access-help::after {
+      content: attr(data-tip);
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 8px);
+      z-index: 80;
+      width: min(260px, 78vw);
+      padding: 10px 12px;
+      border: 1px solid #c9d8e8;
+      border-radius: 8px;
+      background: #0b1726;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+      text-align: left;
+      box-shadow: 0 14px 30px rgba(11,23,38,.22);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity .15s ease, transform .15s ease;
+    }
+    .child-access-help:hover::after,
+    .child-access-help:focus-visible::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
     .child-access-panel {
       display: grid;
       gap: 10px;
-      margin-top: 18px;
+      margin-top: 12px;
       padding: 14px;
       border: 1px solid rgba(11,143,134,.28);
       border-radius: 8px;
       background: #f0fbf9;
+    }
+    .child-access-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .child-access-config {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: end;
+      padding: 10px;
+      border: 1px solid #c9ebe5;
+      border-radius: 8px;
+      background: #f7fffd;
+    }
+    .child-access-config label {
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    .child-access-config select {
+      min-height: 42px;
+      background: white;
     }
     .child-access-panel input {
       width: 100%;
@@ -1036,6 +1148,8 @@
       .hero-copy { min-height: 420px; padding: 28px; }
       h1 { font-size: 38px; }
       .row .button { width: 100%; }
+      .child-access-options { grid-template-columns: 1fr; }
+      .child-access-config { grid-template-columns: 1fr; }
       .child-access-fields { grid-template-columns: 1fr; }
       .child-access-guide { grid-template-columns: 1fr; }
     }
@@ -1150,20 +1264,57 @@
               <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
               <p class="muted" id="welcomeCopy">Cadastre ou selecione uma criança para iniciar o acompanhamento.</p>
             </div>
-            <div class="quick-actions">
-              <div class="row">
-                <button class="button" id="openChildModeButton" type="button">Abrir Bloco Infantil</button>
-                <button class="button blue" id="generateChildLinkButton" type="button">Gerar e copiar link</button>
+            <div class="quick-actions child-access-shell">
+              <div class="child-access-toolbar">
                 <button class="button secondary hidden" id="openReportButton" type="button">Relatório longitudinal</button>
                 <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
               </div>
-              <p class="muted small">Use “Abrir Bloco Infantil” para testar a área da criança em outra aba. Use “Gerar e copiar link” para enviar a missão pelo celular.</p>
+              <div class="child-access-picker" aria-label="Acesso ao Bloco Infantil">
+                <span class="child-access-question">Onde a criança vai acessar?</span>
+                <div class="child-access-options">
+                  <span class="child-access-option" id="sameDeviceOption">
+                    <button class="button" id="openChildModeButton" type="button">Nesse computador</button>
+                    <button class="button ghost child-access-help" type="button" aria-label="Ajuda sobre acesso nesse computador" data-tip="Abre o Bloco Infantil em outra aba deste computador. Bom quando o adulto está ao lado da criança.">?</button>
+                  </span>
+                  <span class="child-access-option" id="childDeviceOption">
+                    <button class="button secondary" id="generateChildLinkButton" type="button">No dispositivo da criança</button>
+                    <button class="button ghost child-access-help" type="button" aria-label="Ajuda sobre acesso no dispositivo da criança" data-tip="Gera um link temporário para abrir no celular, tablet ou computador da criança. A área do adulto continua protegida.">?</button>
+                  </span>
+                  <span class="child-access-option" id="sharedDeviceOption">
+                    <button class="button secondary" id="sharedDeviceAccessButton" type="button">Em dispositivo compartilhado</button>
+                    <button class="button ghost child-access-help" type="button" aria-label="Ajuda sobre acesso em dispositivo compartilhado" data-tip="Gera um código curto para computador de sala, reforço ou laboratório. A criança não precisa receber um link pessoal.">?</button>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           <div class="child-access-panel hidden" id="childAccessPanel">
-            <span class="pill">acesso da criança</span>
-            <strong id="childAccessTitle">Link infantil pronto</strong>
+            <div class="child-access-panel-header">
+              <span class="pill" id="childAccessModeBadge">acesso da criança</span>
+              <strong id="childAccessTitle">Acesso infantil</strong>
+            </div>
             <p class="muted small" id="childAccessCopy">Este link abre somente a área infantil e não mostra percepções, relatórios ou orientações do adulto.</p>
+            <div class="child-access-config hidden" id="childDeviceConfig">
+              <label>
+                Validade do link
+                <select id="childDeviceDuration">
+                  <option value="24">Até amanhã</option>
+                  <option value="72" selected>Até 3 dias</option>
+                </select>
+              </label>
+              <button class="button blue" id="createChildDeviceAccessButton" type="button">Gerar e copiar link</button>
+            </div>
+            <div class="child-access-config hidden" id="sharedDeviceConfig">
+              <label>
+                Validade do código
+                <select id="sharedDeviceDuration">
+                  <option value="1">1 hora</option>
+                  <option value="8" selected>Hoje</option>
+                  <option value="24">Até amanhã</option>
+                </select>
+              </label>
+              <button class="button blue" id="createSharedDeviceAccessButton" type="button">Gerar e copiar código</button>
+            </div>
             <p class="child-access-warning hidden" id="childCodeUnavailableNote">Código curto indisponível neste banco. Rode a migração <strong>20260710_child_short_codes.sql</strong>; enquanto isso, o link infantil continua funcionando.</p>
             <div class="child-access-fields">
               <label class="hidden" aria-hidden="true">
@@ -1185,7 +1336,7 @@
                 <span class="muted small">Abra a entrada por código e peça para ela digitar o código curto.</span>
               </div>
             </div>
-            <div class="row">
+            <div class="row hidden" id="childAccessResultActions">
               <button class="button secondary" id="copyChildLinkButton" type="button">Copiar link</button>
               <button class="button secondary hidden" id="copyChildCodeButton" type="button">Copiar código</button>
               <a class="button ghost hidden" id="openChildCodeEntryButton" href="/entrar" target="_blank" rel="noopener">Abrir entrada por código</a>
@@ -1624,14 +1775,26 @@
       welcomeCopy: document.querySelector("#welcomeCopy"),
       openChildModeButton: document.querySelector("#openChildModeButton"),
       generateChildLinkButton: document.querySelector("#generateChildLinkButton"),
+      sharedDeviceAccessButton: document.querySelector("#sharedDeviceAccessButton"),
+      sameDeviceOption: document.querySelector("#sameDeviceOption"),
+      childDeviceOption: document.querySelector("#childDeviceOption"),
+      sharedDeviceOption: document.querySelector("#sharedDeviceOption"),
       childAccessPanel: document.querySelector("#childAccessPanel"),
+      childAccessModeBadge: document.querySelector("#childAccessModeBadge"),
       childAccessTitle: document.querySelector("#childAccessTitle"),
       childAccessCopy: document.querySelector("#childAccessCopy"),
+      childDeviceConfig: document.querySelector("#childDeviceConfig"),
+      sharedDeviceConfig: document.querySelector("#sharedDeviceConfig"),
+      childDeviceDuration: document.querySelector("#childDeviceDuration"),
+      sharedDeviceDuration: document.querySelector("#sharedDeviceDuration"),
+      createChildDeviceAccessButton: document.querySelector("#createChildDeviceAccessButton"),
+      createSharedDeviceAccessButton: document.querySelector("#createSharedDeviceAccessButton"),
       childAccessLink: document.querySelector("#childAccessLink"),
       childAccessCodeWrap: document.querySelector("#childAccessCodeWrap"),
       childAccessCode: document.querySelector("#childAccessCode"),
       childCodeGuide: document.querySelector("#childCodeGuide"),
       childCodeUnavailableNote: document.querySelector("#childCodeUnavailableNote"),
+      childAccessResultActions: document.querySelector("#childAccessResultActions"),
       copyChildLinkButton: document.querySelector("#copyChildLinkButton"),
       copyChildCodeButton: document.querySelector("#copyChildCodeButton"),
       openChildCodeEntryButton: document.querySelector("#openChildCodeEntryButton"),
@@ -3226,6 +3389,15 @@
 
     function clearChildAccessPanel() {
       els.childAccessPanel.classList.add("hidden");
+      els.childDeviceConfig.classList.add("hidden");
+      els.sharedDeviceConfig.classList.add("hidden");
+      els.sameDeviceOption.classList.remove("active");
+      els.childDeviceOption.classList.remove("active");
+      els.sharedDeviceOption.classList.remove("active");
+      clearChildAccessResult();
+    }
+
+    function clearChildAccessResult() {
       els.childAccessLink.value = "";
       els.childAccessCode.value = "";
       els.childAccessCodeWrap.classList.add("hidden");
@@ -3233,15 +3405,47 @@
       els.childCodeUnavailableNote.classList.add("hidden");
       els.copyChildCodeButton.classList.add("hidden");
       els.openChildCodeEntryButton.classList.add("hidden");
+      els.childAccessResultActions.classList.add("hidden");
       els.openChildLinkButton.href = "#";
     }
 
-    function showChildAccessPanel(link, child, accessCode = "", codeUnavailable = false) {
+    function selectChildAccessOption(mode) {
+      els.sameDeviceOption.classList.toggle("active", mode === "same");
+      els.childDeviceOption.classList.toggle("active", mode === "device");
+      els.sharedDeviceOption.classList.toggle("active", mode === "shared");
+    }
+
+    function showChildAccessMode(mode) {
+      clearMessage();
+      const child = activeChild();
+      if (!child) {
+        message("Selecione uma criança antes de preparar o acesso infantil.", true);
+        return;
+      }
+      clearChildAccessResult();
+      selectChildAccessOption(mode);
+      els.childAccessPanel.classList.remove("hidden");
+      els.childDeviceConfig.classList.toggle("hidden", mode !== "device");
+      els.sharedDeviceConfig.classList.toggle("hidden", mode !== "shared");
+      els.childAccessModeBadge.textContent = mode === "shared" ? "dispositivo compartilhado" : "dispositivo da criança";
+      els.childAccessTitle.textContent = mode === "shared"
+        ? `Código infantil de ${child.full_name}`
+        : `Link infantil de ${child.full_name}`;
+      els.childAccessCopy.textContent = mode === "shared"
+        ? "Use quando a criança estiver em um computador compartilhado. O adulto passa o código curto e a criança entra pela tela de código."
+        : "Use quando a criança for acessar pelo próprio celular, tablet ou computador. O link é temporário e não abre a área do adulto.";
+    }
+
+    function showChildAccessPanel(link, child, accessCode = "", codeUnavailable = false, mode = "device") {
+      selectChildAccessOption(mode);
+      els.childDeviceConfig.classList.add("hidden");
+      els.sharedDeviceConfig.classList.add("hidden");
+      els.childAccessModeBadge.textContent = accessCode ? "código pronto" : "link pronto";
       els.childAccessTitle.textContent = accessCode
-        ? `Link e código infantil de ${child.full_name}`
+        ? `Código infantil de ${child.full_name}`
         : `Link infantil de ${child.full_name}`;
       els.childAccessCopy.textContent = accessCode
-        ? "Envie o link ou passe o código para a criança. Este acesso é temporário e não libera a área do adulto."
+        ? "Passe o código para a criança entrar pela tela de código. Este acesso é temporário e não libera a área do adulto."
         : "Envie este link apenas para a criança ou abra em outro aparelho. Ele é temporário e não libera a área do adulto.";
       if (codeUnavailable) {
         els.childAccessCopy.textContent += " O código curto ficará disponível depois da migração no Supabase.";
@@ -3251,6 +3455,7 @@
       }
       els.childAccessLink.value = link;
       els.openChildLinkButton.href = link;
+      els.childAccessResultActions.classList.remove("hidden");
       if (accessCode) {
         els.childAccessCode.value = accessCode;
         els.childAccessCodeWrap.classList.remove("hidden");
@@ -3267,8 +3472,9 @@
       els.childAccessPanel.classList.remove("hidden");
     }
 
-    async function generateChildAccessLink() {
+    async function generateChildAccessLink(options = {}) {
       clearMessage();
+      const mode = options.mode || "device";
       const child = activeChild();
       if (!child) {
         message("Selecione uma criança antes de gerar o link infantil.", true);
@@ -3279,7 +3485,11 @@
         return;
       }
 
-      setButtonBusy(els.generateChildLinkButton, true, "Gerando...");
+      const trigger = mode === "shared" ? els.createSharedDeviceAccessButton : els.createChildDeviceAccessButton;
+      const expiresInHours = mode === "shared"
+        ? Number(els.sharedDeviceDuration.value || 8)
+        : Number(els.childDeviceDuration.value || 72);
+      setButtonBusy(trigger, true, mode === "shared" ? "Gerando..." : "Copiando...");
       try {
         const response = await fetch("/api/child-access-token", {
           method: "POST",
@@ -3290,33 +3500,36 @@
           body: JSON.stringify({
             child_id: child.id,
             purpose: "child_area",
-            expires_in_hours: 24,
-            include_access_code: true
+            expires_in_hours: expiresInHours,
+            include_access_code: mode === "shared"
           })
         });
         const data = await response.json();
         if (!response.ok || !data.child_url) {
           throw new Error(data.message || "Não foi possível gerar o link infantil.");
         }
-        showChildAccessPanel(data.child_url, child, data.access_code || "", data.access_code_unavailable);
+        showChildAccessPanel(data.child_url, child, data.access_code || "", data.access_code_unavailable, mode);
+        const valueToCopy = mode === "shared" && data.access_code ? data.access_code : data.child_url;
         let copied = false;
         try {
-          await navigator.clipboard.writeText(data.child_url);
+          await navigator.clipboard.writeText(valueToCopy);
           copied = true;
         } catch {
           copied = false;
         }
-        if (copied) {
-          message(data.access_code ? "Link infantil copiado. O código curto também ficou disponível." : "Link infantil gerado e copiado.");
+        if (copied && mode === "shared" && data.access_code) {
+          message("Código infantil gerado e copiado. A criança deve usar a entrada por código.");
+        } else if (copied) {
+          message("Link infantil gerado e copiado.");
         } else if (data.access_code_unavailable) {
           message("Link infantil gerado. Clique em Copiar link para enviar. O código curto depende da migração no Supabase.");
         } else {
-          message("Link infantil gerado. Clique em Copiar link para enviar.");
+          message(mode === "shared" ? "Código infantil gerado. Clique em Copiar código." : "Link infantil gerado. Clique em Copiar link para enviar.");
         }
       } catch (error) {
         message(childAccessErrorMessage(error), true);
       } finally {
-        setButtonBusy(els.generateChildLinkButton, false);
+        setButtonBusy(trigger, false);
       }
     }
 
@@ -3480,9 +3693,11 @@
         return;
       }
 
+      clearChildAccessPanel();
+      selectChildAccessOption("same");
       const childTab = window.open("about:blank", "_blank");
       if (!childTab) {
-        message("O navegador bloqueou a nova aba. Libere pop-ups para este site ou use “Gerar e copiar link”.", true);
+        message("O navegador bloqueou a nova aba. Libere pop-ups para este site ou use a opção “No dispositivo da criança”.", true);
         return;
       }
       childTab.opener = null;
@@ -3501,14 +3716,13 @@
             child_id: child.id,
             purpose: "child_area",
             expires_in_hours: 24,
-            include_access_code: true
+            include_access_code: false
           })
         });
         const data = await response.json();
         if (!response.ok || !data.child_url) {
           throw new Error(data.message || "Não foi possível abrir o Bloco Infantil.");
         }
-        showChildAccessPanel(data.child_url, child, data.access_code || "", data.access_code_unavailable);
         childTab.location.href = data.child_url;
         message("Bloco Infantil aberto em nova aba. A área do adulto continua aberta aqui.");
       } catch (error) {
@@ -4293,7 +4507,10 @@
     els.refreshButton.addEventListener("click", refreshAll);
     els.organizePerceptionButton.addEventListener("click", organizePerception);
     els.openChildModeButton.addEventListener("click", openChildMode);
-    els.generateChildLinkButton.addEventListener("click", generateChildAccessLink);
+    els.generateChildLinkButton.addEventListener("click", () => showChildAccessMode("device"));
+    els.sharedDeviceAccessButton.addEventListener("click", () => showChildAccessMode("shared"));
+    els.createChildDeviceAccessButton.addEventListener("click", () => generateChildAccessLink({ mode: "device" }));
+    els.createSharedDeviceAccessButton.addEventListener("click", () => generateChildAccessLink({ mode: "shared" }));
     els.copyChildLinkButton.addEventListener("click", copyChildAccessLink);
     els.copyChildCodeButton.addEventListener("click", copyChildAccessCode);
     els.applyTabuadaSuggestionButton.addEventListener("click", applyTabuadaDoseSuggestion);
