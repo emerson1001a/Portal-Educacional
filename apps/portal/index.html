@@ -450,8 +450,8 @@
     .child-access-option {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 28px;
-      gap: 6px;
+      grid-template-columns: minmax(0, 1fr) 34px;
+      gap: 0;
       align-items: stretch;
     }
     .child-access-option .button {
@@ -460,16 +460,31 @@
       white-space: normal;
       line-height: 1.15;
     }
+    .child-access-option .button:first-child {
+      border-color: rgba(11,143,134,.25);
+      border-radius: 8px 0 0 8px;
+      background: #edf8f6;
+      color: #075f59;
+    }
+    .child-access-option .button:first-child:hover,
+    .child-access-option .button:first-child:focus-visible {
+      border-color: rgba(11,143,134,.44);
+      background: #e1f3f0;
+    }
     .child-access-option.active .button:first-child {
       border-color: rgba(11,143,134,.45);
-      background: #e7f6f4;
+      background: #dff3f0;
       color: #075f59;
     }
     .child-access-help {
-      width: 28px;
+      width: 34px;
       min-height: 42px;
       padding: 0;
-      border-radius: 999px;
+      border-left: 0;
+      border-radius: 0 8px 8px 0;
+      border-color: rgba(11,143,134,.25);
+      background: #edf8f6;
+      color: #075f59;
       font-size: 14px;
       font-weight: 900;
       position: relative;
@@ -1267,7 +1282,6 @@
             <div class="quick-actions child-access-shell">
               <div class="child-access-toolbar">
                 <button class="button secondary hidden" id="openReportButton" type="button">Relatório longitudinal</button>
-                <button class="button ghost" id="refreshButton" type="button">Atualizar</button>
               </div>
               <div class="child-access-picker" aria-label="Acesso ao Bloco Infantil">
                 <span class="child-access-question">Onde a criança vai acessar?</span>
@@ -1800,7 +1814,6 @@
       openChildCodeEntryButton: document.querySelector("#openChildCodeEntryButton"),
       openChildLinkButton: document.querySelector("#openChildLinkButton"),
       openReportButton: document.querySelector("#openReportButton"),
-      refreshButton: document.querySelector("#refreshButton"),
       metricActivities: document.querySelector("#metricActivities"),
       metricGoals: document.querySelector("#metricGoals"),
       metricLast: document.querySelector("#metricLast"),
@@ -2561,7 +2574,7 @@
     function renderDashboard() {
       const child = activeChild();
       els.welcomeTitle.textContent = child ? `Bloco Infantil de ${child.full_name}` : "Bem-vindo ao Portal Educacional";
-      els.welcomeCopy.textContent = child ? "Abra a área da criança, gere o link infantil e organize as próximas atividades." : "Cadastre ou selecione uma criança para iniciar.";
+      els.welcomeCopy.textContent = child ? "Após criar a Missão, seu filho já pode acessar conforme abaixo:" : "Cadastre ou selecione uma criança para iniciar.";
       els.metricActivities.textContent = state.events.length;
       els.metricGoals.textContent = state.goals.length;
       els.metricLast.textContent = state.events[0] ? formatDate(state.events[0].occurred_at || state.events[0].created_at) : "-";
@@ -4504,7 +4517,6 @@
 
     els.loginTab.addEventListener("click", () => setMode("login"));
     els.signupTab.addEventListener("click", () => setMode("signup"));
-    els.refreshButton.addEventListener("click", refreshAll);
     els.organizePerceptionButton.addEventListener("click", organizePerception);
     els.openChildModeButton.addEventListener("click", openChildMode);
     els.generateChildLinkButton.addEventListener("click", () => showChildAccessMode("device"));
