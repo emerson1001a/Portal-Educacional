@@ -285,6 +285,10 @@
     const returnUrl = new URL(portal.returnUrl);
     const correctMcq = state.submittedAnswers.filter((item) => item && item.tipo === "mcq" && item.correta === 1).length;
     const totalMcq = state.submittedAnswers.filter((item) => item && item.tipo === "mcq").length;
+    const durationSeconds = Number.isFinite(Number(state.readTimeMs)) ? Math.max(1, Math.round(Number(state.readTimeMs) / 1000)) : null;
+    const accuracyPct = totalMcq ? Math.round((correctMcq / totalMcq) * 100) : null;
+    const comprehensionScore = totalMcq ? Math.round((correctMcq / totalMcq) * 100) / 100 : null;
+    const lengthChoice = el("length").value || "auto";
     const headers = { "Content-Type": "application/json" };
     if (portal.token) headers["X-Portal-Activity-Token"] = portal.token;
     if (portal.childToken) headers["X-Portal-Child-Token"] = portal.childToken;
@@ -302,6 +306,20 @@
         title: el("theme").value.trim() || "Interpretação de texto",
         duration_ms: state.readTimeMs,
         metrics: {
+          schema_version: "1.0",
+          module_version: "interpretacao-portal-1.0",
+          duration_seconds: durationSeconds,
+          completed: true,
+          completion_reason: "finished",
+          child_age: Number(el("age").value || 11),
+          topic: el("theme").value.trim() || "",
+          difficulty_level: lengthChoice,
+          mission_context: portal.assignmentId ? "assignment" : "free_practice",
+          reading_mode: "generated_text",
+          comprehension_score: comprehensionScore,
+          accuracy_pct: accuracyPct,
+          question_total: state.questions.length,
+          answer_total: state.submittedAnswers.filter(Boolean).length,
           reading_time_ms: state.readTimeMs,
           question_times_ms: state.qTimesMs,
           total_questions: state.questions.length,
@@ -325,7 +343,11 @@
         },
         artifacts: {
           text: state.textHidden,
+          source_text: state.textHidden,
+          topic: el("theme").value.trim() || "",
+          difficulty_level: lengthChoice,
           questions: state.questions,
+          question_types: state.questions.map((question) => question && question.type ? question.type : "unknown"),
           answers: state.submittedAnswers.filter(Boolean)
         }
       })

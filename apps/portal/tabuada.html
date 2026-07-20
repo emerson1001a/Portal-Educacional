@@ -364,6 +364,12 @@
         title: "Treino de tabuada",
         duration_ms: missionDurationMs() ?? (Number.isFinite(lastEvent.ms) ? lastEvent.ms : null),
         metrics: {
+          schema_version: "1.0",
+          module_version: "tabuada-portal-1.0",
+          mission_context: portal.assignmentId ? "assignment" : "free_practice",
+          math_operation: "multiplication",
+          accuracy_score: summary.total ? Math.round((summary.correct / summary.total) * 100) / 100 : null,
+          completion_reason: (force || missionCompleted) ? "target_reached" : "partial_progress",
           total_attempts: student.events.length,
           recent_attempts: summary.total,
           recent_correct: summary.correct,
@@ -400,6 +406,9 @@
         },
         artifacts: {
           student_profile: student.profile || null,
+          selected_tabs: getSelectedTabsArray(),
+          target_attempts: missionTargetAttempts,
+          training_mode: modeEl.value,
           recent_events: recentEvents,
           coach_history: student.coach?.history || []
         }

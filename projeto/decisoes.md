@@ -352,3 +352,136 @@ Motivo:
 - o produto deve cuidar da confianca do adulto e da percepcao de progresso da crianca;
 - autoavaliacao e tempo so fazem sentido quando cruzados com historico, idade, tentativas, acertos e conclusao da missao;
 - o portal deve organizar sinais, nao transformar dificuldade em rotulo.
+
+## 2026-07-18
+
+### Produto unico com modos Familia e Escola
+
+Decisao:
+
+- nao duplicar o produto neste momento;
+- preservar um nucleo comum de crianca, adulto, missoes, evidencias e analise longitudinal;
+- evoluir a experiencia com dois modos de uso: Familia e Escola;
+- seguir refinando o produto sem destruir a futura vertente escolar;
+- usar a tela atual como prototipo escolar funcional para validacao com escola, deixando claro que ainda faltam turma, papeis escolares, relatorios por turma e implantacao dedicada.
+
+Motivo:
+
+- a versao escolar ja esta avancada porque metas, missoes, evidencias, historico e relatorio longitudinal fazem sentido para escola;
+- a versao familia precisa de linguagem e fluxo mais simples, mas deve usar o mesmo motor;
+- duplicar agora aumentaria manutencao e risco de divergencia entre modulos;
+- um marco Git foi criado para preservar o ponto atual antes dessa decisao.
+
+### Relatorios longitudinais por calendario escolar
+
+Decisao:
+
+- o portal deve guardar historico continuo, nao apenas ultimos 30 dias;
+- o relatorio para familia em contexto escolar deve poder ser bimestral, semestral, anual ou por periodo personalizado;
+- o acompanhamento mensal pode existir como uso interno da escola ou do adulto, mas nao deve ser o unico formato de devolutiva aos pais;
+- a IA deve ajudar a organizar evidencias e escrever sinteses cuidadosas, sempre sem diagnosticar, rotular ou substituir professor/especialista;
+- relatorios longos devem selecionar evidencias representativas, e nao listar tudo;
+- toda conclusao deve permitir rastrear quais evidencias foram usadas.
+
+Motivo:
+
+- escolas trabalham por ciclos, bimestres, semestres e ano letivo;
+- familias precisam de uma devolutiva clara, curta e orientadora, nao de uma descarga de metricas;
+- a forca do produto esta em contar a trajetoria da crianca em relacao a ela mesma ao longo do tempo;
+- casos reais como acompanhamento por 4 bimestres exigem banco, telas e relatorios preparados para periodos longos.
+
+### Tempo incorporado ao Acompanhamento por area
+
+Decisao:
+
+- retirar `Sinais principais` como bloco independente do painel adulto;
+- preservar sua funcao como sintese curta dentro de `Acompanhamento por area`;
+- renomear essa sintese operacionalmente para `Onde olhar primeiro`;
+- usar `Onde olhar primeiro` para indicar, em ate 3 pistas, qual area o adulto deve abrir primeiro;
+- retirar `Evolucao no tempo` como bloco principal separado;
+- tratar tempo, volume e continuidade como dimensoes obrigatorias dentro da analise de cada area;
+- usar ritmo geral de pratica apenas como sinal auxiliar dentro de `Acompanhamento por area`;
+- manter `Historico unificado` separado, porque ele e auditoria das evidencias.
+
+Motivo:
+
+- `Sinais principais` como bloco proprio ficava com proposito pouco claro;
+- a funcao real dele e uma triagem por area, nao um resumo geral do desenvolvimento;
+- separar `tempo` e `area` em blocos independentes deixa a analise pedagogica incompleta;
+- a evolucao de uma disciplina depende de desempenho, quantidade de evidencias, distribuicao no tempo e consistencia;
+- colocar essa sintese dentro de `Acompanhamento por area` reduz duplicidade e deixa o painel mais limpo;
+- o adulto continua recebendo uma orientacao curta, mas ligada diretamente aos blocos que sustentam a analise.
+
+## 2026-07-20
+
+### PRD do Relatorio para Reuniao com Pais
+
+Decisao:
+
+- criar `docs/prd-relatorio-reuniao-pais.md` como documento proprio;
+- tratar o relatorio como uma saida revisavel para conversa com a familia, e nao como copia do painel adulto;
+- permitir relatorios por ultimos 30 dias, bimestre, semestre, ano letivo ou periodo personalizado;
+- gerar a primeira versao a partir do `Acompanhamento por area`, preservando rastreabilidade das evidencias;
+- exigir revisao humana antes de qualquer compartilhamento com a familia;
+- manter linguagem acolhedora, sem diagnostico, rotulo ou comparacao com outras criancas;
+- incluir orientacoes praticas para casa e proximos passos da escola.
+
+Motivo:
+
+- reuniao com pais exige comunicacao diferente do painel operacional;
+- a familia precisa entender a trajetoria da crianca com clareza, cuidado e evidencias;
+- a escola precisa de um material defensavel, revisavel e adequado para conversa;
+- o produto deve ajudar o adulto a sair da ansiedade para um plano simples de continuidade;
+- periodos escolares reais exigem bimestre, semestre e ano letivo, nao apenas ultimas semanas.
+
+### Revisao critica antes de seguir instrucoes
+
+Decisao:
+
+- nenhuma instrucao de produto deve ser executada automaticamente se contrariar a logica pedagogica, a privacidade da crianca, a clareza para o adulto ou a arquitetura sustentavel;
+- quando uma ideia parecer arriscada, confusa ou desalinhada, o projeto deve devolver uma ponderacao antes de implementar;
+- criticas devem ser feitas com proposta alternativa, e nao apenas como bloqueio;
+- a experiencia real com criancas e adultos tem prioridade sobre suposicoes de tela bonita ou arquitetura elegante.
+
+Motivo:
+
+- o produto lida com criancas, pais, professores e dados sensiveis;
+- uma decisao errada pode gerar ansiedade, exposicao indevida ou conclusoes fracas;
+- o objetivo e construir um portal que alivie e oriente, nao que apenas cumpra comandos;
+- a qualidade do produto depende de testar ideias contra a logica pedagogica e a rotina real.
+
+### Mapa de infraestrutura antes do codigo longitudinal
+
+Decisao:
+
+- criar `docs/analise-infra-relatorios-longitudinais.md`;
+- mapear banco, APIs, contratos de modulo, permissoes, relatorios, IA, auditoria e sequencia segura antes de implementar;
+- preservar `activity_events` como fonte central de evidencias;
+- evitar criar relatorio final antes de consolidar contrato de evidencias e Acompanhamento por area;
+- priorizar uma implementacao em camadas: contrato de evidencias, periodos, analise por area, tela, relatorio rascunho e exportacao.
+
+Motivo:
+
+- os PRDs recentes mudaram a profundidade do produto;
+- relatorios bimestrais, semestrais e anuais exigem infraestrutura mais robusta;
+- a IA precisa trabalhar com evidencias rastreaveis, nao com texto solto;
+- uma revisao previa reduz risco de retrabalho, vazamento de dados adultos e conclusoes sem base.
+
+### Contrato de evidencias por modulo
+
+Decisao:
+
+- atualizar `modules/module-contract.md` como fonte oficial do contrato de evidencias;
+- exigir campos comuns de `metrics`, `feedback` e `artifacts` para qualquer modulo;
+- definir campos especificos para Redacao, Interpretacao, Tabuada e Ingles;
+- considerar uma evidencia completa apenas quando ela permitir auditoria futura;
+- permitir que atividades incompletas aparecam no Historico unificado, mas com baixa confianca para conclusoes longitudinais;
+- manter separacao rigorosa entre feedback da crianca e feedback do adulto.
+
+Motivo:
+
+- a analise longitudinal depende de dados comparaveis ao longo do tempo;
+- relatorios para pais precisam de evidencias concretas e rastreaveis;
+- cada modulo deve continuar livre na experiencia, mas padronizado na entrega de dados;
+- sem contrato, a IA e o painel podem gerar conclusoes bonitas, mas fracas;
+- a crianca deve receber apenas feedback positivo e seguro, enquanto o adulto recebe orientacao completa.

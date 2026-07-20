@@ -149,13 +149,14 @@ O painel adulto nao deve repetir a mesma analise em lugares diferentes.
 
 Decisao de produto:
 
-- a evolucao sempre deve existir em dois eixos complementares: **tempo** e **area**;
-- **Evolucao no tempo** mostra ritmo, continuidade e distribuicao da pratica;
-- **Evolucao por area** mostra como leitura, escrita, matematica, ingles e futuros modulos estao evoluindo dentro de suas proprias logicas;
-- esses dois blocos formam o coracao da analise longitudinal;
-- **Sinais principais** deve ser uma sintese curta depois das missoes, nao um relatorio completo;
+- tempo e area nao devem ser tratados como blocos independentes na analise pedagogica;
+- cada area deve trazer sua propria leitura temporal, porque qualidade, volume e continuidade se misturam;
+- **Acompanhamento por area** passa a ser o bloco central da analise longitudinal;
+- dentro de cada area, o produto deve avaliar desempenho, quantidade de evidencias, distribuicao no tempo, complexidade, consistencia e nivel de confianca;
+- **Onde olhar primeiro** deixa de ser bloco independente e passa a ser a sintese de entrada dentro de **Acompanhamento por area**;
+- o ritmo geral de pratica pode aparecer como sinal auxiliar, mas nao como bloco principal separado;
 - o **Historico unificado** deve ser a area de auditoria das evidencias;
-- o **Plano dos proximos 7 dias** nao deve ser um bloco principal neste momento. A orientacao de proximo passo deve aparecer como recomendacao curta dentro dos Sinais principais ou dentro de cada area analisada.
+- o **Plano dos proximos 7 dias** nao deve ser um bloco principal neste momento. A orientacao de proximo passo deve aparecer como recomendacao curta dentro de **Acompanhamento por area**, especialmente em **Onde olhar primeiro** ou dentro de cada area analisada.
 
 Ordem oficial do modulo adulto:
 
@@ -164,9 +165,9 @@ Ordem oficial do modulo adulto:
    - Meta Pedagogica
    - Missoes para a crianca
 3. **Acompanhamento da Crianca**
-   - Sinais principais
-   - Evolucao no tempo
-   - Evolucao por area
+   - Acompanhamento por area
+     - Onde olhar primeiro
+     - areas analisadas
    - Historico unificado
 
 Essa ordem segue a logica pedagogica do produto:
@@ -185,9 +186,7 @@ Cada bloco deve ter uma funcao clara:
 - **Aluno ativo e Bloco Infantil:** responder "qual crianca estou acompanhando, como cadastro outra e como abro a area infantil?";
 - **Meta Pedagogica:** responder "o que a crianca precisa praticar ou desenvolver?";
 - **Missoes para a crianca:** responder "baseado na meta pedagogica, quais atividades propor a crianca?";
-- **Sinais principais:** responder "com base no que ja foi feito, onde o adulto precisa olhar agora?";
-- **Evolucao no tempo:** responder "ha continuidade de pratica ao longo das semanas?";
-- **Evolucao por area:** responder "como cada area esta evoluindo dentro da sua propria logica?";
+- **Acompanhamento por area:** responder "como cada area esta evoluindo ao longo do tempo, com base nas evidencias disponiveis?" e, na entrada do bloco, "onde o adulto deve olhar primeiro?";
 - **Historico unificado:** responder "quais evidencias existem e onde posso auditar cada atividade?".
 
 ### Aluno ativo e Bloco Infantil
@@ -262,49 +261,53 @@ Exemplo:
 Hoje: escrever uma historia curta com foco no comeco.
 ```
 
-### Sinais principais
+### Onde olhar primeiro
 
 Ponderacao:
 
-Sinais principais substitui a ideia de um bloco grande chamado Resumo do
-Desenvolvimento. Ele nao deve explicar tudo.
+A funcao antes chamada de **Sinais principais** nao deve existir como bloco
+independente no painel adulto.
 
-Ele tambem nao deve aparecer antes da Meta Pedagogica e das Missoes, porque
-a analise deve vir depois do combinado pedagogico e da pratica.
+Ela continua importante, mas deve ficar dentro de **Acompanhamento por area**, como
+uma sintese de entrada chamada **Onde olhar primeiro**.
 
-Ele nao deve ser o centro da analise longitudinal. O centro deve ficar em
-**Evolucao no tempo** e **Evolucao por area**.
+Motivo:
 
-Sinais principais deve funcionar como uma primeira leitura, curta e tranquila, para
-ajudar o adulto a decidir onde olhar primeiro.
+- evita criar um bloco concorrente com Acompanhamento por area;
+- reduz duplicidade de leitura;
+- deixa claro que os sinais estao ligados a areas especificas;
+- ajuda o adulto a decidir qual area abrir primeiro;
+- preserva a ideia de triagem rapida sem transformar isso em relatorio.
 
 Funcao:
 
-- ser uma porta de entrada para a analise;
-- mostrar no maximo 3 sinais principais;
-- indicar quais blocos merecem ser abertos;
-- reduzir ansiedade com uma orientacao curta;
-- evitar que o adulto precise ler tudo para saber por onde comecar.
+- ser a primeira leitura dentro de Acompanhamento por area;
+- mostrar no maximo 3 pistas acionaveis;
+- indicar qual area merece ser aberta primeiro;
+- reduzir ansiedade com orientacao curta;
+- separar sinal positivo, ponto de atencao e proximo passo;
+- evitar que o adulto precise interpretar todos os graficos antes de agir.
 
 Nao deve:
 
+- aparecer como bloco principal independente;
 - listar todas as atividades;
 - repetir todos os graficos;
 - virar historico completo;
-- conter botao de relatorio completo;
-- substituir Evolucao no tempo;
-- substituir Evolucao por area;
+- conter botao de relatorio completo como acao principal;
+- substituir a analise temporal dentro de cada area;
+- substituir os cards por area;
 - virar Plano dos proximos 7 dias;
 - misturar detalhes tecnicos demais;
 - fazer conclusoes sem indicar nivel de confianca.
 
 Conteudo esperado:
 
-- 1 sinal positivo;
-- 1 ponto que merece observacao, quando existir;
+- 1 sinal positivo, quando existir;
+- 1 area que merece observacao, quando existir;
 - 1 proximo passo curto;
-- indicacao dos blocos que devem ser abertos para analise real.
-- opcionalmente, um "relatorio rapido" textual, sem virar um relatorio completo.
+- indicacao da area que deve ser aberta;
+- opcionalmente, um relatorio rapido textual, sem virar documento longo.
 
 Exemplos de intencao:
 
@@ -316,29 +319,29 @@ Tudo caminhando bem. Mantenha a rotina leve e continue observando os proximos re
 Vale olhar Redacao com calma. Ha sinais de que a estrutura do texto ainda precisa de pratica guiada.
 ```
 
-Exemplo:
+Exemplo dentro de Acompanhamento por area:
 
 ```text
-Sinais principais
+Onde olhar primeiro
 
-1. Boa continuidade em Tabuada.
-2. Interpretacao mostra sinais positivos.
-3. Redacao merece observacao mais cuidadosa.
+1. Tabuada: boa continuidade nas ultimas semanas.
+2. Redacao: vale abrir a area antes de aumentar a dificuldade.
+3. Interpretacao: ainda ha poucos dados para concluir.
 
-Proximo passo: abra Evolucao por area em Redacao antes de aumentar a dificuldade.
+Proximo passo: abra Redacao e observe as evidencias de estrutura do texto.
 ```
 
 ### Relatorio longitudinal
 
 O Relatorio longitudinal nao deve ser um botao solto no topo da tela.
-Tambem nao deve ficar como acao principal dentro de Sinais principais, porque
-esse bloco deve ser uma olhada rapida.
+Tambem nao deve ficar como acao principal dentro de Onde olhar primeiro, porque
+essa sintese deve ser uma olhada rapida.
 
 Ele deve ser gerado a partir de:
 
-- Sinais principais;
-- Evolucao no tempo;
-- Evolucao por area;
+- Onde olhar primeiro;
+- Acompanhamento por area;
+- ritmo geral de pratica, quando relevante;
 - Historico unificado.
 
 A entrada para o relatorio completo deve ficar preferencialmente dentro das
@@ -350,84 +353,431 @@ areas de evolucao, com botoes como:
 
 O relatorio deve ser uma consequencia da analise, nao um bloco concorrente.
 
-Em Sinais principais, quando houver algo relacionado a relatorio, deve aparecer
+Em Onde olhar primeiro, quando houver algo relacionado a relatorio, deve aparecer
 como "relatorio rapido" ou sintese curta, sem exigir que o adulto abra um
 documento longo naquele momento.
 
-### Evolucao no tempo
+## Relatorios longitudinais e calendario escolar
 
-Funcao:
+### Ponderacao
 
-- mostrar ritmo e continuidade;
-- indicar semanas com pratica;
-- mostrar equilibrio entre areas;
-- ajudar o adulto a perceber se houve constancia ou concentracao de atividades em poucos dias.
+O acompanhamento diario ou semanal serve para o adulto ajustar a rota.
+
+O relatorio para a familia, especialmente em contexto escolar, nao deve ser
+necessariamente mensal. Na realidade da escola, faz mais sentido que o produto
+suporte relatorios por ciclos:
+
+- bimestre;
+- semestre;
+- ano letivo;
+- periodo personalizado.
+
+Um relatorio de 30 dias responde:
+
+```text
+Como foi este ciclo inicial?
+```
+
+Um relatorio semestral ou por 4 bimestres responde:
+
+```text
+Qual foi a trajetoria da crianca ao longo do tempo?
+```
+
+Esses dois relatorios nao devem ter a mesma estrutura.
+
+### Decisao de produto
+
+O portal deve preservar historico longitudinal continuo, sem se limitar a 30
+dias.
+
+As telas podem trazer resumos curtos, mas o banco e a camada de analise devem
+estar preparados para recuperar evidencias de meses anteriores e comparar
+periodos escolares.
+
+O produto deve suportar, como direcao de arquitetura:
+
+- acompanhamento diario/semanal para professor, nucleo pedagogico ou familia;
+- analise mensal interna, quando a escola quiser ajustar a estrategia;
+- relatorio bimestral para conversa com responsaveis;
+- relatorio semestral para mostrar trajetoria;
+- relatorio anual ou por 4 bimestres para consolidar percurso escolar.
+
+### Tipos de relatorio
+
+#### 1. Relatorio rapido do adulto
+
+Uso:
+
+- dentro do portal;
+- leitura curta;
+- ajuda o adulto a decidir onde olhar primeiro.
+
+Nao deve virar documento formal.
+
+Exemplo de pergunta que responde:
+
+```text
+Onde vale prestar atencao agora?
+```
+
+#### 2. Relatorio interno da escola
+
+Uso:
+
+- professor;
+- coordenacao;
+- nucleo de apoio pedagogico;
+- revisao de estrategia.
+
+Pode ser mais tecnico, com graficos, evidencias abertas e metricas por area.
+
+Exemplo de pergunta que responde:
+
+```text
+A estrategia aplicada neste periodo esta funcionando?
+```
+
+#### 3. Relatorio para familia
+
+Uso:
+
+- reuniao com pais ou responsaveis;
+- devolutiva bimestral, semestral ou por periodo definido;
+- comunicacao cuidadosa, simples e pratica.
+
+Deve traduzir os dados para uma conversa humana.
 
 Nao deve:
 
-- concluir qualidade pedagogica sozinho;
-- dizer que a crianca evoluiu apenas porque praticou;
-- substituir a analise por bloco;
-- listar textos, respostas ou detalhes de cada atividade.
+- expor excesso de metricas;
+- assustar;
+- rotular;
+- apresentar diagnostico;
+- despejar historico completo sem curadoria.
 
-Conteudo esperado:
+Deve:
 
-- quantidade de atividades por semana;
-- semanas exibidas lado a lado, para dar impressao visual de evolucao;
-- areas praticadas por semana;
-- grafico abaixo dos indicadores semanais, ocupando a largura disponivel;
-- quatro linhas no grafico quando houver dados: Redacao, Interpretacao, Tabuada e Ingles;
-- alerta de pouca continuidade;
-- indicacao de concentracao excessiva em poucos dias;
-- sugestao de rotina curta.
+- mostrar evidencias selecionadas;
+- explicar a trajetoria;
+- indicar avancos;
+- indicar pontos que ainda pedem continuidade;
+- orientar como a familia pode ajudar;
+- terminar com proximo passo claro e esperancoso.
+
+#### 4. Relatorio tecnico longitudinal
+
+Uso:
+
+- revisao pedagogica mais profunda;
+- conversa com especialistas, quando autorizado;
+- auditoria interna;
+- evolucao por 4 bimestres ou ano letivo completo.
+
+Pode trazer:
+
+- graficos por area;
+- comparacao entre bimestres;
+- evolucao de metricas;
+- textos representativos;
+- feedbacks e artefatos completos;
+- observacoes do adulto;
+- limites da conclusao.
+
+### Periodos suportados
+
+O produto deve permitir filtrar e gerar analises por:
+
+- ultimos 30 dias;
+- ultimos 90 dias;
+- bimestre;
+- semestre;
+- ano letivo;
+- periodo personalizado.
+
+Para escola, o conceito de bimestre deve ser configuravel, porque calendarios
+podem variar.
+
+No MVP, o produto pode comecar com periodos fixos simples. A evolucao natural
+e permitir configurar datas de inicio e fim de cada ciclo escolar.
+
+### Relatorio por bimestre
+
+Funcao:
+
+- mostrar o que foi praticado no ciclo;
+- indicar como a crianca respondeu;
+- registrar evidencias principais;
+- orientar a continuidade no proximo bimestre.
+
+Estrutura recomendada para familia:
+
+1. abertura acolhedora;
+2. sintese do bimestre;
+3. atividades realizadas por area;
+4. sinais de avanco;
+5. pontos que ainda pedem apoio;
+6. orientacao pratica para casa;
+7. proximos passos da escola.
+
+### Relatorio semestral
+
+Funcao:
+
+- mostrar trajetoria, nao apenas volume de tarefas;
+- comparar momentos do semestre;
+- selecionar evidencias representativas;
+- explicar oscilacoes com cuidado;
+- orientar a continuidade do acompanhamento.
+
+Estrutura recomendada:
+
+1. sintese do semestre;
+2. linha do tempo por meses ou bimestres;
+3. evolucao por area;
+4. evidencias selecionadas;
+5. leitura cuidadosa dos pontos que ainda precisam de apoio;
+6. orientacoes para familia;
+7. proximos passos do nucleo pedagogico.
+
+### Relatorio por 4 bimestres
+
+O portal deve estar preparado para contar uma trajetoria longa, como no caso
+real de uma crianca que pratica Redacao, Leitura, Tabuada e outros modulos ao
+longo de todo o ano.
+
+Esse relatorio deve responder:
+
+```text
+Onde a crianca estava no inicio?
+Que estrategias foram aplicadas?
+O que mudou ao longo dos bimestres?
+O que ficou mais consistente?
+O que ainda precisa de continuidade?
+Quais evidencias sustentam essa leitura?
+```
+
+Nao deve listar tudo. Deve selecionar evidencias representativas.
 
 Exemplo:
 
+- uma redacao inicial;
+- uma redacao intermediaria;
+- uma redacao recente;
+- sinais de mudanca no processo;
+- graficos por area;
+- orientacao de continuidade.
+
+### Curadoria de evidencias
+
+O banco deve guardar historico completo.
+
+O relatorio deve selecionar evidencias relevantes.
+
+A IA pode ajudar a selecionar e resumir, mas sempre com rastreabilidade:
+
 ```text
-Houve pratica em 3 de 4 semanas. A continuidade esta se formando. Agora vale manter pequenas missoes distribuidas, em vez de concentrar muitas atividades em um unico dia.
+Ver evidencias usadas neste relatorio
 ```
 
-### Evolucao por area
+Regras:
+
+- nao omitir dados importantes que contradigam a conclusao;
+- nao exagerar avanco com base em poucos registros;
+- nao transformar volume de pratica em prova de evolucao;
+- separar constancia de pratica de qualidade pedagogica;
+- indicar quando a conclusao ainda tem baixa confianca.
+
+### Linguagem do relatorio para familia
+
+O relatorio para familia deve ser tecnico o suficiente para ser defensavel,
+mas humano o suficiente para aliviar e orientar.
+
+Preferir:
+
+```text
+Pedro Antonio se beneficia de atividades curtas e organizadas por etapas.
+```
+
+```text
+Em Redacao, os registros mostram que a estrutura ainda precisa de pratica
+guiada. O proximo ciclo deve manter foco em comeco, meio e fim.
+```
+
+Evitar:
+
+```text
+Pedro Antonio nao evoluiu em Redacao.
+```
+
+```text
+Pedro Antonio tem dificuldade grave.
+```
+
+### Papel da IA nos relatorios
+
+A IA deve atuar como organizadora de evidencias e tradutora pedagogica.
+
+Pode:
+
+- resumir a trajetoria;
+- comparar periodos;
+- selecionar evidencias representativas;
+- escrever sintese para familia;
+- escrever sintese tecnica para escola;
+- sugerir proximos passos;
+- indicar quando ainda faltam dados.
+
+Nao pode:
+
+- diagnosticar;
+- rotular;
+- afirmar causalidade sem base;
+- esconder incerteza;
+- escrever recomendacoes alarmistas;
+- substituir professor, coordenacao ou especialista.
+
+### Requisitos tecnicos derivados
+
+Para suportar relatorios bimestrais, semestrais e por 4 bimestres, o produto
+precisa garantir:
+
+- toda evidencia tem `occurred_at` real e confiavel;
+- as consultas nao ficam presas apenas as ultimas semanas;
+- as telas aceitam filtro de periodo;
+- os graficos conseguem comparar periodos longos;
+- os artefatos completos ficam preservados;
+- redacoes guardam texto, tema, titulo e feedbacks;
+- interpretacoes guardam texto, perguntas, respostas e feedbacks;
+- tabuadas guardam tabuadas treinadas, tentativas, acertos, erros e tempos;
+- ingles guarda habilidade, tipo de exercicio, itens, acertos, erros e apoio;
+- relatorios podem apontar quais evidencias foram usadas.
+
+### Acompanhamento por area
 
 Funcao:
 
 - analisar cada area separadamente;
-- mostrar tendencia especifica por disciplina ou habilidade;
+- mostrar como cada area esta evoluindo ao longo do tempo;
+- considerar desempenho, volume, continuidade, complexidade e consistencia;
+- indicar se ha evidencias suficientes para falar em tendencia;
 - permitir abrir grafico e evidencias daquela area;
 - orientar o proximo passo pedagogico dentro daquele bloco.
 
+Pergunta central:
+
+```text
+Como cada area esta evoluindo ao longo do tempo, com base nas evidencias disponiveis?
+```
+
+Ponderacao:
+
+Tempo e area nao podem ser analisados de forma completamente separada.
+
+Uma area pode ter bom desempenho em atividades isoladas, mas pouca pratica no
+periodo. Nesse caso, o produto nao deve afirmar evolucao consistente.
+
+Exemplo:
+
+```text
+Em Interpretacao, a crianca respondeu bem nas atividades feitas, mas ainda ha poucas evidencias no periodo para afirmar evolucao consistente.
+```
+
+Outra area pode ter pratica suficiente e mostrar repeticao do mesmo ponto de
+atencao. Nesse caso, a orientacao pode ser mais firme.
+
+Exemplo:
+
+```text
+Em Redacao, houve pratica suficiente no periodo e os mesmos sinais apareceram em varias tentativas. Vale manter foco em comeco, meio e fim antes de aumentar a dificuldade.
+```
+
 Nao deve:
 
+- separar qualidade pedagogica de volume e continuidade;
 - misturar leitura, escrita, matematica e ingles em uma conclusao unica;
 - esconder a metrica usada;
 - afirmar tendencia sem quantidade minima de evidencias;
+- dizer que a crianca evoluiu apenas porque praticou;
+- dizer que a crianca nao evoluiu sem considerar se houve pratica suficiente;
 - mostrar todos os detalhes de todas as atividades logo no bloco fechado.
 
-Conteudo esperado com o bloco fechado:
+Conteudo esperado no topo do bloco:
 
-- nome do bloco;
+- **Onde olhar primeiro**;
+- ritmo geral de pratica como sinal auxiliar, quando relevante;
+- indicacao de areas com poucos dados;
+- indicacao de areas que merecem abertura imediata.
+
+Conteudo esperado com cada area fechada:
+
+- nome da area;
 - tendencia;
 - pista curta;
 - numero de evidencias;
+- distribuicao no tempo;
 - periodo observado;
 - nivel de confianca.
 
-Conteudo esperado com o bloco aberto:
+Conteudo esperado com cada area aberta:
 
-- resumo longitudinal do bloco;
-- grafico de linha;
+- resumo longitudinal da area;
+- grafico de linha da area ao longo do tempo;
+- volume de evidencias no periodo;
+- distribuicao das praticas por semana, mes ou bimestre;
 - metrica principal;
 - sinais observados;
 - orientacao para o adulto;
 - lista de evidencias recolhidas.
 
-Exemplo fechado:
+Exemplos fechados:
 
 ```text
 Redacao
 Tendencia estavel
 8 evidencias em 4 semanas
 Pista: estrutura ainda oscila; abra para ver as redacoes e a orientacao.
+```
+
+```text
+Interpretacao
+Bom desempenho, mas poucos dados
+2 evidencias em 8 semanas
+Pista: as respostas foram boas, mas ainda nao ha continuidade suficiente para falar em evolucao.
+```
+
+```text
+Tabuada
+Tendencia de alta
+10 evidencias distribuidas em 4 semanas
+Pista: acertos subiram e o tempo diminuiu com pratica frequente.
+```
+
+### Ritmo geral de pratica
+
+O ritmo geral nao deve ser um bloco principal separado.
+
+Ele deve aparecer como sinal auxiliar dentro de **Acompanhamento por area**,
+especialmente em **Onde olhar primeiro**.
+
+Funcao:
+
+- indicar se houve pratica distribuidada ou concentrada;
+- mostrar se alguma area ficou sem evidencia suficiente;
+- apoiar a interpretacao da tendencia por area;
+- ajudar o adulto a ajustar a rotina.
+
+Nao deve:
+
+- concluir qualidade pedagogica sozinho;
+- substituir a analise por area;
+- virar grafico grande concorrente;
+- listar todas as atividades.
+
+Exemplo:
+
+```text
+Houve pratica em 3 de 4 semanas. Tabuada teve boa continuidade; Redacao teve poucas evidencias para concluir evolucao consistente.
 ```
 
 ### Historico unificado
@@ -471,8 +821,8 @@ Se a mesma informacao aparecer em mais de um bloco, ela deve ter funcao diferent
 
 Exemplo:
 
-- em Sinais principais: "Redacao merece atencao nesta semana";
-- na Evolucao por Area: "Redacao esta estavel, com estrutura oscilando";
+- em Onde olhar primeiro: "Redacao merece atencao nesta semana";
+- no card de Redacao em Acompanhamento por area: "Redacao esta estavel, com estrutura oscilando";
 - no Historico unificado: "Redacao 4, texto completo, feedback e metricas".
 
 O mesmo dado pode aparecer em camadas diferentes, mas nao deve gerar a mesma leitura repetida.
@@ -1012,11 +1362,10 @@ Ver evidencias desta conclusao
 1. Adulto seleciona a crianca.
 2. Adulto revisa ou cria uma Meta Pedagogica.
 3. Adulto transforma a meta em Missoes para a crianca.
-4. Portal mostra Sinais principais com uma sintese curta do que merece atencao.
-5. Adulto abre Evolucao no tempo para ver ritmo e continuidade.
-6. Adulto abre Evolucao por area para analisar leitura, escrita, matematica, ingles ou futuros modulos.
-7. Adulto abre atividades especificas no Historico unificado quando quiser auditar evidencias.
-8. Portal sugere um proximo passo curto sem substituir a decisao adulta.
+4. Adulto abre Acompanhamento por area para ver Onde olhar primeiro e analisar leitura, escrita, matematica, ingles ou futuros modulos ao longo do tempo.
+5. Dentro de cada area, adulto observa tendencia, volume de evidencias, distribuicao no tempo, nivel de confianca e orientacao.
+6. Adulto abre atividades especificas no Historico unificado quando quiser auditar evidencias.
+7. Portal sugere um proximo passo curto sem substituir a decisao adulta.
 
 ## Fluxo do professor
 
@@ -1200,14 +1549,24 @@ Esperado:
 - Quando uma tendencia estavel deve sugerir nova estrategia?
 - Quantas evidencias sao necessarias para acionar uma orientacao mais firme?
 - Como validar os textos com especialista pedagogico/psicologico antes de producao?
+- Como configurar o calendario escolar de cada escola?
+- O relatorio para familia deve ser gerado por bimestre, semestre ou ambos?
+- Quais evidencias devem ser selecionadas automaticamente pela IA em um relatorio longo?
+- Como permitir que a escola revise o relatorio antes de apresentar aos pais?
 
 ## Proximos passos
 
-1. Refinar este PRD disciplina por disciplina.
-2. Definir o contrato final de `metrics` e `artifacts` por modulo.
-3. Criar massa de teste neutra, sem conclusoes plantadas.
-4. Implementar o painel por blocos.
-5. Implementar grafico por bloco.
-6. Implementar "ver evidencias desta conclusao".
-7. Testar com Jose Carlos e Pedro Antonio.
-8. Depois testar com dados reais de Miguel e Gabriel, sem misturar com massa demo.
+1. Auditar se o banco e as APIs preservam evidencias por periodo longo.
+2. Confirmar se as telas atuais consultam apenas ultimas semanas ou todo o historico.
+3. Definir filtros de periodo: 30 dias, 90 dias, bimestre, semestre, ano letivo e periodo personalizado.
+4. Refinar este PRD disciplina por disciplina.
+5. Definir o contrato final de `metrics` e `artifacts` por modulo.
+6. Criar massa de teste neutra distribuida por bimestre e semestre, sem conclusoes plantadas.
+7. Desenhar mockup do relatorio para familia.
+8. Desenhar mockup do relatorio tecnico da escola.
+9. Implementar o painel por blocos.
+10. Implementar grafico por bloco e por periodo.
+11. Implementar "ver evidencias desta conclusao".
+12. Implementar geracao de relatorio longitudinal com IA, sempre com revisao pelo adulto.
+13. Testar com Jose Carlos e Pedro Antonio.
+14. Depois testar com dados reais de Miguel e Gabriel, sem misturar com massa demo.

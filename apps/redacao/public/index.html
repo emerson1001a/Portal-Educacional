@@ -401,7 +401,18 @@
     };
     portal.enabled = Boolean((portal.token || portal.childToken) && portal.returnUrl);
 
-    const state = { step: 0, type: "", validating: false, analyzing: false, validatedSteps: {}, portalEventSaved: false, reviewDirty: false, reviewSource: "" };
+    const state = {
+      step: 0,
+      type: "",
+      validating: false,
+      analyzing: false,
+      validatedSteps: {},
+      portalEventSaved: false,
+      reviewDirty: false,
+      reviewSource: "",
+      startedAt: new Date().toISOString(),
+      finishedAt: ""
+    };
     const PORTAL_START_STEP = 1;
 
     function activeStep() { return steps[state.step]; }
@@ -562,6 +573,57 @@
     function displayType() {
       return { historia: "história", relato: "relato", opiniao: "opinião" }[state.type] || "(não escolhido)";
     }
+    function nowIso() {
+      return new Date().toISOString();
+    }
+    function secondsBetween(startIso, endIso = nowIso()) {
+      const start = new Date(startIso).getTime();
+      const end = new Date(endIso).getTime();
+      if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return null;
+      return Math.max(1, Math.round((end - start) / 1000));
+    }
+    function wordCount(text) {
+      return String(text || "").split(/\s+/).filter(Boolean).length;
+    }
+    function roundScore(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return 0;
+      return Math.round(Math.max(0, Math.min(1, number)) * 100) / 100;
+    }
+    function scorePart(text, minWords) {
+      const words = wordCount(text);
+      if (!words) return 0;
+      if (words >= minWords) return 0.75;
+      if (words >= Math.max(4, Math.round(minWords * 0.6))) return 0.6;
+      return 0.4;
+    }
+    function writingType() {
+      return { historia: "story", relato: "personal_report", opiniao: "opinion" }[state.type] || "story";
+    }
+    function missionContext() {
+      return portal.assignmentId ? "assignment" : "free_practice";
+    }
+    function currentInputMode() {
+      return "typed";
+    }
+    function estimateWritingScores() {
+      const profile = ageProfile();
+      const minWords = Math.max(5, Math.round((profile.min || 20) / 6));
+      const beginning = scorePart(textValue("begin"), minWords);
+      const middle = scorePart(textValue("middle"), minWords);
+      const ending = scorePart(textValue("end"), minWords);
+      const hasAllParts = Boolean(textValue("begin") && textValue("middle") && textValue("end"));
+      const coherence = hasAllParts ? 0.68 : 0.45;
+      const structure = roundScore((beginning + middle + ending + coherence) / 4);
+      return {
+        structure_score: structure,
+        beginning_score: roundScore(beginning),
+        middle_score: roundScore(middle),
+        ending_score: roundScore(ending),
+        coherence_score: roundScore(coherence),
+        score_source: "local_heuristic"
+      };
+    }
     function payload() {
       return { ...student(), tipo: state.type, tema: textValue("theme"), titulo: textValue("title"), texto: finalEssayText() };
     }
@@ -592,7 +654,13 @@
       if (!portal.enabled || state.portalEventSaved) return false;
       const returnUrl = new URL(portal.returnUrl);
       const finalText = finalEssayText();
-      const words = finalText.split(/\s+/).filter(Boolean).length;
+      const baseText = essayText();
+      const words = wordCount(finalText);
+      const finishedAt = state.finishedAt || nowIso();
+      const durationSeconds = secondsBetween(state.startedAt, finishedAt);
+      const revisionDone = Boolean(state.reviewDirty && finalText.trim() && finalText.trim() !== baseText.trim());
+      const apiScores = data && typeof data.writing_analysis === "object" ? data.writing_analysis : {};
+      const scores = { ...estimateWritingScores(), ...apiScores };
       const headers = { "Content-Type": "application/json" };
       if (portal.token) headers["X-Portal-Activity-Token"] = portal.token;
       if (portal.childToken) headers["X-Portal-Child-Token"] = portal.childToken;
@@ -609,6 +677,28 @@
           activity_type: "analise_final",
           title: textValue("title") || textValue("theme") || "Redação concluída",
           metrics: {
+            schema_version: "1.0",
+            module_version: "redacao-portal-1.0",
+            started_at: state.startedAt,
+            finished_at: finishedAt,
+            duration_seconds: durationSeconds,
+            completed: true,
+            completion_reason: "finished",
+            support_level: "medium",
+            attempt_number: 1,
+            child_age: currentAge(),
+            input_mode: currentInputMode(),
+            mission_context: missionContext(),
+            writing_type: writingType(),
+            structure_score: roundScore(scores.structure_score),
+            beginning_score: roundScore(scores.beginning_score),
+            middle_score: roundScore(scores.middle_score),
+            ending_score: roundScore(scores.ending_score),
+            coherence_score: roundScore(scores.coherence_score),
+            score_source: scores.score_source || "local_heuristic",
+            revision_done: revisionDone,
+            adult_help_level: "unknown",
+            word_count: words,
             words,
             chars: finalText.length,
             type: state.type || "",
@@ -630,9 +720,19 @@
           },
           artifacts: {
             text: finalText,
+            final_text: finalText,
+            revised_text: revisionDone ? finalText : "",
             title: textValue("title") || "",
             theme: textValue("theme") || "",
-            type: state.type || ""
+            type: state.type || "",
+            writing_type_label: displayType(),
+            draft_parts: {
+              beginning: textValue("begin"),
+              middle: textValue("middle"),
+              ending: textValue("end")
+            },
+            revision_focus: data.revision_focus || (apiScores && apiScores.revision_focus) || reviewSuggestion(baseText),
+            input_mode: currentInputMode()
           }
         })
       });
@@ -944,6 +1044,7 @@
       $("finishBtn").textContent = "Analisando...";
       $("childFeedback").classList.add("hidden");
       syncReturnPortalButton();
+      state.finishedAt = nowIso();
       try {
         const response = await fetch("/api/analisar", {
           method: "POST",
@@ -1015,6 +1116,9 @@
       state.validatedSteps = {};
       state.reviewDirty = false;
       state.reviewSource = "";
+      state.startedAt = nowIso();
+      state.finishedAt = "";
+      state.portalEventSaved = false;
       $("fullText").value = "";
       document.querySelectorAll("[data-type]").forEach((button) => button.classList.remove("active"));
       hideMessage();

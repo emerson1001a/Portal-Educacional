@@ -1540,6 +1540,17 @@
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
           <div class="topic-body">
+            <div class="row" style="margin-bottom:12px">
+              <label style="max-width:260px">
+                Período de análise
+                <select id="evolutionPeriodInput">
+                  <option value="28">Últimos 28 dias</option>
+                  <option value="60">Bimestre</option>
+                  <option value="180">Semestre</option>
+                  <option value="365">Ano</option>
+                </select>
+              </label>
+            </div>
             <div class="time-grid" id="timeEvolutionGrid"></div>
             <div class="area-bars" id="areaBalance"></div>
           </div>
@@ -1650,6 +1661,18 @@
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
           <div class="topic-body">
+            <div class="row" style="margin-bottom:12px">
+              <label style="max-width:260px">
+                Período do histórico
+                <select id="historyPeriodInput">
+                  <option value="30">Últimos 30 dias</option>
+                  <option value="90">Últimos 90 dias</option>
+                  <option value="180">Semestre</option>
+                  <option value="365">Ano</option>
+                  <option value="all">Tudo</option>
+                </select>
+              </label>
+            </div>
             <div class="timeline" id="timeline"></div>
           </div>
         </details>
@@ -1823,6 +1846,7 @@
       reviewsList: document.querySelector("#reviewsList"),
       snapshotsList: document.querySelector("#snapshotsList"),
       practicePlan: document.querySelector("#practicePlan"),
+      evolutionPeriodInput: document.querySelector("#evolutionPeriodInput"),
       timeEvolutionGrid: document.querySelector("#timeEvolutionGrid"),
       areaBalance: document.querySelector("#areaBalance"),
       evolutionGrid: document.querySelector("#evolutionGrid"),
@@ -1853,6 +1877,7 @@
       inglesSupportInput: document.querySelector("#inglesSupportInput"),
       inglesItemsInput: document.querySelector("#inglesItemsInput"),
       assignmentsList: document.querySelector("#assignmentsList"),
+      historyPeriodInput: document.querySelector("#historyPeriodInput"),
       modulesGrid: document.querySelector("#modulesGrid"),
       timeline: document.querySelector("#timeline"),
       childOverlay: document.querySelector("#childOverlay"),
@@ -1871,6 +1896,15 @@
       printReportButton: document.querySelector("#printReportButton"),
       reportContent: document.querySelector("#reportContent")
     };
+
+    const savedEvolutionPeriod = localStorage.getItem("portal.evolutionPeriodDays");
+    if (els.evolutionPeriodInput && ["28", "60", "180", "365"].includes(savedEvolutionPeriod)) {
+      els.evolutionPeriodInput.value = savedEvolutionPeriod;
+    }
+    const savedHistoryPeriod = localStorage.getItem("portal.historyPeriodDays");
+    if (els.historyPeriodInput && ["30", "90", "180", "365", "all"].includes(savedHistoryPeriod)) {
+      els.historyPeriodInput.value = savedHistoryPeriod;
+    }
 
     function message(text, isError = false) {
       const target = state.session?.user && !state.passwordRecovery && !state.resetRequest ? els.appMessage : els.authMessage;
@@ -2044,6 +2078,14 @@
       }
       if (Number.isFinite(Number(metrics.recent_accuracy_pct))) {
         signals.push(`${Number(metrics.recent_accuracy_pct)}% acerto`);
+      } else if (Number.isFinite(Number(metrics.accuracy_pct))) {
+        signals.push(`${Number(metrics.accuracy_pct)}% acerto`);
+      }
+      if (Number.isFinite(Number(metrics.structure_score))) {
+        signals.push(`estrutura ${Math.round(Number(metrics.structure_score) * 100)}%`);
+      }
+      if (Number.isFinite(Number(metrics.comprehension_score))) {
+        signals.push(`compreensão ${Math.round(Number(metrics.comprehension_score) * 100)}%`);
       }
       if (Number.isFinite(Number(metrics.target_attempts))) {
         signals.push(`meta ${Number(metrics.target_attempts)}`);
@@ -2096,6 +2138,44 @@
       };
       const services = byArea[area] || [];
       return state.events.filter((event) => services.includes(event.service));
+    }
+
+    function eventPerformanceScore(event) {
+      const metrics = event?.metrics && typeof event.metrics === "object" ? event.metrics : {};
+      const candidates = [
+        metrics.structure_score,
+        metrics.comprehension_score,
+        metrics.accuracy_score,
+        Number.isFinite(Number(metrics.recent_accuracy_pct)) ? Number(metrics.recent_accuracy_pct) / 100 : null,
+        Number.isFinite(Number(metrics.accuracy_pct)) ? Number(metrics.accuracy_pct) / 100 : null
+      ];
+      const score = candidates.find((value) => Number.isFinite(Number(value)));
+      return score === undefined || score === null ? null : Math.max(0, Math.min(1, Number(score)));
+    }
+
+    function areaTrend(events) {
+      const scored = events
+        .map((event) => ({ event, score: eventPerformanceScore(event) }))
+        .filter((item) => item.score !== null);
+      if (scored.length < 3) {
+        return {
+          status: "sinais em formação",
+          detail: scored.length ? "Ainda há poucos registros comparáveis. Continue coletando evidências curtas." : "Ainda não há indicadores comparáveis nesta área.",
+          direction: "stable"
+        };
+      }
+
+      const recent = scored.slice(0, Math.ceil(scored.length / 2));
+      const older = scored.slice(Math.ceil(scored.length / 2));
+      const avg = (items) => items.reduce((sum, item) => sum + item.score, 0) / Math.max(1, items.length);
+      const delta = avg(recent) - avg(older);
+      if (delta >= 0.08) {
+        return { status: "tendência de avanço", detail: "Os registros mais recentes estão melhores que os anteriores.", direction: "up" };
+      }
+      if (delta <= -0.08) {
+        return { status: "atenção com leveza", detail: "Os sinais recentes pedem uma tarefa menor e mais guiada.", direction: "down" };
+      }
+      return { status: "estável", detail: "A área está relativamente estável. Mantenha prática curta e observe autonomia.", direction: "stable" };
     }
 
     function moduleForArea(area) {
@@ -2192,18 +2272,41 @@
       return state.events.filter((event) => localDay(eventDate(event)) >= start);
     }
 
+    function selectedHistoryEvents() {
+      const value = els.historyPeriodInput?.value || "30";
+      if (value === "all") return state.events;
+      const days = Number(value);
+      return Number.isFinite(days) ? eventsSince(days) : eventsSince(30);
+    }
+
     function weekLabel(weekIndex) {
       return weekIndex === 0 ? "Esta semana" : `${weekIndex + 1} semanas atrás`;
     }
 
+    function selectedEvolutionPeriodDays() {
+      const days = Number(els.evolutionPeriodInput?.value || 28);
+      return [28, 60, 180, 365].includes(days) ? days : 28;
+    }
+
+    function periodBucketLabel(bucketIndex, periodDays) {
+      if (periodDays === 28) return weekLabel(bucketIndex);
+      const bucketSize = Math.ceil(periodDays / 4);
+      if (bucketIndex === 0) return `Últimos ${bucketSize} dias`;
+      const start = bucketIndex * bucketSize + 1;
+      const end = Math.min(periodDays, (bucketIndex + 1) * bucketSize);
+      return `${start} a ${end} dias atrás`;
+    }
+
     function buildTimeEvolution() {
-      const recent = eventsSince(28);
+      const periodDays = selectedEvolutionPeriodDays();
+      const bucketSize = Math.ceil(periodDays / 4);
+      const recent = eventsSince(periodDays);
       const weeks = [0, 1, 2, 3].map((index) => ({ index, events: [] }));
       const today = localDay(new Date());
 
       recent.forEach((event) => {
         const ageDays = Math.floor((today - localDay(eventDate(event))) / 86400000);
-        const weekIndex = Math.min(3, Math.max(0, Math.floor(ageDays / 7)));
+        const weekIndex = Math.min(3, Math.max(0, Math.floor(ageDays / bucketSize)));
         weeks[weekIndex].events.push(event);
       });
 
@@ -2220,14 +2323,14 @@
       const activeWeeks = weeks.filter((week) => week.events.length).length;
       const total = recent.length;
       const continuity = !total
-        ? "Ainda não há registros nos últimos 28 dias. Uma primeira prática curta já começa a linha de evolução."
+        ? `Ainda não há registros nos últimos ${periodDays} dias. Uma primeira prática curta já começa a linha de evolução.`
         : activeWeeks >= 3
           ? "Há boa continuidade recente. Agora vale manter a rotina curta e observar qualidade, não aumentar pressão."
           : activeWeeks === 2
             ? "A prática já apareceu em mais de uma semana. O próximo ganho vem de repetir sem transformar em cobrança."
-            : "Há registro recente, mas ainda pouca continuidade semanal. O plano de 7 dias ajuda a criar ritmo.";
+            : "Há registro no período, mas ainda pouca continuidade. O próximo ganho vem de repetir pequenas práticas sem transformar em cobrança.";
 
-      return { weeks, areaCounts, total, activeWeeks, continuity };
+      return { weeks, areaCounts, total, activeWeeks, continuity, periodDays, bucketSize };
     }
 
     function listItems(items) {
@@ -3069,10 +3172,10 @@
         const services = uniqueList(week.events.map((event) => serviceName(event.service)), 3);
         return `
           <article class="time-card">
-            <span class="pill">${escapeHtml(weekLabel(week.index))}</span>
+            <span class="pill">${escapeHtml(periodBucketLabel(week.index, evolution.periodDays))}</span>
             <strong>${week.events.length}</strong>
             <p class="muted small">${week.events.length === 1 ? "atividade registrada" : "atividades registradas"}</p>
-            <p class="small">${services.length ? escapeHtml(services.join(", ")) : "Sem prática salva nesta semana."}</p>
+            <p class="small">${services.length ? escapeHtml(services.join(", ")) : "Sem prática salva nesta faixa."}</p>
           </article>
         `;
       }).join("");
@@ -3082,7 +3185,7 @@
       els.areaBalance.innerHTML = `
         <article class="feedback-card primary">
           <span class="pill">continuidade</span>
-          <strong>${evolution.activeWeeks} de 4 semanas com prática</strong>
+          <strong>${evolution.activeWeeks} de 4 faixas com prática</strong>
           <p class="muted">${escapeHtml(evolution.continuity)}</p>
         </article>
         ${evolution.areaCounts.map((item) => `
@@ -3109,12 +3212,14 @@
         const evidences = state.events.filter((event) => services.includes(event.service));
         const latest = evidences[0];
         const latestSummary = latest ? eventAdultSummary(latest) : "";
+        const trend = areaTrend(evidences);
         const card = document.createElement("article");
         card.className = "evolution-card";
         card.innerHTML = `
           <span class="pill">${areaLabel(area)}</span>
           <strong>${evidences.length ? `${evidences.length} evidência${evidences.length === 1 ? "" : "s"}` : "sem evidência ainda"}</strong>
           <p class="muted">${goals.length ? `${goals.length} meta${goals.length === 1 ? "" : "s"} ativa${goals.length === 1 ? "" : "s"}.` : "Sem meta ativa nesta área."}</p>
+          <p class="small"><strong>${escapeHtml(trend.status)}:</strong> ${escapeHtml(trend.detail)}</p>
           <p class="small">${latest ? `Última prática: ${formatDate(latest.occurred_at || latest.created_at)}` : recipeForArea(area)}</p>
           ${latestSummary ? `<p class="small"><strong>Leitura:</strong> ${escapeHtml(latestSummary)}</p>` : ""}
         `;
@@ -3829,8 +3934,17 @@
       if (artifacts.title) meta.push(`Título: ${artifacts.title}`);
       if (artifacts.theme) meta.push(`Tema: ${artifacts.theme}`);
       if (artifacts.type) meta.push(`Tipo: ${artifacts.type}`);
+      const draft = artifacts.draft_parts && typeof artifacts.draft_parts === "object" ? artifacts.draft_parts : null;
+      const draftBody = draft ? `
+        <ul class="question-list">
+          ${draft.beginning ? `<li><strong>Começo</strong><p class="small">${escapeHtml(draft.beginning)}</p></li>` : ""}
+          ${draft.middle ? `<li><strong>Meio</strong><p class="small">${escapeHtml(draft.middle)}</p></li>` : ""}
+          ${draft.ending ? `<li><strong>Final</strong><p class="small">${escapeHtml(draft.ending)}</p></li>` : ""}
+        </ul>
+      ` : "";
       const body = `
         ${meta.length ? `<p class="small">${escapeHtml(meta.join(" | "))}</p>` : ""}
+        ${draftBody}
         <div class="artifact-text">${escapeHtml(artifacts.text)}</div>
       `;
       return detailBlock(textArtifactTitle(event), body);
@@ -3881,6 +3995,24 @@
       }
       if (Number.isFinite(Number(metrics.recent_accuracy_pct))) {
         rows.push(["Precisão recente", `${Number(metrics.recent_accuracy_pct)}%`]);
+      }
+      if (Number.isFinite(Number(metrics.accuracy_pct))) {
+        rows.push(["Precisão da atividade", `${Number(metrics.accuracy_pct)}%`]);
+      }
+      if (Number.isFinite(Number(metrics.structure_score))) {
+        rows.push(["Estrutura do texto", `${Math.round(Number(metrics.structure_score) * 100)}%`]);
+      }
+      if (Number.isFinite(Number(metrics.comprehension_score))) {
+        rows.push(["Compreensão", `${Math.round(Number(metrics.comprehension_score) * 100)}%`]);
+      }
+      if (Number.isFinite(Number(metrics.word_count))) {
+        rows.push(["Palavras", Number(metrics.word_count)]);
+      }
+      if (metrics.writing_type) {
+        rows.push(["Tipo de escrita", metrics.writing_type]);
+      }
+      if (metrics.difficulty_level) {
+        rows.push(["Dificuldade", metrics.difficulty_level]);
       }
       if (Number.isFinite(Number(metrics.target_attempts))) {
         rows.push(["Meta combinada", `${Number(metrics.target_attempts)} respostas`]);
@@ -3936,7 +4068,12 @@
         els.timeline.innerHTML = '<div class="notice">Ainda não há registros. Ao conectar os módulos, as evidências aparecerão aqui.</div>';
         return;
       }
-      const timelineEvents = state.events.slice(0, 40);
+      const filteredEvents = selectedHistoryEvents();
+      if (!filteredEvents.length) {
+        els.timeline.innerHTML = '<div class="notice">Não há registros no período selecionado. Experimente ampliar o filtro do histórico.</div>';
+        return;
+      }
+      const timelineEvents = filteredEvents.slice(0, 40);
       timelineEvents.forEach((event) => {
         const item = document.createElement("article");
         item.className = "event";
@@ -3962,10 +4099,10 @@
         `;
         els.timeline.appendChild(item);
       });
-      if (state.events.length > timelineEvents.length) {
+      if (filteredEvents.length > timelineEvents.length) {
         const more = document.createElement("div");
         more.className = "notice";
-        more.textContent = `Mostrando ${timelineEvents.length} registros mais recentes de ${state.events.length} carregados.`;
+        more.textContent = `Mostrando ${timelineEvents.length} registros mais recentes de ${filteredEvents.length} no período selecionado.`;
         els.timeline.appendChild(more);
       }
     }
@@ -4002,8 +4139,8 @@
     function reportEvidenceSummary(time) {
       const items = [
         `${state.events.length} evidência${state.events.length === 1 ? "" : "s"} no histórico completo.`,
-        `${time.total} registro${time.total === 1 ? "" : "s"} nos últimos 28 dias.`,
-        `${time.activeWeeks} de 4 semanas recentes tiveram prática registrada.`,
+        `${time.total} registro${time.total === 1 ? "" : "s"} no período selecionado (${time.periodDays} dias).`,
+        `${time.activeWeeks} de 4 faixas do período tiveram prática registrada.`,
         `Áreas com prática recente: ${reportAreaCoverage(time)}.`
       ];
 
@@ -4023,15 +4160,17 @@
     }
 
     function reportAreaRows() {
+      const periodDays = selectedEvolutionPeriodDays();
+      const eventsInPeriod = eventsSince(periodDays);
       return reportTrackedAreas().map((area) => {
         const events = eventsForArea(area);
-        const recentEvents = events.filter((event) => eventsSince(28).includes(event));
+        const recentEvents = events.filter((event) => eventsInPeriod.includes(event));
         const goals = state.goals.filter((goal) => goal.area === area);
         const completedGoals = state.completedGoals.filter((goal) => goal.area === area);
         const latest = events[0];
         const latestSummary = latest ? eventAdultSummary(latest) : "";
         const status = events.length
-          ? `${events.length} evidência${events.length === 1 ? "" : "s"} no histórico, ${recentEvents.length} nos últimos 28 dias.`
+          ? `${events.length} evidência${events.length === 1 ? "" : "s"} no histórico, ${recentEvents.length} no período selecionado.`
           : goals.length
             ? "há meta registrada, mas ainda falta prática para comparar evolução."
             : "sem foco ativo no momento.";
@@ -4094,7 +4233,7 @@
       const cards = [
         ["Período", reportPeriodLabel()],
         ["Evidências", String(state.events.length)],
-        ["Continuidade", `${time.activeWeeks}/4 semanas`],
+        ["Continuidade", `${time.activeWeeks}/4 faixas`],
         ["Confiança", reportConfidence()]
       ];
 
@@ -4128,7 +4267,7 @@
       });
       const goals = state.goals.map((goal) => `${areaLabel(goal.area)}: ${goal.title}`);
       const completedGoals = state.completedGoals.map((goal) => `${areaLabel(goal.area)}: ${goal.title} (${formatDate(goal.updated_at || goal.created_at)})`);
-      const areaCounts = time.areaCounts.map((item) => `${areaLabel(item.area)}: ${item.count} registro${item.count === 1 ? "" : "s"} nos últimos 28 dias`);
+      const areaCounts = time.areaCounts.map((item) => `${areaLabel(item.area)}: ${item.count} registro${item.count === 1 ? "" : "s"} no período selecionado`);
       const reviewComparison = buildReviewComparison();
       const evidenceSummary = reportEvidenceSummary(time);
       const areaRows = reportAreaRows();
@@ -4526,6 +4665,15 @@
     els.copyChildLinkButton.addEventListener("click", copyChildAccessLink);
     els.copyChildCodeButton.addEventListener("click", copyChildAccessCode);
     els.applyTabuadaSuggestionButton.addEventListener("click", applyTabuadaDoseSuggestion);
+    els.evolutionPeriodInput.addEventListener("change", () => {
+      localStorage.setItem("portal.evolutionPeriodDays", els.evolutionPeriodInput.value);
+      renderTimeEvolution();
+      renderEvolution();
+    });
+    els.historyPeriodInput.addEventListener("change", () => {
+      localStorage.setItem("portal.historyPeriodDays", els.historyPeriodInput.value);
+      renderTimeline();
+    });
     els.closeChildModeButton.addEventListener("click", closeChildMode);
     els.cancelAdultConfirmButton.addEventListener("click", hideAdultConfirm);
     els.openReportButton.addEventListener("click", openReport);

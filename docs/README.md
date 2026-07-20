@@ -17,10 +17,12 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `prd-modulo-ingles.md`: desenho inicial do modulo futuro de Ingles, com missoes de gramatica, vocabulario e evidencias.
 - `prd-sinais-da-missao.md`: sinais transversais das missoes, incluindo tempo invisivel, autoavaliacao leve da crianca e sintese cuidadosa da IA para o adulto.
 - `prd-analise-longitudinal-por-blocos.md`: documento de trabalho para a analise longitudinal por disciplina/bloco, com tendencias, evidencias abertas, graficos e linguagem segura.
+- `prd-relatorio-reuniao-pais.md`: formato do relatorio revisavel para reunioes com pais, gerado a partir do acompanhamento por area e com linguagem adequada para familia.
 - `prd-consolidacao-monorepo.md`: plano para trazer Redacao, Interpretacao e Tabuada para o mesmo GitHub do Portal, com migracao paralela e desativacao segura dos projetos antigos.
 - `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
 - `analise-schema-etapa-5.md`: comparacao entre PRD de metas/tarefas e o schema/migracoes existentes.
 - `analise-codigo-curto-infantil.md`: preparo tecnico para codigo curto infantil com hash, expiracao e entrada futura.
+- `analise-infra-relatorios-longitudinais.md`: mapa de infraestrutura necessaria para acompanhamento por area, relatorios revisaveis, evidencias rastreaveis e periodos escolares.
 - `product-vision.md`: visao curta do produto e principios centrais.
 - `guia-de-orientacao-pedagogica.md`: regras de linguagem, feedback, limites pedagogicos e material para revisao profissional.
 - `deployment-plan.md`: plano de GitHub, Vercel e Supabase.
@@ -43,6 +45,7 @@ docs/
   prd-controle-de-acesso-supabase.md
   prd-metas-e-tarefas.md
   prd-relatorio-longitudinal.md
+  prd-relatorio-reuniao-pais.md
   prd-integracao-modulos.md
   prd-modulos-plugaveis.md
   prd-turma-e-professor.md
