@@ -106,6 +106,9 @@
       gap: 18px;
       align-items: start;
     }
+    .grid.portalMode {
+      grid-template-columns: 1fr;
+    }
     .card, .mission {
       border: 1px solid var(--line);
       border-radius: 14px;
@@ -114,6 +117,10 @@
     }
     .card { padding: 18px; }
     .mission { padding: 22px; background: var(--paper); }
+    .portalMode .mission {
+      width: min(960px, 100%);
+      margin: 0 auto;
+    }
 
     .field { margin: 14px 0; }
     label {
@@ -216,19 +223,21 @@
     .question {
       border: 1px solid #d7cda9;
       border-radius: 14px;
-      padding: 22px;
+      padding: clamp(18px, 3vw, 34px);
       background: #fffef9;
     }
     .sentence {
-      min-height: 96px;
+      min-height: clamp(110px, 20vh, 210px);
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-size: clamp(30px, 5vw, 58px);
-      line-height: 1.15;
+      font-size: clamp(42px, 7vw, 88px);
+      line-height: 1.05;
       font-weight: 900;
-      margin: 8px 0 22px;
+      margin: 10px 0 26px;
+      overflow-wrap: normal;
+      word-break: normal;
     }
     .options {
       display: grid;
@@ -326,7 +335,7 @@
       .topbar { align-items: flex-start; }
       .options { grid-template-columns: 1fr; }
       .statGrid { grid-template-columns: 1fr; }
-      .sentence { min-height: 70px; justify-content: flex-start; text-align: left; font-size: 34px; }
+      .sentence { min-height: 90px; justify-content: center; text-align: center; font-size: clamp(34px, 11vw, 54px); }
     }
   </style>
 </head>
@@ -343,7 +352,7 @@
       <button id="resetBtn" class="ghost" type="button">Recomecar</button>
     </div>
 
-    <div class="grid">
+    <div class="grid" id="appGrid">
       <aside class="card" id="setupPanel">
         <div class="hero">
           <span class="pill">adulto configura</span>
@@ -653,6 +662,7 @@
       if (["5", "10"].includes(portal.itemsPerBlock)) $("itemsPerBlock").value = portal.itemsPerBlock;
       $("returnPortalBtn").classList.toggle("hidden", !portal.returnUrl);
       if (portal.enabled) {
+        $("appGrid").classList.add("portalMode");
         $("setupPanel").classList.add("hidden");
         $("evidenceTitle").classList.add("hidden");
         $("evidence").classList.add("hidden");

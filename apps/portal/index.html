@@ -3011,7 +3011,7 @@
     function assignmentProgress(assignment) {
       const items = assignment.items || [];
       if (!items.length) return { done: 0, total: 0 };
-      const done = items.filter((item) => item.resolved_status === "done").length;
+      const done = items.filter((item) => (item.resolved_status || item.status) === "done").length;
       return { done, total: items.length };
     }
 
@@ -3731,9 +3731,10 @@
         return;
       }
 
+      const isChildAssignmentItemDone = (item) => (item.resolved_status || item.status) === "done";
       const activeAssignments = state.assignments.filter((assignment) => (assignment.resolved_status || assignment.status) !== "done");
       const pendingItemsCount = activeAssignments.reduce((total, assignment) => {
-        return total + (assignment.items || []).filter((item) => item.resolved_status !== "done").length;
+        return total + (assignment.items || []).filter((item) => !isChildAssignmentItemDone(item)).length;
       }, 0);
 
       if (!activeAssignments.length || !pendingItemsCount) {
@@ -3751,7 +3752,7 @@
       activeAssignments.forEach((assignment) => {
         const progress = assignmentProgress(assignment);
         const items = (assignment.items || [])
-          .filter((item) => item.resolved_status !== "done")
+          .filter((item) => !isChildAssignmentItemDone(item))
           .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
         if (!items.length) return;
 
