@@ -4441,6 +4441,8 @@
 
       if (status === "activity_saved") {
         message(`${serviceName(service)} concluída. O resultado já entrou no histórico central.`);
+      } else if (status === "activity_pending") {
+        message(`Você voltou para a missão. ${serviceName(service)} continua disponível para fazer depois.`);
       } else {
         message(`${serviceName(service)} concluída, mas confira se o registro apareceu no histórico.`, true);
       }

@@ -97,13 +97,13 @@
       </div>
 
       <div id="portalIdentitySummary" class="portalIdentitySummary">
-        <strong>Atividade da missao</strong>
-        <span id="portalIdentityText">Aluno identificado pelo Portal Educacional.</span>
+        <strong>Sua missão de leitura</strong>
+        <span id="portalIdentityText">Esta leitura foi preparada para você.</span>
       </div>
 
       <div id="readingPlanSummary" class="readingPlanSummary">
-        <strong>Plano da leitura</strong>
-        <span id="readingPlanText">O tamanho do texto será sugerido pela idade.</span>
+        <strong>Como será a leitura</strong>
+        <span id="readingPlanText">Leia uma parte de cada vez, com calma.</span>
       </div>
 
       <label class="portalIdentityField">Nome do aluno *</label>
@@ -129,6 +129,7 @@
       <div class="btnrow">
         <button id="btnPrepare" class="blue prepare-cta">Preparar atividade</button>
         <button id="btnReset" class="secondary">Limpar</button>
+        <button id="btnExitPortal" class="secondary" style="display:none;margin-left:auto">Sair para a missão</button>
         <button id="btnTeacher" class="warn" style="margin-left:auto">Área da professora</button>
       </div>
 
@@ -183,7 +184,7 @@
       <div class="sep"></div>
 
       <div class="feedbackHead">
-        <h2>Feedback do aluno</h2>
+        <h2>Mensagem para você</h2>
         <button id="btnReturnPortal" class="blue" style="display:none;">Retornar à missão</button>
       </div>
       <pre id="studentFeedback">—</pre>
@@ -432,10 +433,15 @@
       medio: "O adulto escolheu texto médio para esta atividade.",
       longo: "O adulto escolheu texto longo. Use apenas quando a criança estiver pronta para uma leitura maior."
     };
+    const childManual = {
+      curto: "Você vai ler um texto curto. Leia devagar e procure as pistas no texto.",
+      medio: "Você vai ler um texto médio. Faça uma parte de cada vez, com calma.",
+      longo: "Você vai ler um texto maior. Vá com calma e termine antes de responder."
+    };
     const text = selected ? manual[selected] : profile.copy;
     el("lengthHint").textContent = text;
     el("readingPlanText").textContent = portal.enabled
-      ? `${text} A criança não precisa escolher o tamanho agora.`
+      ? (selected ? childManual[selected] : childManual[profile.size])
       : `${text} Você pode manter automático ou ajustar manualmente.`;
   }
 
@@ -445,10 +451,8 @@
     const portalAge = ageFromPortal();
     if(portalAge) el("age").value = String(portalAge);
     if(!ageReady()) el("age").value = "11";
-    const name = el("studentName").value.trim() || "Aluno da missao";
-    const age = Number(el("age").value || 0);
-    const ageText = ageReady() ? `, ${age} anos` : "";
-    el("portalIdentityText").textContent = `${name}${ageText}. Nome e idade vieram do Portal Educacional.`;
+    const name = el("studentName").value.trim() || "aluno";
+    el("portalIdentityText").textContent = `${name}, esta leitura foi preparada para você. Siga um passo por vez.`;
     updateReadingPlan();
   }
 
@@ -458,6 +462,8 @@
 
     if(!portal.enabled && !nameReady()) return { id:"name", text:"Escreva o nome do aluno." };
     if(!portal.enabled && !ageReady()) return { id:"age", text:"Informe a idade entre 6 e 18 anos." };
+    if(portal.enabled && !state.prepared && !themeReady) return { id:"theme", text:"Se quiser, escreva um tema. Depois clique em Preparar atividade." };
+    if(portal.enabled && !state.prepared) return { id:"prepare", text:"Agora clique em Preparar atividade." };
     if(!state.prepared && !themeReady) return { id:"theme", text:"Se quiser, escreva um tema. Se não quiser, siga para o tamanho do texto." };
     if(!state.prepared && !state.guideLengthSeen) return { id:"length", text:"Confira o tamanho do texto. Você pode manter como está." };
     if(!state.prepared) return { id:"prepare", text:"Agora clique em Preparar atividade." };
@@ -821,10 +827,10 @@ ${state.qTimesMs.map((ms,i)=>`Q${i+1}: ${formatMs(ms)}`).join("\n")}
         try {
           await sendPortalEvent();
           syncPortalReturnButton();
-          el("studentFeedback").textContent += "\n\nAtividade registrada no Portal Educacional. Clique em Retornar à missão para continuar.";
+          el("studentFeedback").textContent += "\n\nPronto, sua leitura foi entregue. Clique em Retornar à missão para continuar.";
         } catch (portalError) {
           syncPortalReturnButton();
-          el("studentFeedback").textContent += `\n\nA atividade ficou pronta. Tente Retornar à missão e confira se ela apareceu no portal. Detalhe: ${portalError.message}`;
+          el("studentFeedback").textContent += `\n\nSua leitura ficou pronta, mas não consegui entregar agora. Tente Retornar à missão e peça ajuda ao adulto se precisar. Detalhe: ${portalError.message}`;
         }
       }
       updateGuide();
@@ -1022,6 +1028,10 @@ host.onclick = async (ev) => {
   el("btnReturnPortal").onclick = () => returnToPortal(state.portalEventSaved ? "activity_saved" : "activity_pending");
 
   el("btnTeacher").onclick = openTeacher;
+  el("btnExitPortal").onclick = ()=>{
+    const wantsToLeave = confirm("Você quer sair desta leitura agora? Esta tentativa não será salva, e a missão continuará disponível.");
+    if(wantsToLeave) returnToPortal("activity_pending");
+  };
   el("btnClose").onclick = closeTeacher;
   el("btnOpenTeacher").onclick = openTeacherReport;
 
@@ -1052,6 +1062,7 @@ host.onclick = async (ev) => {
     document.body.classList.add("portal-mode");
     applyPortalIdentity();
     el("btnTeacher").style.display = "none";
+    el("btnExitPortal").style.display = "inline-flex";
     syncPortalReturnButton();
     el("headerCopy").textContent = "Faça a leitura com calma, responda às perguntas e depois retorne à missão.";
     el("guideText").textContent = portal.childName
