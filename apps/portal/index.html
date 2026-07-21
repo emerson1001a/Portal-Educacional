@@ -2033,6 +2033,27 @@
       return module?.short_name || module?.name || service || "Atividade";
     }
 
+    function activityTypeLabel(activityType, service) {
+      const key = String(activityType || "").trim().toLowerCase();
+      const labels = {
+        analise_final: "análise final",
+        bloco_de_treino: "bloco de treino",
+        grammar_practice: "treino de gramática",
+        leitura: "leitura",
+        leitura_com_perguntas: "leitura com perguntas",
+        math_fact_practice: "treino de tabuada",
+        reading_comprehension: "compreensão de leitura",
+        redacao: "redação",
+        treino_finalizado: "treino finalizado"
+      };
+      if (labels[key]) return labels[key];
+      if (service === "interpretacao") return "leitura com perguntas";
+      if (service === "redacao") return "atividade de redação";
+      if (service === "tabuada") return "treino de tabuada";
+      if (service === "ingles") return "treino de inglês";
+      return "atividade registrada";
+    }
+
     function metricNumber(value) {
       if (value === null || value === undefined || value === "") return null;
       const number = Number(value);
@@ -4124,7 +4145,7 @@
           <div class="event-head">
             <div>
               <strong>${escapeHtml(event.title || serviceName(event.service))}</strong>
-              <div class="muted small">${escapeHtml(serviceName(event.service))} - ${escapeHtml(event.activity_type || "atividade")}</div>
+              <div class="muted small">${escapeHtml(serviceName(event.service))} - ${escapeHtml(activityTypeLabel(event.activity_type, event.service))}</div>
               ${adultSummary ? `<p class="muted small">${escapeHtml(adultSummary)}</p>` : ""}
               ${signals.length ? `<div class="event-signals">${signals.map((signal) => `<span class="event-signal">${escapeHtml(signal)}</span>`).join("")}</div>` : ""}
             </div>
