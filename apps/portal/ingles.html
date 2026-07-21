@@ -1049,9 +1049,13 @@
       show("introView");
     });
     $("exitBtn").addEventListener("click", () => {
-      if (confirm("Você quer sair deste treino agora? O progresso desta tentativa não será salvo.")) {
-        show("introView");
+      const wantsToLeave = confirm("Você quer sair deste treino agora? O progresso desta tentativa não será salvo.");
+      if (!wantsToLeave) return;
+      if (portal.enabled) {
+        returnToPortal("activity_pending");
+        return;
       }
+      show("introView");
     });
     $("skillSelect").addEventListener("change", buildMission);
     $("blockA").addEventListener("change", buildMission);
