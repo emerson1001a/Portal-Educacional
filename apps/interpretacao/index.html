@@ -433,15 +433,10 @@
       medio: "O adulto escolheu texto médio para esta atividade.",
       longo: "O adulto escolheu texto longo. Use apenas quando a criança estiver pronta para uma leitura maior."
     };
-    const childManual = {
-      curto: "Você vai ler um texto curto. Leia devagar e procure as pistas no texto.",
-      medio: "Você vai ler um texto médio. Faça uma parte de cada vez, com calma.",
-      longo: "Você vai ler um texto maior. Vá com calma e termine antes de responder."
-    };
     const text = selected ? manual[selected] : profile.copy;
     el("lengthHint").textContent = text;
     el("readingPlanText").textContent = portal.enabled
-      ? (selected ? childManual[selected] : childManual[profile.size])
+      ? "Você vai ler um texto com atenção. Depois, responderá algumas perguntas relacionadas ao texto."
       : `${text} Você pode manter automático ou ajustar manualmente.`;
   }
 
