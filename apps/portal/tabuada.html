@@ -31,15 +31,15 @@
 <body>
   <div class="shell">
     <header class="topbar">
-      <div class="brand"><div class="mark">×</div><div><h1>Tabuada Inteligente</h1><div class="muted">Treino adaptativo para praticar tabuada com leveza e progresso visível.</div></div></div>
-      <div class="rolebar"><span class="pill">Modo</span><button id="roleStudent" class="role-active">Aluno</button><button id="roleTeacher">Professor</button><button id="returnPortalBtn" class="secondary" style="display:none;">Retornar à missão</button></div>
+      <div class="brand"><div class="mark">×</div><div><h1>Tabuada Inteligente</h1><div id="headerCopy" class="muted">Treino de tabuada com leveza e progresso visível.</div></div></div>
+      <div class="rolebar"><span id="modePill" class="pill">Modo</span><button id="roleStudent" class="role-active">Aluno</button><button id="roleTeacher">Professor</button><button id="returnPortalBtn" class="secondary" style="display:none;">Retornar à missão</button></div>
     </header>
     <div id="roleHint" class="muted" style="margin-bottom:12px;">Aluno: treino leve, com incentivo.</div>
     <main class="hero">
       <section class="card setup">
-        <div><h2>Preparar treino</h2><div class="muted">Escolha o aluno e as tabuadas. Depois é só começar.</div></div>
-        <div class="grid2"><div class="field"><label for="studentId">Aluno</label><input id="studentId" placeholder="ex.: miguel01" /><div id="studentContext" class="muted hidden"></div></div><div class="field"><label for="mode">Modo de treino</label><select id="mode"><option value="adaptive" selected>Adaptativo</option><option value="random">Aleatório</option></select></div></div>
-        <div class="field"><label>Tabuadas</label><div class="tabs" id="tabsBox"></div><div class="grid2"><button id="allBtn" class="secondary">Marcar todas</button><button id="noneBtn" class="secondary">Desmarcar todas</button></div></div>
+        <div><h2 id="setupTitle">Preparar treino</h2><div id="setupCopy" class="muted">Escolha o aluno e as tabuadas. Depois é só começar.</div></div>
+        <div id="setupGrid" class="grid2"><div class="field"><label id="studentLabel" for="studentId">Aluno</label><input id="studentId" placeholder="ex.: miguel01" /><div id="studentContext" class="muted hidden"></div></div><div id="modeField" class="field"><label for="mode">Modo de treino</label><select id="mode"><option value="adaptive" selected>Treino guiado</option><option value="random">Aleatório</option></select></div></div>
+        <div class="field"><label>Tabuadas</label><div class="tabs" id="tabsBox"></div><div id="tabActions" class="grid2"><button id="allBtn" class="secondary">Selecionar todas</button><button id="noneBtn" class="secondary">Limpar seleção</button></div></div>
         <div class="grid3"><button id="startBtn" class="primary">Começar</button><button id="pauseBtn" class="caution">Pausar</button><button id="resetBtn" class="danger" title="Apaga dados do aluno atual">Reset do aluno</button></div>
         <div id="studentMini" class="student-panel"><div class="metric"><span class="muted">Últimas 20 tentativas</span><div id="studentMiniBox" style="margin-top:8px;">—</div></div><div class="metric"><span class="muted">Mais precisa treinar</span><strong id="studentMostErrors">—</strong></div><div class="msg" style="grid-column:1/-1;"><h3>Mensagem de incentivo</h3><div id="studentCoachMsg"><strong>—</strong><div class="muted">—</div></div><div class="muted" style="margin-top:8px;"><b>Últimas mensagens:</b></div><div id="studentCoachHistory" class="muted" style="margin-top:4px;">—</div></div></div>
       </section>
@@ -148,11 +148,18 @@
   // Role UI
   const roleStudentBtn = el("roleStudent");
   const roleTeacherBtn = el("roleTeacher");
+  const modePill = el("modePill");
   const returnPortalBtn = el("returnPortalBtn");
   const roleHint = el("roleHint");
   const teacherArea = el("teacherArea");
   const studentMini = el("studentMini");
   const studentContextEl = el("studentContext");
+  const headerCopy = el("headerCopy");
+  const setupTitle = el("setupTitle");
+  const setupCopy = el("setupCopy");
+  const setupGrid = el("setupGrid");
+  const studentLabel = el("studentLabel");
+  const modeField = el("modeField");
 
   // Student coach UI
   const studentCoachMsg = el("studentCoachMsg");
@@ -164,6 +171,7 @@
   const studentIdEl = el("studentId");
   const modeEl = el("mode");
   const tabsBox = el("tabsBox");
+  const tabActions = el("tabActions");
   const allBtn = el("allBtn");
   const noneBtn = el("noneBtn");
 
@@ -290,7 +298,8 @@
 
   async function handleReturnToPortal(button) {
     if (portal.enabled && !missionCompleted) {
-      returnToPortal("activity_pending");
+      const wantsToLeave = confirm("Você quer sair deste treino agora? Esta tentativa não será salva, e a missão continuará disponível.");
+      if (wantsToLeave) returnToPortal("activity_pending");
       return;
     }
     const student = getStudent();
@@ -427,9 +436,9 @@
     roleStudentBtn.classList.toggle("role-active", !isTeacher);
     roleTeacherBtn.classList.toggle("role-active", isTeacher);
     teacherArea.classList.toggle("hidden", !isTeacher);
-    studentMini.classList.toggle("hidden", isTeacher);
+    studentMini.classList.toggle("hidden", isTeacher || portal.enabled);
     roleHint.textContent = portal.enabled
-      ? `Complete ${missionTargetAttempts} respostas e depois retorne à missão.`
+      ? `Você vai praticar algumas contas. Quando completar a meta, poderá voltar para a missão.`
       : (isTeacher
         ? "Professor: visão pedagógica e analítica (demo)."
         : "Aluno: treino leve, com incentivo.");
@@ -1475,30 +1484,38 @@
   if (portal.assignedTabs.length) markSpecificTabs(portal.assignedTabs);
   else if (portal.enabled) markSpecificTabs([2, 3, 4, 5]);
   if (portal.enabled) {
+    headerCopy.textContent = "Faça uma conta por vez. Quando terminar, volte para a missão.";
+    setupTitle.textContent = "Sua missão de tabuada";
+    setupCopy.textContent = "Confira o combinado e clique em Começar.";
+    setupGrid.style.gridTemplateColumns = "1fr";
+    studentLabel.textContent = "Seu nome";
+    modePill.style.display = "none";
+    roleStudentBtn.style.display = "none";
     roleTeacherBtn.style.display = "none";
+    modeField.style.display = "none";
     returnPortalBtn.style.display = "inline-flex";
     studentIdEl.value = portal.childName || "Aluno da missão";
     studentIdEl.readOnly = true;
-    studentIdEl.title = "Aluno definido pela missão no Portal Educacional";
+    studentIdEl.title = "Nome da criança";
+    const missionParts = [];
+    if (portal.assignedTabs.length) missionParts.push(`tabuadas ${portal.assignedTabs.join(", ")}`);
+    missionParts.push(`${missionTargetAttempts} respostas`);
     if (portal.childAge || portal.childBirthDate) {
-      const parts = [];
-      if (portal.childAge) parts.push(`${portal.childAge} anos`);
-      if (portal.childBirthDate) parts.push(`nasc. ${portal.childBirthDate.split("-").reverse().join("/")}`);
-      studentContextEl.textContent = `Dados recebidos do Portal: ${parts.join(" • ")}.`;
+      studentContextEl.textContent = `Esta missão foi preparada para você. Hoje vamos fazer ${missionParts.join(" • ")}.`;
       studentContextEl.classList.remove("hidden");
     }
     if (portal.hasTrainingConfig) {
-      const configParts = [];
-      if (portal.assignedTabs.length) configParts.push(`tabuadas ${portal.assignedTabs.join(", ")}`);
-      configParts.push(`${missionTargetAttempts} respostas`);
-      if (studentContextEl.textContent) studentContextEl.textContent += " ";
-      studentContextEl.textContent += `Missão combinada: ${configParts.join(" • ")}.`;
+      studentContextEl.textContent = `Esta missão foi preparada para você. Hoje vamos fazer ${missionParts.join(" • ")}.`;
       studentContextEl.classList.remove("hidden");
       modeEl.disabled = true;
       tabsBox.querySelectorAll("input").forEach((input) => { input.disabled = true; });
-      allBtn.style.display = "none";
-      noneBtn.style.display = "none";
     }
+    if (!studentContextEl.textContent) {
+      studentContextEl.textContent = "Esta missão foi preparada para você. Faça uma resposta por vez.";
+      studentContextEl.classList.remove("hidden");
+    }
+    tabsBox.querySelectorAll("input").forEach((input) => { input.disabled = true; });
+    tabActions.style.display = "none";
     resetBtn.style.display = "none";
     exportBtn.style.display = "none";
     importBtn.style.display = "none";
