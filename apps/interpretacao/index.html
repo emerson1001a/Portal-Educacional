@@ -267,6 +267,8 @@
     url.searchParams.set("portal_status", status);
     url.searchParams.set("service", "interpretacao");
     if (portal.childId) url.searchParams.set("child_id", portal.childId);
+    if (portal.assignmentId) url.searchParams.set("assignment_id", portal.assignmentId);
+    if (portal.assignmentItemId) url.searchParams.set("assignment_item_id", portal.assignmentItemId);
     return url.toString();
   }
 
@@ -285,6 +287,7 @@
     const returnUrl = new URL(portal.returnUrl);
     const correctMcq = state.submittedAnswers.filter((item) => item && item.tipo === "mcq" && item.correta === 1).length;
     const totalMcq = state.submittedAnswers.filter((item) => item && item.tipo === "mcq").length;
+    const openTotal = state.submittedAnswers.filter((item) => item && item.tipo !== "mcq").length;
     const durationSeconds = Number.isFinite(Number(state.readTimeMs)) ? Math.max(1, Math.round(Number(state.readTimeMs) / 1000)) : null;
     const accuracyPct = totalMcq ? Math.round((correctMcq / totalMcq) * 100) : null;
     const comprehensionScore = totalMcq ? Math.round((correctMcq / totalMcq) * 100) / 100 : null;
@@ -318,8 +321,10 @@
           reading_mode: "generated_text",
           comprehension_score: comprehensionScore,
           accuracy_pct: accuracyPct,
+          objective_scoring_available: totalMcq > 0,
           question_total: state.questions.length,
           answer_total: state.submittedAnswers.filter(Boolean).length,
+          open_answer_total: openTotal,
           reading_time_ms: state.readTimeMs,
           question_times_ms: state.qTimesMs,
           total_questions: state.questions.length,
@@ -754,6 +759,8 @@
     const tags = Array.isArray(q.tags) ? q.tags : [];
     const answerRecord = {
       pergunta_index: state.qIndex+1,
+      type: q.type || "open",
+      tipo: q.type || "open",
       pergunta: q.prompt || "",
       resposta: ans,
       correta,

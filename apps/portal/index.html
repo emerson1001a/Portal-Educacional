@@ -2033,6 +2033,12 @@
       return module?.short_name || module?.name || service || "Atividade";
     }
 
+    function metricNumber(value) {
+      if (value === null || value === undefined || value === "") return null;
+      const number = Number(value);
+      return Number.isFinite(number) ? number : null;
+    }
+
     function assignmentConfigSummary(item) {
       if (item?.module_id !== "tabuada") return "";
       const tabuada = item.config?.tabuada;
@@ -2073,25 +2079,36 @@
         const count = Math.max(artifacts.questions?.length || 0, artifacts.answers?.length || 0);
         signals.push(`${count || ""} pergunta${count === 1 ? "" : "s"}`.trim());
       }
-      if (Number.isFinite(Number(metrics.total_attempts))) {
-        signals.push(`${Number(metrics.total_attempts)} tentativa${Number(metrics.total_attempts) === 1 ? "" : "s"}`);
+      const totalAttempts = metricNumber(metrics.total_attempts);
+      const recentAccuracy = metricNumber(metrics.recent_accuracy_pct);
+      const activityAccuracy = metricNumber(metrics.accuracy_pct);
+      const structureScore = metricNumber(metrics.structure_score);
+      const comprehensionScore = metricNumber(metrics.comprehension_score);
+      const openAnswerTotal = metricNumber(metrics.open_answer_total);
+      const targetAttempts = metricNumber(metrics.target_attempts);
+      const durationSeconds = metricNumber(metrics.duration_seconds);
+
+      if (totalAttempts !== null) {
+        signals.push(`${totalAttempts} tentativa${totalAttempts === 1 ? "" : "s"}`);
       }
-      if (Number.isFinite(Number(metrics.recent_accuracy_pct))) {
-        signals.push(`${Number(metrics.recent_accuracy_pct)}% acerto`);
-      } else if (Number.isFinite(Number(metrics.accuracy_pct))) {
-        signals.push(`${Number(metrics.accuracy_pct)}% acerto`);
+      if (recentAccuracy !== null) {
+        signals.push(`${recentAccuracy}% acerto`);
+      } else if (activityAccuracy !== null) {
+        signals.push(`${activityAccuracy}% acerto`);
+      } else if (openAnswerTotal !== null && openAnswerTotal > 0) {
+        signals.push("respostas abertas");
       }
-      if (Number.isFinite(Number(metrics.structure_score))) {
-        signals.push(`estrutura ${Math.round(Number(metrics.structure_score) * 100)}%`);
+      if (structureScore !== null) {
+        signals.push(`estrutura ${Math.round(structureScore * 100)}%`);
       }
-      if (Number.isFinite(Number(metrics.comprehension_score))) {
-        signals.push(`compreensão ${Math.round(Number(metrics.comprehension_score) * 100)}%`);
+      if (comprehensionScore !== null) {
+        signals.push(`compreensão ${Math.round(comprehensionScore * 100)}%`);
       }
-      if (Number.isFinite(Number(metrics.target_attempts))) {
-        signals.push(`meta ${Number(metrics.target_attempts)}`);
+      if (targetAttempts !== null) {
+        signals.push(`meta ${targetAttempts}`);
       }
-      if (Number.isFinite(Number(metrics.duration_seconds))) {
-        const minutes = Math.max(1, Math.round(Number(metrics.duration_seconds) / 60));
+      if (durationSeconds !== null) {
+        const minutes = Math.max(1, Math.round(durationSeconds / 60));
         signals.push(`${minutes} min`);
       }
       if (metrics.child_self_assessment_label) {
@@ -2142,14 +2159,16 @@
 
     function eventPerformanceScore(event) {
       const metrics = event?.metrics && typeof event.metrics === "object" ? event.metrics : {};
+      const recentAccuracy = metricNumber(metrics.recent_accuracy_pct);
+      const activityAccuracy = metricNumber(metrics.accuracy_pct);
       const candidates = [
         metrics.structure_score,
         metrics.comprehension_score,
         metrics.accuracy_score,
-        Number.isFinite(Number(metrics.recent_accuracy_pct)) ? Number(metrics.recent_accuracy_pct) / 100 : null,
-        Number.isFinite(Number(metrics.accuracy_pct)) ? Number(metrics.accuracy_pct) / 100 : null
+        recentAccuracy !== null ? recentAccuracy / 100 : null,
+        activityAccuracy !== null ? activityAccuracy / 100 : null
       ];
-      const score = candidates.find((value) => Number.isFinite(Number(value)));
+      const score = candidates.find((value) => metricNumber(value) !== null);
       return score === undefined || score === null ? null : Math.max(0, Math.min(1, Number(score)));
     }
 
@@ -3984,30 +4003,45 @@
     function eventMetricsDetails(event) {
       const metrics = event.metrics && typeof event.metrics === "object" ? event.metrics : {};
       const rows = [];
+      const totalAttempts = metricNumber(metrics.total_attempts);
+      const recentAttempts = metricNumber(metrics.recent_attempts);
+      const recentCorrect = metricNumber(metrics.recent_correct);
+      const recentAccuracy = metricNumber(metrics.recent_accuracy_pct);
+      const activityAccuracy = metricNumber(metrics.accuracy_pct);
+      const structureScore = metricNumber(metrics.structure_score);
+      const comprehensionScore = metricNumber(metrics.comprehension_score);
+      const wordCount = metricNumber(metrics.word_count);
+      const openAnswerTotal = metricNumber(metrics.open_answer_total);
+      const targetAttempts = metricNumber(metrics.target_attempts);
+      const childAge = metricNumber(metrics.child_age);
+      const durationSeconds = metricNumber(metrics.duration_seconds);
 
-      if (Number.isFinite(Number(metrics.total_attempts))) {
-        rows.push(["Tentativas totais", Number(metrics.total_attempts)]);
+      if (totalAttempts !== null) {
+        rows.push(["Tentativas totais", totalAttempts]);
       }
-      if (Number.isFinite(Number(metrics.recent_attempts))) {
-        rows.push(["Tentativas neste envio", Number(metrics.recent_attempts)]);
+      if (recentAttempts !== null) {
+        rows.push(["Tentativas neste envio", recentAttempts]);
       }
-      if (Number.isFinite(Number(metrics.recent_correct))) {
-        rows.push(["Acertos neste envio", Number(metrics.recent_correct)]);
+      if (recentCorrect !== null) {
+        rows.push(["Acertos neste envio", recentCorrect]);
       }
-      if (Number.isFinite(Number(metrics.recent_accuracy_pct))) {
-        rows.push(["Precisão recente", `${Number(metrics.recent_accuracy_pct)}%`]);
+      if (recentAccuracy !== null) {
+        rows.push(["Precisão recente", `${recentAccuracy}%`]);
       }
-      if (Number.isFinite(Number(metrics.accuracy_pct))) {
-        rows.push(["Precisão da atividade", `${Number(metrics.accuracy_pct)}%`]);
+      if (activityAccuracy !== null) {
+        rows.push(["Precisão da atividade", `${activityAccuracy}%`]);
       }
-      if (Number.isFinite(Number(metrics.structure_score))) {
-        rows.push(["Estrutura do texto", `${Math.round(Number(metrics.structure_score) * 100)}%`]);
+      if (activityAccuracy === null && recentAccuracy === null && openAnswerTotal !== null && openAnswerTotal > 0) {
+        rows.push(["Correção objetiva", "Não se aplica a respostas abertas. Use o feedback e as respostas salvas."]);
       }
-      if (Number.isFinite(Number(metrics.comprehension_score))) {
-        rows.push(["Compreensão", `${Math.round(Number(metrics.comprehension_score) * 100)}%`]);
+      if (structureScore !== null) {
+        rows.push(["Estrutura do texto", `${Math.round(structureScore * 100)}%`]);
       }
-      if (Number.isFinite(Number(metrics.word_count))) {
-        rows.push(["Palavras", Number(metrics.word_count)]);
+      if (comprehensionScore !== null) {
+        rows.push(["Compreensão", `${Math.round(comprehensionScore * 100)}%`]);
+      }
+      if (wordCount !== null) {
+        rows.push(["Palavras", wordCount]);
       }
       if (metrics.writing_type) {
         rows.push(["Tipo de escrita", metrics.writing_type]);
@@ -4015,8 +4049,8 @@
       if (metrics.difficulty_level) {
         rows.push(["Dificuldade", metrics.difficulty_level]);
       }
-      if (Number.isFinite(Number(metrics.target_attempts))) {
-        rows.push(["Meta combinada", `${Number(metrics.target_attempts)} respostas`]);
+      if (targetAttempts !== null) {
+        rows.push(["Meta combinada", `${targetAttempts} respostas`]);
       }
       const practicedTabs = Array.isArray(metrics.selected_tabs) && metrics.selected_tabs.length
         ? metrics.selected_tabs
@@ -4029,11 +4063,11 @@
       if (metrics.training_mode) {
         rows.push(["Modo de treino", metrics.training_mode === "random" ? "Aleatório" : "Adaptativo"]);
       }
-      if (Number.isFinite(Number(metrics.child_age))) {
-        rows.push(["Idade no registro", `${Number(metrics.child_age)} anos`]);
+      if (childAge !== null) {
+        rows.push(["Idade no registro", `${childAge} anos`]);
       }
-      if (Number.isFinite(Number(metrics.duration_seconds))) {
-        const totalSeconds = Math.max(0, Number(metrics.duration_seconds));
+      if (durationSeconds !== null) {
+        const totalSeconds = Math.max(0, durationSeconds);
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
         rows.push(["Tempo da missão", minutes ? `${minutes}min ${seconds}s` : `${seconds}s`]);
