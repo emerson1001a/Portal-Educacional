@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Missao Ingles</title>
+  <title>Missão de Inglês</title>
   <style>
     :root {
       --ink: #132033;
@@ -345,11 +345,11 @@
       <div class="brand">
         <div class="logo">EN</div>
         <div>
-          <h1>Missao Ingles</h1>
-          <p class="muted">Prototipo inicial com blocos curtos e exercicios variados.</p>
+          <h1>Missão de Inglês</h1>
+          <p class="muted">Faça uma pergunta por vez e avance com calma.</p>
         </div>
       </div>
-      <button id="resetBtn" class="ghost" type="button">Recomecar</button>
+      <button id="resetBtn" class="ghost" type="button">Recomeçar</button>
     </div>
 
     <div class="grid" id="appGrid">
@@ -358,7 +358,7 @@
           <span class="pill">adulto configura</span>
           <div>
             <h2>Escolha o treino</h2>
-            <p>O adulto escolhe a habilidade e os blocos. A crianca faz uma parte de cada vez.</p>
+            <p>O adulto escolhe a habilidade e os blocos. A criança faz uma parte de cada vez.</p>
           </div>
         </div>
 
@@ -378,16 +378,16 @@
         </div>
 
         <div class="field">
-          <label for="supportLevel">Nivel de apoio</label>
+          <label for="supportLevel">Nível de apoio</label>
           <select id="supportLevel">
-            <option value="high" selected>Apoio alto - instrucoes em portugues</option>
-            <option value="medium">Apoio medio - comandos mais curtos</option>
-            <option value="low">Apoio baixo - mais ingles na tela</option>
+            <option value="high" selected>Apoio alto - instruções em português</option>
+            <option value="medium">Apoio médio - comandos mais curtos</option>
+            <option value="low">Apoio baixo - mais inglês na tela</option>
           </select>
         </div>
 
         <div class="field">
-          <label>Blocos da missao</label>
+          <label>Blocos da missão</label>
           <label class="blockOption">
             <input id="blockA" type="checkbox" checked>
             <span><strong>Completar lacuna</strong><br><span class="muted">O mesmo formato em todas as perguntas do bloco.</span></span>
@@ -399,35 +399,35 @@
         </div>
 
         <div class="field">
-          <label for="itemsPerBlock">Questoes por bloco</label>
+          <label for="itemsPerBlock">Questões por bloco</label>
           <select id="itemsPerBlock">
             <option value="5">5 por bloco</option>
             <option value="10" selected>10 por bloco</option>
           </select>
         </div>
 
-        <button id="startBtn" class="success" type="button">Preparar missao</button>
+        <button id="startBtn" class="success" type="button">Preparar missão</button>
       </aside>
 
       <section class="mission">
         <div id="introView">
-          <span class="blockBadge">missao pronta</span>
+          <span class="blockBadge">missão pronta</span>
           <h2>Vamos treinar uma parte pequena.</h2>
-          <p class="muted">Quando apertar comecar, o primeiro bloco aparece. Cada bloco mantem o mesmo tipo de exercicio para ficar previsivel.</p>
-          <div class="instruction">Escolha uma resposta por vez. Se errar, tudo bem: a pista aparece e voce tenta a proxima com calma.</div>
-          <button id="beginBtn" type="button">Comecar</button>
+          <p class="muted">Quando apertar começar, o primeiro bloco aparece. Cada parte mantém o mesmo tipo de exercício para ficar previsível.</p>
+          <div class="instruction">Escolha uma resposta por vez. Se errar, tudo bem: a pista aparece e você tenta a próxima com calma.</div>
+          <button id="beginBtn" type="button">Começar</button>
         </div>
 
         <div id="exerciseView" class="hidden">
           <div class="progressBox">
-            <div><strong id="progressText">Questao 1 de 10</strong></div>
+            <div><strong id="progressText">Questão 1 de 10</strong></div>
             <div class="muted" id="blockText">Bloco 1: completar lacuna</div>
             <div class="barTrack"><div id="bar" class="bar"></div></div>
           </div>
 
-          <span id="blockBadge" class="blockBadge">bloco</span>
-          <h2 id="missionTitle">Treino de Ingles</h2>
-          <div id="instruction" class="instruction">Escolha a melhor opcao.</div>
+          <span id="blockBadge" class="blockBadge hidden">bloco</span>
+          <h2 id="missionTitle">Treino de Inglês</h2>
+          <div id="instruction" class="instruction">Escolha a melhor opção.</div>
 
           <div class="question">
             <div id="sentence" class="sentence"></div>
@@ -438,7 +438,7 @@
           <div class="actions">
             <div class="leftActions">
               <button id="checkBtn" type="button">Responder</button>
-              <button id="nextBtn" class="success hidden" type="button">Proxima</button>
+              <button id="nextBtn" class="success hidden" type="button">Próxima</button>
             </div>
             <div class="rightActions">
               <button id="exitBtn" class="secondary" type="button">Sair</button>
@@ -447,21 +447,21 @@
         </div>
 
         <div id="summaryView" class="hidden">
-          <span class="blockBadge">missao concluida</span>
+          <span class="blockBadge">missão concluída</span>
           <h2 id="doneTitle">Treino de hoje completo!</h2>
-          <p class="muted" id="doneText">Voce terminou a missao. Mostre para o adulto acompanhar seu progresso.</p>
+          <p class="muted" id="doneText">Você terminou a missão. Mostre para o adulto acompanhar seu progresso.</p>
 
           <div class="statGrid">
             <div class="stat"><span class="muted">Acertos</span><strong id="correctStat">0</strong></div>
-            <div class="stat"><span class="muted">Questoes</span><strong id="totalStat">0</strong></div>
+            <div class="stat"><span class="muted">Questões</span><strong id="totalStat">0</strong></div>
             <div class="stat"><span class="muted">Blocos</span><strong id="blockStat">0</strong></div>
           </div>
 
-          <h3 id="evidenceTitle" style="margin-top:18px">Evidencia que o portal receberia</h3>
+          <h3 id="evidenceTitle" style="margin-top:18px">Evidência que o portal receberia</h3>
           <div id="evidence" class="evidence"></div>
           <div class="actions">
-            <button id="againBtn" class="success" type="button">Fazer outra missao</button>
-            <button id="returnPortalBtn" class="secondary hidden" type="button">Retornar a missao</button>
+            <button id="againBtn" class="success" type="button">Fazer outra missão</button>
+            <button id="returnPortalBtn" class="secondary hidden" type="button">Retornar à missão</button>
           </div>
         </div>
       </section>
@@ -494,15 +494,15 @@
         chooseInstruction: "Leia com calma e escolha a melhor frase.",
         correctFeedback: "Boa! Essa combinou muito bem.",
         almostLabel: "Quase.",
-        doneText: "Voce terminou o treino de hoje. O adulto ja consegue ver o que foi praticado."
+        doneText: "Você terminou o treino de hoje. O adulto já consegue ver o que foi praticado."
       },
       medium: {
-        label: "Apoio medio",
+        label: "Apoio médio",
         fillInstruction: "Complete a frase.",
         chooseInstruction: "Escolha a frase correta.",
         correctFeedback: "Boa! Essa combinou muito bem.",
         almostLabel: "Quase.",
-        doneText: "Voce terminou o treino de hoje. O adulto ja consegue ver o que foi praticado."
+        doneText: "Você terminou o treino de hoje. O adulto já consegue ver o que foi praticado."
       },
       low: {
         label: "Apoio baixo",
@@ -528,10 +528,10 @@
           { sentence: "You ___ very kind.", answer: "are", options: ["am", "is", "are"], clue: "Com you, usamos are." },
           { sentence: "It ___ a pencil.", answer: "is", options: ["am", "is", "are"], clue: "Com it, usamos is." },
           { sentence: "My parents ___ at home.", answer: "are", options: ["am", "is", "are"], clue: "Quando falamos de mais de uma pessoa, usamos are." },
-          { sentence: "My mother ___ a teacher.", answer: "is", options: ["am", "is", "are"], clue: "My mother combina com she, entao usamos is." },
-          { sentence: "The books ___ on the table.", answer: "are", options: ["am", "is", "are"], clue: "Books esta no plural, entao usamos are." },
+          { sentence: "My mother ___ a teacher.", answer: "is", options: ["am", "is", "are"], clue: "My mother combina com she, então usamos is." },
+          { sentence: "The books ___ on the table.", answer: "are", options: ["am", "is", "are"], clue: "Books está no plural, então usamos are." },
           { sentence: "I ___ eleven years old.", answer: "am", options: ["am", "is", "are"], clue: "Com I, usamos am." },
-          { sentence: "The dog ___ small.", answer: "is", options: ["am", "is", "are"], clue: "The dog combina com it, entao usamos is." }
+          { sentence: "The dog ___ small.", answer: "is", options: ["am", "is", "are"], clue: "The dog combina com it, então usamos is." }
         ],
         choose: [
           { sentence: "Escolha a frase correta.", answer: "She is my friend.", options: ["She am my friend.", "She is my friend.", "She are my friend."], clue: "She combina com is." },
@@ -558,12 +558,12 @@
           { sentence: "You ___ very fast.", answer: "read", options: ["read", "reads", "reading"], clue: "Com you, usamos o verbo base: read." },
           { sentence: "Maria ___ her homework every day.", answer: "does", options: ["do", "does", "doing"], clue: "Maria combina com she; usamos does." },
           { sentence: "My father ___ coffee in the morning.", answer: "drinks", options: ["drink", "drinks", "drinking"], clue: "My father combina com he; usamos drinks." },
-          { sentence: "The children ___ after lunch.", answer: "play", options: ["play", "plays", "playing"], clue: "The children esta no plural; usamos play." }
+          { sentence: "The children ___ after lunch.", answer: "play", options: ["play", "plays", "playing"], clue: "The children está no plural; usamos play." }
         ],
         choose: [
           { sentence: "Qual frase fala de algo que acontece sempre?", answer: "She plays soccer every day.", options: ["She is playing soccer now.", "She plays soccer every day.", "She play soccer every day."], clue: "Every day mostra rotina; com she, usamos plays." },
           { sentence: "Escolha a frase correta.", answer: "My mother cooks very well.", options: ["My mother cook very well.", "My mother cooks very well.", "My mother cooking very well."], clue: "My mother combina com she; usamos cooks." },
-          { sentence: "Qual frase esta no simple present?", answer: "They study English on Mondays.", options: ["They are studying now.", "They studies English.", "They study English on Mondays."], clue: "On Mondays mostra rotina; com they, usamos study." },
+          { sentence: "Qual frase está no simple present?", answer: "They study English on Mondays.", options: ["They are studying now.", "They studies English.", "They study English on Mondays."], clue: "On Mondays mostra rotina; com they, usamos study." },
           { sentence: "Escolha a frase correta.", answer: "He watches TV after school.", options: ["He watch TV after school.", "He watches TV after school.", "He watching TV after school."], clue: "Com he, usamos watches." },
           { sentence: "Qual frase fala de rotina?", answer: "I eat breakfast every day.", options: ["I am eating now.", "I eats breakfast.", "I eat breakfast every day."], clue: "Every day mostra rotina; com I, usamos eat." },
           { sentence: "Escolha a frase correta.", answer: "The dog runs in the garden.", options: ["The dog runs in the garden.", "The dog run in the garden.", "The dog is run in the garden."], clue: "The dog combina com it; usamos runs." }
@@ -577,23 +577,23 @@
           { sentence: "She is ___ a book.", answer: "reading", options: ["read", "reads", "reading"], clue: "Depois de is, usamos o verbo com ing." },
           { sentence: "They are ___ soccer.", answer: "playing", options: ["play", "plays", "playing"], clue: "Depois de are, usamos o verbo com ing." },
           { sentence: "I am ___ my homework.", answer: "doing", options: ["do", "does", "doing"], clue: "Depois de am, usamos o verbo com ing." },
-          { sentence: "He is ___ water.", answer: "drinking", options: ["drink", "drinks", "drinking"], clue: "A acao esta acontecendo agora: drinking." },
-          { sentence: "We are ___ English.", answer: "studying", options: ["study", "studies", "studying"], clue: "Com are, a acao fica studying." },
-          { sentence: "The dog is ___.", answer: "running", options: ["run", "runs", "running"], clue: "A forma com ing e running." },
+          { sentence: "He is ___ water.", answer: "drinking", options: ["drink", "drinks", "drinking"], clue: "A ação está acontecendo agora: drinking." },
+          { sentence: "We are ___ English.", answer: "studying", options: ["study", "studies", "studying"], clue: "Com are, a ação fica studying." },
+          { sentence: "The dog is ___.", answer: "running", options: ["run", "runs", "running"], clue: "A forma com ing é running." },
           { sentence: "You are ___ very well.", answer: "writing", options: ["write", "writes", "writing"], clue: "Depois de are, usamos writing." },
           { sentence: "My father is ___ dinner.", answer: "cooking", options: ["cook", "cooks", "cooking"], clue: "Depois de is, usamos cooking." },
           { sentence: "The children are ___.", answer: "singing", options: ["sing", "sings", "singing"], clue: "Com are, usamos singing." },
           { sentence: "Look! Maria is ___.", answer: "drawing", options: ["draw", "draws", "drawing"], clue: "Look indica agora; usamos drawing." },
-          { sentence: "Now, I am ___.", answer: "listening", options: ["listen", "listens", "listening"], clue: "Now indica acao acontecendo agora." },
+          { sentence: "Now, I am ___.", answer: "listening", options: ["listen", "listens", "listening"], clue: "Now indica ação acontecendo agora." },
           { sentence: "They are ___ in the classroom.", answer: "talking", options: ["talk", "talks", "talking"], clue: "Depois de are, usamos talking." }
         ],
         choose: [
-          { sentence: "Qual frase fala de algo acontecendo agora?", answer: "She is studying now.", options: ["She studies every day.", "She is studying now.", "She study now."], clue: "Now mostra que a acao esta acontecendo agora." },
-          { sentence: "Qual frase esta correta?", answer: "They are playing soccer.", options: ["They are playing soccer.", "They is playing soccer.", "They playing soccer."], clue: "They combina com are, e a acao usa ing." },
-          { sentence: "Qual frase fala de agora?", answer: "He is eating now.", options: ["He eats every day.", "He eating now.", "He is eating now."], clue: "He is eating now mostra acao acontecendo agora." },
-          { sentence: "Qual frase esta correta?", answer: "I am reading a book.", options: ["I is reading a book.", "I am reading a book.", "I reading a book."], clue: "I combina com am." },
+          { sentence: "Qual frase fala de algo acontecendo agora?", answer: "She is studying now.", options: ["She studies every day.", "She is studying now.", "She study now."], clue: "Now mostra que a ação está acontecendo agora." },
+          { sentence: "Qual frase está correta?", answer: "They are playing soccer.", options: ["They are playing soccer.", "They is playing soccer.", "They playing soccer."], clue: "They combina com are, e a ação usa ing." },
+          { sentence: "Qual frase fala de agora?", answer: "He is eating now.", options: ["He eats every day.", "He eating now.", "He is eating now."], clue: "He is eating now mostra ação acontecendo agora." },
+          { sentence: "Qual frase está correta?", answer: "I am reading a book.", options: ["I is reading a book.", "I am reading a book.", "I reading a book."], clue: "I combina com am." },
           { sentence: "Qual frase fala de algo acontecendo agora?", answer: "We are learning English now.", options: ["We learn English on Mondays.", "We are learning English now.", "We learns English."], clue: "Are learning now indica agora." },
-          { sentence: "Qual frase esta correta?", answer: "The dog is running.", options: ["The dog are running.", "The dog is running.", "The dog running."], clue: "The dog combina com is." }
+          { sentence: "Qual frase está correta?", answer: "The dog is running.", options: ["The dog are running.", "The dog is running.", "The dog running."], clue: "The dog combina com is." }
         ]
       },
       question_words: {
@@ -601,26 +601,26 @@
         childTitle: "Vamos escolher a melhor palavra para fazer a pergunta.",
         childTitleLow: "Let's choose the best question word.",
         fill: [
-          { sentence: "___ is your name?", answer: "What", options: ["What", "Where", "When"], clue: "What pergunta sobre coisa, nome ou informacao." },
+          { sentence: "___ is your name?", answer: "What", options: ["What", "Where", "When"], clue: "What pergunta sobre coisa, nome ou informação." },
           { sentence: "___ do you live?", answer: "Where", options: ["Who", "Where", "Why"], clue: "Where pergunta sobre lugar." },
           { sentence: "___ is your birthday?", answer: "When", options: ["When", "What", "How"], clue: "When pergunta sobre tempo ou data." },
           { sentence: "___ is your teacher?", answer: "Who", options: ["Who", "Where", "When"], clue: "Who pergunta sobre pessoa." },
           { sentence: "___ are you sad?", answer: "Why", options: ["What", "Why", "Who"], clue: "Why pergunta o motivo." },
           { sentence: "___ do you go to school?", answer: "How", options: ["How", "When", "Where"], clue: "How pergunta o jeito ou a forma." },
           { sentence: "___ is your pencil?", answer: "Where", options: ["Where", "Who", "Why"], clue: "Where pergunta sobre lugar." },
-          { sentence: "___ is your favorite color?", answer: "What", options: ["What", "When", "How"], clue: "What pergunta sobre coisa, nome ou informacao." },
+          { sentence: "___ is your favorite color?", answer: "What", options: ["What", "When", "How"], clue: "What pergunta sobre coisa, nome ou informação." },
           { sentence: "___ is at the door?", answer: "Who", options: ["When", "Who", "Where"], clue: "Who pergunta sobre pessoa." },
           { sentence: "___ do you study English?", answer: "When", options: ["When", "Who", "Why"], clue: "When pergunta sobre tempo ou data." },
           { sentence: "___ are you happy?", answer: "Why", options: ["Why", "What", "Where"], clue: "Why pergunta o motivo." },
           { sentence: "___ do you spell your name?", answer: "How", options: ["Where", "How", "Who"], clue: "How pergunta o jeito ou a forma." }
         ],
         choose: [
-          { sentence: "A resposta e: My name is Ana.", answer: "What is your name?", options: ["What is your name?", "Where is your name?", "When is your name?"], clue: "What pergunta nome ou informacao." },
-          { sentence: "A resposta e: I live in Brazil.", answer: "Where do you live?", options: ["Who do you live?", "Where do you live?", "Why do you live?"], clue: "Where pergunta lugar." },
-          { sentence: "A resposta e: My birthday is in May.", answer: "When is your birthday?", options: ["When is your birthday?", "Who is your birthday?", "How is your birthday?"], clue: "When pergunta tempo ou data." },
-          { sentence: "A resposta e: My teacher is Miss Paula.", answer: "Who is your teacher?", options: ["Where is your teacher?", "Who is your teacher?", "Why is your teacher?"], clue: "Who pergunta pessoa." },
-          { sentence: "A resposta e: I am happy because I won.", answer: "Why are you happy?", options: ["Why are you happy?", "When are you happy?", "Who are you happy?"], clue: "Why pergunta o motivo." },
-          { sentence: "A resposta e: I go by bus.", answer: "How do you go to school?", options: ["What do you go to school?", "How do you go to school?", "Who do you go to school?"], clue: "How pergunta o jeito ou a forma." }
+          { sentence: "A resposta é: My name is Ana.", answer: "What is your name?", options: ["What is your name?", "Where is your name?", "When is your name?"], clue: "What pergunta nome ou informação." },
+          { sentence: "A resposta é: I live in Brazil.", answer: "Where do you live?", options: ["Who do you live?", "Where do you live?", "Why do you live?"], clue: "Where pergunta lugar." },
+          { sentence: "A resposta é: My birthday is in May.", answer: "When is your birthday?", options: ["When is your birthday?", "Who is your birthday?", "How is your birthday?"], clue: "When pergunta tempo ou data." },
+          { sentence: "A resposta é: My teacher is Miss Paula.", answer: "Who is your teacher?", options: ["Where is your teacher?", "Who is your teacher?", "Why is your teacher?"], clue: "Who pergunta pessoa." },
+          { sentence: "A resposta é: I am happy because I won.", answer: "Why are you happy?", options: ["Why are you happy?", "When are you happy?", "Who are you happy?"], clue: "Why pergunta o motivo." },
+          { sentence: "A resposta é: I go by bus.", answer: "How do you go to school?", options: ["What do you go to school?", "How do you go to school?", "Who do you go to school?"], clue: "How pergunta o jeito ou a forma." }
         ]
       }
     };
@@ -740,7 +740,7 @@
       $("missionTitle").textContent = state.config.support_level === "low" && pool.childTitleLow ? pool.childTitleLow : pool.childTitle;
       $("blockBadge").textContent = `Bloco ${item.blockIndex + 1}: ${item.blockLabel}`;
       $("blockText").textContent = `Bloco ${item.blockIndex + 1}: ${item.blockLabel}`;
-      $("progressText").textContent = `Questao ${state.index + 1} de ${state.items.length}`;
+      $("progressText").textContent = `Questão ${state.index + 1} de ${state.items.length}`;
       $("bar").style.width = `${((state.index) / state.items.length) * 100}%`;
       $("instruction").textContent = item.blockType === "fill" ? support.fillInstruction : support.chooseInstruction;
       $("sentence").textContent = item.sentence;
@@ -800,7 +800,7 @@
       }
       $("checkBtn").classList.add("hidden");
       $("nextBtn").classList.remove("hidden");
-      $("nextBtn").textContent = state.index === state.items.length - 1 ? "Finalizar" : "Proxima";
+      $("nextBtn").textContent = state.index === state.items.length - 1 ? "Finalizar" : "Próxima";
     }
 
     function buildErrorFeedback(item, selected, support) {
@@ -930,7 +930,7 @@
       const evidence = {
         service: "ingles",
         activity_type: "grammar_practice",
-        title: `Treino de Ingles - ${state.config.skill_label}`,
+        title: `Treino de Inglês - ${state.config.skill_label}`,
         metrics: {
           schema_version: "1.0",
           module_version: "ingles-portal-1.0",
@@ -954,14 +954,14 @@
         feedback: {
           child: {
             tone: "positive",
-            message: "Voce terminou a missao de hoje. Algumas frases ja ficaram mais seguras.",
+            message: "Você terminou a missão de hoje. Algumas frases já ficaram mais seguras.",
             next_step: "Mostre para o adulto acompanhar."
           },
           adult: {
-            summary: "A missao registrou desempenho por bloco para comparar formatos de exercicio.",
-            strengths: correct ? ["concluiu a missao", "respondeu perguntas de forma consistente"] : ["concluiu a missao"],
+            summary: "A missão registrou desempenho por bloco para comparar formatos de exercício.",
+            strengths: correct ? ["concluiu a missão", "respondeu perguntas de forma consistente"] : ["concluiu a missão"],
             attention_points: blockStats.filter((block) => block.accuracy_pct < 70).map((block) => `revisar ${block.label}`),
-            recipe: ["Na proxima pratica, mantenha a mesma habilidade e varie as frases."]
+            recipe: ["Na próxima prática, mantenha a mesma habilidade e varie as frases."]
           }
         },
         artifacts: {
@@ -981,8 +981,8 @@
         $("doneText").textContent = "Treino completo. Registrando no Portal...";
         state.portalEventSaved = await sendPortalEvent(evidence);
         $("doneText").textContent = state.portalEventSaved
-          ? "Treino registrado no Portal. Agora voce pode retornar para a missao."
-          : "Treino completo. Nao consegui registrar no Portal agora, mas voce pode tentar retornar e pedir ajuda ao adulto.";
+          ? "Treino registrado no Portal. Agora você pode retornar para a missão."
+          : "Treino completo. Não consegui registrar no Portal agora, mas você pode tentar retornar e pedir ajuda ao adulto.";
       }
     }
 
@@ -1014,7 +1014,7 @@
         const data = await response.json().catch(() => ({}));
         return response.ok && data.ok;
       } catch (err) {
-        console.warn("Falha ao registrar Ingles no Portal:", err);
+        console.warn("Falha ao registrar Inglês no Portal:", err);
         return false;
       }
     }
@@ -1049,7 +1049,7 @@
       show("introView");
     });
     $("exitBtn").addEventListener("click", () => {
-      if (confirm("Voce quer sair deste treino agora? O progresso desta tentativa nao sera salvo.")) {
+      if (confirm("Você quer sair deste treino agora? O progresso desta tentativa não será salvo.")) {
         show("introView");
       }
     });
