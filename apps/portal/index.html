@@ -2080,7 +2080,28 @@
     function eventAdultSummary(event) {
       const feedback = event?.feedback && typeof event.feedback === "object" ? event.feedback : {};
       const adult = feedback.adult && typeof feedback.adult === "object" ? feedback.adult : {};
-      return adult.summary || (Array.isArray(adult.recipe) ? adult.recipe[0] : "") || "";
+      return normalizePortalText(adult.summary || (Array.isArray(adult.recipe) ? adult.recipe[0] : "") || "");
+    }
+
+    function normalizePortalText(text) {
+      if (!text) return "";
+      return String(text)
+        .replace(/\bRedacao\b/g, "Redação")
+        .replace(/\bredacao\b/g, "redação")
+        .replace(/\bOrientacao\b/g, "Orientação")
+        .replace(/\borientacao\b/g, "orientação")
+        .replace(/\bConfianca\b/g, "Confiança")
+        .replace(/\bconfianca\b/g, "confiança")
+        .replace(/\bVocabulario\b/g, "Vocabulário")
+        .replace(/\bvocabulario\b/g, "vocabulário")
+        .replace(/\bPratica\b/g, "Prática")
+        .replace(/\bpratica\b/g, "prática")
+        .replace(/\bEvolucao\b/g, "Evolução")
+        .replace(/\bevolucao\b/g, "evolução")
+        .replace(/\bCrianca\b/g, "Criança")
+        .replace(/\bcrianca\b/g, "criança")
+        .replace(/\bInicio\b/g, "Início")
+        .replace(/\binicio\b/g, "início");
     }
 
     function eventSignals(event) {
@@ -2219,6 +2240,48 @@
         return { status: "atenção com leveza", detail: "Os sinais recentes pedem uma tarefa menor e mais guiada.", direction: "down" };
       }
       return { status: "estável", detail: "A área está relativamente estável. Mantenha prática curta e observe autonomia.", direction: "stable" };
+    }
+
+    function areaPracticeName(area) {
+      return {
+        leitura: "leitura",
+        escrita: "escrita",
+        matematica: "matemática",
+        ingles: "inglês"
+      }[area] || "aprendizagem";
+    }
+
+    function areaNextStep(area) {
+      return {
+        leitura: "O próximo passo é pedir que a criança mostre a pista no texto antes de responder, mantendo perguntas curtas e bem ligadas à leitura.",
+        escrita: "O próximo passo é preservar a escrita por partes e trabalhar apenas um refinamento por vez, como melhorar uma frase, escolher palavras mais precisas ou deixar a sequência mais clara.",
+        matematica: "O próximo passo é manter treinos curtos e repetidos, observando quais tabuadas ainda pedem mais segurança antes de aumentar a quantidade.",
+        ingles: "O próximo passo é manter blocos pequenos e previsíveis, repetindo o mesmo ponto gramatical até a criança responder com mais segurança."
+      }[area] || "O próximo passo é manter uma prática pequena, observar a resposta da criança e registrar uma evidência simples.";
+    }
+
+    function areaLongitudinalAnalysis(area, evidences, trend, latestSummary) {
+      if (!evidences.length) return "";
+      const latest = evidences[0];
+      const oldest = evidences[evidences.length - 1];
+      const latestDate = latest?.occurred_at || latest?.created_at;
+      const oldestDate = oldest?.occurred_at || oldest?.created_at;
+      const period = latestDate && oldestDate && formatDate(latestDate) !== formatDate(oldestDate)
+        ? ` entre ${formatDate(oldestDate)} e ${formatDate(latestDate)}`
+        : "";
+      const practice = areaPracticeName(area);
+      const evidenceText = evidences.length >= 12
+        ? `Há ${evidences.length} evidências de ${practice}${period}, o que já permite uma leitura longitudinal mais consistente.`
+        : evidences.length >= 4
+          ? `Há ${evidences.length} evidências de ${practice}${period}, suficientes para observar sinais iniciais com mais cuidado.`
+          : `Ainda há poucas evidências de ${practice}; use esta leitura como ponto de partida.`;
+      const trendText = trend.direction === "up"
+        ? "Os registros mais recentes indicam avanço em relação aos anteriores."
+        : trend.direction === "down"
+          ? "Os registros recentes pedem reduzir a tarefa e oferecer mais apoio antes de aumentar a exigência."
+          : "Os registros estão relativamente estáveis; a continuidade agora é mais importante do que aumentar a dificuldade.";
+      const latestText = latestSummary ? ` O sinal mais recente aponta: ${latestSummary}` : "";
+      return normalizePortalText(`${evidenceText} ${trendText}${latestText} ${areaNextStep(area)}`);
     }
 
     function moduleForArea(area) {
@@ -3256,6 +3319,7 @@
         const latest = evidences[0];
         const latestSummary = latest ? eventAdultSummary(latest) : "";
         const trend = areaTrend(evidences);
+        const analysis = areaLongitudinalAnalysis(area, evidences, trend, latestSummary);
         const card = document.createElement("article");
         card.className = "evolution-card";
         card.innerHTML = `
@@ -3264,7 +3328,7 @@
           <p class="muted">${goals.length ? `${goals.length} meta${goals.length === 1 ? "" : "s"} ativa${goals.length === 1 ? "" : "s"}.` : "Sem meta ativa nesta área."}</p>
           <p class="small"><strong>${escapeHtml(trend.status)}:</strong> ${escapeHtml(trend.detail)}</p>
           <p class="small">${latest ? `Última prática: ${formatDate(latest.occurred_at || latest.created_at)}` : recipeForArea(area)}</p>
-          ${latestSummary ? `<p class="small"><strong>Leitura:</strong> ${escapeHtml(latestSummary)}</p>` : ""}
+          ${analysis ? `<p class="small"><strong>Análise:</strong> ${escapeHtml(analysis)}</p>` : ""}
         `;
         els.evolutionGrid.appendChild(card);
       });
