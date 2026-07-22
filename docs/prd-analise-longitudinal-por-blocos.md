@@ -52,6 +52,8 @@ O produto deve ajudar o adulto a agir melhor, nao assustar, culpar ou rotular.
 Criar um modelo de analise longitudinal que:
 
 - analise cada bloco de aprendizagem separadamente;
+- relacione a evolucao observada com as metas cadastradas pelo adulto;
+- ajude o adulto a perceber se a meta esta bem encaminhada, ainda em construcao, precisa de ajuste ou ainda nao tem evidencias suficientes;
 - mostre tendencias de forma simples quando o bloco estiver fechado;
 - permita abrir cada bloco para ver graficos, evidencias e orientacoes;
 - ligue toda conclusao a evidencias concretas;
@@ -143,6 +145,58 @@ A analise deve trazer:
 - receita pequena para a proxima semana;
 - indicacao de quando esperar mais evidencias.
 
+### 6. A meta fecha o ciclo da analise
+
+A analise longitudinal nao deve apenas dizer se uma area melhorou.
+
+Ela deve ajudar o adulto a responder:
+
+```text
+As evidencias mostram que a crianca esta se aproximando da meta cadastrada?
+```
+
+Esse ponto e central para o produto.
+
+Hoje o portal registra metas, missoes e evidencias. A evolucao do produto deve
+ligar essas camadas, para que o adulto nao precise fazer sozinho a conexao entre
+o que foi planejado e o que aconteceu.
+
+O portal deve tratar a meta como eixo da leitura:
+
+- qual era a intencao pedagogica do adulto;
+- quais missoes foram propostas a partir dessa meta;
+- quais evidencias foram registradas;
+- se os sinais recentes indicam aproximacao da meta;
+- se a meta ainda precisa de mais pratica;
+- se a estrategia deve ser ajustada;
+- se a meta esta bem encaminhada para fechamento e acompanhamento de manutencao.
+
+O produto nao deve afirmar de forma seca:
+
+```text
+Meta alcancada.
+```
+
+Preferir sinais cuidadosos:
+
+```text
+Meta bem encaminhada.
+```
+
+```text
+Ha indicios de que esta meta pode ser encerrada como foco principal e acompanhada em manutencao.
+```
+
+```text
+Ainda nao ha evidencias suficientes para concluir se a meta esta avancando.
+```
+
+Decisao final:
+
+- o portal sinaliza;
+- o adulto decide;
+- a evidencia fica disponivel para auditoria.
+
 ## Separacao dos blocos do painel adulto
 
 O painel adulto nao deve repetir a mesma analise em lugares diferentes.
@@ -187,6 +241,7 @@ Cada bloco deve ter uma funcao clara:
 - **Meta Pedagogica:** responder "o que a crianca precisa praticar ou desenvolver?";
 - **Missoes para a crianca:** responder "baseado na meta pedagogica, quais atividades propor a crianca?";
 - **Acompanhamento por area:** responder "como cada area esta evoluindo ao longo do tempo, com base nas evidencias disponiveis?" e, na entrada do bloco, "onde o adulto deve olhar primeiro?";
+- **Leitura da meta:** responder, dentro de cada area ou meta relacionada, "as evidencias aproximam a crianca da meta cadastrada?";
 - **Historico unificado:** responder "quais evidencias existem e onde posso auditar cada atividade?".
 
 ### Aluno ativo e Bloco Infantil
@@ -659,6 +714,7 @@ Funcao:
 
 - analisar cada area separadamente;
 - mostrar como cada area esta evoluindo ao longo do tempo;
+- relacionar a evolucao da area com metas ativas ou concluidas;
 - considerar desempenho, volume, continuidade, complexidade e consistencia;
 - indicar se ha evidencias suficientes para falar em tendencia;
 - permitir abrir grafico e evidencias daquela area;
@@ -668,6 +724,12 @@ Pergunta central:
 
 ```text
 Como cada area esta evoluindo ao longo do tempo, com base nas evidencias disponiveis?
+```
+
+Pergunta complementar obrigatoria quando houver meta:
+
+```text
+Esta evolucao aproxima a crianca da meta cadastrada?
 ```
 
 Ponderacao:
@@ -712,6 +774,8 @@ Conteudo esperado no topo do bloco:
 Conteudo esperado com cada area fechada:
 
 - nome da area;
+- meta relacionada, quando existir;
+- leitura da meta;
 - tendencia;
 - pista curta;
 - numero de evidencias;
@@ -722,6 +786,7 @@ Conteudo esperado com cada area fechada:
 Conteudo esperado com cada area aberta:
 
 - resumo longitudinal da area;
+- leitura da meta relacionada;
 - grafico de linha da area ao longo do tempo;
 - volume de evidencias no periodo;
 - distribuicao das praticas por semana, mes ou bimestre;
@@ -780,6 +845,49 @@ Exemplo:
 Houve pratica em 3 de 4 semanas. Tabuada teve boa continuidade; Redacao teve poucas evidencias para concluir evolucao consistente.
 ```
 
+### Leitura da meta
+
+Funcao:
+
+- fechar o ciclo entre meta, missao e evidencia;
+- ajudar o adulto a perceber se a estrategia esta funcionando;
+- indicar quando manter, ajustar, reduzir ou encerrar uma meta;
+- evitar que metas continuem ativas por inercia quando ja ha sinais de avanco;
+- evitar que uma estrategia sem efeito continue sendo repetida sem ajuste.
+
+Pergunta que responde:
+
+```text
+As evidencias aproximam a crianca da meta cadastrada?
+```
+
+Estados sugeridos:
+
+- **sem meta ativa:** ha evidencias na area, mas nenhuma meta atual vinculada;
+- **sem evidencias suficientes:** a meta existe, mas ainda faltam registros para comparar;
+- **em construcao:** ha pratica e alguns sinais, mas ainda e cedo para decidir;
+- **bem encaminhada:** os registros recentes apontam aproximacao da meta;
+- **precisa de ajuste:** houve pratica suficiente, mas os sinais nao caminham na direcao esperada;
+- **pronta para manutencao:** ha sinais consistentes de que a meta pode deixar de ser foco principal e seguir em observacao leve.
+
+Exemplo:
+
+```text
+Meta: organizar redacoes com comeco, meio e fim.
+Leitura da meta: bem encaminhada.
+Sinais: as redacoes recentes mostram estrutura mais clara que os primeiros registros.
+Proximo passo: considerar encerrar esta meta como foco principal e criar uma meta menor, como melhorar frases de transicao.
+```
+
+Regras:
+
+- nao declarar "meta alcancada" sem mostrar evidencias;
+- nao encerrar meta automaticamente;
+- sempre mostrar as evidencias usadas;
+- separar pratica frequente de melhoria real;
+- considerar periodo, volume, tendencia e complexidade;
+- quando houver duvida, orientar observacao por mais algumas atividades curtas.
+
 ### Historico unificado
 
 Funcao:
@@ -836,6 +944,8 @@ Cada bloco deve aparecer recolhido por padrao.
 Com o bloco fechado, o adulto deve ver apenas:
 
 - nome do bloco;
+- meta relacionada, quando existir;
+- leitura curta da meta;
 - tendencia;
 - pista curta;
 - quantidade de evidencias;
@@ -847,6 +957,8 @@ Exemplo:
 ```text
 Redacao
 Tendencia estavel
+Meta: organizar comeco, meio e fim
+Leitura da meta: ainda em construcao
 8 evidencias em 4 semanas
 Pista: estrutura ainda oscila; vale manter roteiro de comeco, meio e fim.
 ```
@@ -856,6 +968,8 @@ Outro exemplo:
 ```text
 Tabuada
 Tendencia de alta
+Meta: ganhar seguranca na tabuada do 6
+Leitura da meta: bem encaminhada
 8 evidencias em 4 semanas
 Pista: acertos e tempo melhoraram com treinos curtos.
 ```
@@ -881,12 +995,14 @@ Texto de apoio:
 Ao abrir um bloco, o adulto deve ver:
 
 1. resumo longitudinal;
-2. grafico de linha;
-3. metrica principal usada;
-4. sinais observados;
-5. orientacao para o adulto;
-6. lista de evidencias recolhidas;
-7. acao sugerida.
+2. meta relacionada, quando existir;
+3. leitura da meta;
+4. grafico de linha;
+5. metrica principal usada;
+6. sinais observados;
+7. orientacao para o adulto;
+8. lista de evidencias recolhidas;
+9. acao sugerida.
 
 Exemplo de estrutura:
 
@@ -895,6 +1011,12 @@ Redacao
 
 Resumo:
 Ha pratica frequente, mas a estrutura ainda nao mostra avanco consistente.
+
+Meta relacionada:
+Organizar redacoes com comeco, meio e fim.
+
+Leitura da meta:
+Ainda em construcao. As evidencias mostram pratica suficiente, mas os sinais de estrutura ainda oscilam.
 
 Grafico:
 Estrutura do texto ao longo do tempo.
@@ -1364,8 +1486,9 @@ Ver evidencias desta conclusao
 3. Adulto transforma a meta em Missoes para a crianca.
 4. Adulto abre Acompanhamento por area para ver Onde olhar primeiro e analisar leitura, escrita, matematica, ingles ou futuros modulos ao longo do tempo.
 5. Dentro de cada area, adulto observa tendencia, volume de evidencias, distribuicao no tempo, nivel de confianca e orientacao.
-6. Adulto abre atividades especificas no Historico unificado quando quiser auditar evidencias.
-7. Portal sugere um proximo passo curto sem substituir a decisao adulta.
+6. Quando houver meta relacionada, adulto ve a leitura da meta: bem encaminhada, em construcao, precisa de ajuste, pronta para manutencao ou sem evidencias suficientes.
+7. Adulto abre atividades especificas no Historico unificado quando quiser auditar evidencias.
+8. Portal sugere um proximo passo curto sem substituir a decisao adulta.
 
 ## Fluxo do professor
 
@@ -1486,13 +1609,16 @@ O MVP da analise longitudinal por blocos sera considerado aceitavel quando:
 
 - cada bloco aparecer separado;
 - cada bloco fechado mostrar tendencia e pista curta;
+- cada bloco fechado mostrar leitura da meta quando houver meta relacionada;
 - cada bloco aberto mostrar grafico de linha;
+- cada bloco aberto mostrar como as evidencias conversam com a meta;
 - cada conclusao tiver evidencias abertas;
 - Redacao mostrar texto produzido;
 - Tabuada mostrar tabuadas treinadas;
 - Interpretacao mostrar texto, perguntas e respostas quando disponiveis;
 - Ingles mostrar habilidade, apoio e erros frequentes;
 - o portal diferenciar alta, estabilidade, baixa e dados insuficientes;
+- o portal diferenciar meta bem encaminhada, em construcao, precisa de ajuste, pronta para manutencao e sem evidencias suficientes;
 - a linguagem adulta for pratica e cuidadosa;
 - a crianca nao tiver acesso a conclusoes adultas;
 - o sistema nao fizer diagnosticos.
@@ -1540,6 +1666,30 @@ Esperado:
 - tendencia de baixa;
 - linguagem sem alarme;
 - sugestao de reduzir dose e recuperar confianca.
+
+### Caso 5: meta bem encaminhada
+
+Crianca com meta ativa e evidencias recentes apontando melhora consistente na
+habilidade esperada.
+
+Esperado:
+
+- leitura da meta como bem encaminhada ou pronta para manutencao;
+- sugestao de considerar fechamento da meta como foco principal;
+- orientacao para criar meta menor ou acompanhar manutencao;
+- evidencias abertas sustentam a leitura.
+
+### Caso 6: meta sem efeito claro
+
+Crianca com meta ativa, pratica suficiente e sinais estaveis ou desalinhados
+com a habilidade esperada.
+
+Esperado:
+
+- leitura da meta como precisa de ajuste ou ainda em construcao;
+- texto cuidadoso, sem dizer que a crianca fracassou;
+- sugestao de reduzir tarefa, mudar estrategia ou observar mais algumas tentativas;
+- evidencias abertas mostram a base da orientacao.
 
 ## Questoes abertas
 

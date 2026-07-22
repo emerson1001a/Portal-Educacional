@@ -18,7 +18,8 @@ O caminho deve ser:
 3. adulto libera uma tarefa curta;
 4. crianca executa no Portal da Crianca ou em um modulo;
 5. modulo devolve evidencias;
-6. portal mostra evolucao e orienta o proximo passo.
+6. portal compara as evidencias com a meta cadastrada;
+7. portal mostra evolucao e orienta o proximo passo.
 
 ## Ponderacao de produto
 
@@ -121,7 +122,8 @@ Exemplos:
 8. Adulto define instrucao infantil.
 9. Adulto libera a missao.
 10. Adulto acompanha evidencias no historico.
-11. Portal sugere proximo passo.
+11. Portal sinaliza se a meta esta bem encaminhada, ainda em construcao, precisa de ajuste ou ainda nao tem evidencias suficientes.
+12. Portal sugere proximo passo.
 
 ## Fluxo infantil
 
@@ -194,9 +196,13 @@ Campos futuros recomendados:
 
 ```text
 target_skill
+success_criteria
+primary_metric
 confidence
 review_after_events
 review_after_days
+goal_reading_status
+goal_reading_updated_at
 completed_at
 ```
 
@@ -304,6 +310,44 @@ Uma tarefa pode estar vinculada a uma meta principal.
 
 No futuro, uma tarefa podera atender mais de uma meta, mas o MVP deve manter uma meta principal para reduzir complexidade.
 
+## Relacao entre meta e evidencia
+
+A meta nao deve ser apenas um cadastro textual.
+
+Ela deve ser usada como referencia para interpretar as evidencias.
+
+Pergunta central:
+
+```text
+As atividades realizadas aproximam a crianca da meta cadastrada?
+```
+
+Estados sugeridos para leitura da meta:
+
+- `insufficient_evidence`: ainda faltam evidencias;
+- `building`: ha sinais iniciais, mas a meta ainda esta em construcao;
+- `on_track`: a meta esta bem encaminhada;
+- `needs_adjustment`: ha pratica, mas os sinais sugerem ajustar estrategia;
+- `maintenance_ready`: a meta pode estar pronta para deixar de ser foco principal e seguir em manutencao.
+
+Regras:
+
+- uma meta pode ter evidencias diretas, quando a atividade foi vinculada a ela;
+- uma meta pode ter evidencias indiretas da mesma area, quando o adulto ainda nao vinculou atividade;
+- evidencias diretas devem ter mais peso que evidencias indiretas;
+- o portal deve mostrar quais evidencias sustentam a leitura;
+- a decisao de encerrar uma meta continua sendo do adulto;
+- o sistema nao deve dizer "meta alcancada" como conclusao definitiva sem revisao adulta.
+
+Exemplo:
+
+```text
+Meta: organizar textos com comeco, meio e fim.
+Evidencias: 12 redacoes vinculadas.
+Leitura da meta: bem encaminhada.
+Proximo passo: considerar encerrar esta meta como foco principal e criar uma meta menor, como melhorar frases de transicao.
+```
+
 ## IA no fluxo
 
 A IA pode:
@@ -396,5 +440,6 @@ Nao deve premiar apenas:
 3. Exibir status de tarefa e item.
 4. Registrar `assignment_id` e `assignment_item_id` em todos os modulos conectados.
 5. Criar resumo por meta no painel adulto.
-6. Criar primeira versao de conclusao de meta como conquista.
-7. Preparar PRD de relatorio longitudinal.
+6. Criar primeira versao de leitura da meta a partir das evidencias.
+7. Criar primeira versao de conclusao de meta como conquista.
+8. Preparar PRD de relatorio longitudinal.

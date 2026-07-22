@@ -255,6 +255,8 @@ Ingles: 6 evidencias no semestre, distribuidas em 4 de 20 semanas.
 
 Cada area deve apresentar:
 
+- meta trabalhada no periodo, quando existir;
+- leitura cuidadosa da meta;
 - tendencia no periodo;
 - volume de evidencias;
 - distribuicao no tempo;
@@ -285,6 +287,15 @@ Pedro Antonio praticou Redacao com regularidade. A estrutura de comeco, meio e
 fim aparece em formacao, mas ainda precisa de pratica guiada para ganhar mais
 consistencia. O proximo ciclo deve manter textos curtos e trabalhar uma etapa
 por vez.
+```
+
+Quando houver meta relacionada, o relatorio deve explicitar a conexao:
+
+```text
+Meta trabalhada: organizar redacoes com comeco, meio e fim.
+Leitura da meta: ainda em construcao. Houve pratica suficiente no periodo, mas
+os registros mostram que a estrutura ainda oscila. A recomendacao e manter a
+meta no proximo ciclo com tarefas menores e mais guiadas.
 ```
 
 #### Tabuada
@@ -464,11 +475,12 @@ longo dos proximos ciclos.
 1. Adulto seleciona crianca.
 2. Adulto escolhe periodo.
 3. Portal monta Acompanhamento por area.
-4. Adulto clica em `Gerar relatorio para reuniao`.
-5. IA gera rascunho com base em evidencias rastreaveis.
-6. Escola revisa e edita o texto.
-7. Portal marca o relatorio como revisado.
-8. Escola exporta ou compartilha com pais.
+4. Portal cruza metas, missoes e evidencias no periodo.
+5. Adulto clica em `Gerar relatorio para reuniao`.
+6. IA gera rascunho com base em evidencias rastreaveis.
+7. Escola revisa e edita o texto.
+8. Portal marca o relatorio como revisado.
+9. Escola exporta ou compartilha com pais.
 
 ## Revisao humana obrigatoria
 
@@ -546,6 +558,7 @@ O relatorio para reuniao com pais sera considerado aceitavel quando:
 
 - permitir escolher periodo;
 - nascer do Acompanhamento por area;
+- relacionar metas trabalhadas com evidencias do periodo;
 - mostrar evidencias usadas;
 - separar leitura por area;
 - indicar volume e distribuicao das evidencias;
