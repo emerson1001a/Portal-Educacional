@@ -10,6 +10,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `arquitetura-de-papeis.md`: papeis, permissoes, fronteiras entre adulto, professor e crianca.
 - `prd-matriz-de-papeis.md`: PRD fechado da Etapa 1, com matriz de permissoes, bloqueios e criterios de aceite.
 - `prd-controle-de-acesso-supabase.md`: desenho da Etapa 2 para tabelas, vinculos, RLS e token infantil.
+- `prd-portal-adulto.md`: experiencia base do adulto, com regras de blocos recolhidos, faixas clicaveis, botao Recolher e separacao entre planejamento e acompanhamento.
 - `prd-portal-crianca.md`: experiencia infantil, token, missoes, limites de informacao e gamificacao futura.
 - `prd-metas-e-tarefas.md`: fluxo de percepcao adulta, meta pedagogica, tarefa, missao infantil e evidencias.
 - `prd-compartilhamento-responsavel-professor.md`: regras para responsavel e professor compartilharem acompanhamento sem expor percepcoes privadas por padrao.
@@ -60,7 +61,8 @@ Quando houver conflito entre documentos:
 3. `arquitetura-de-papeis.md` prevalece para permissoes;
 4. `prd-matriz-de-papeis.md` prevalece para a matriz fechada da Etapa 1;
 5. `documento-do-projeto.md` prevalece para direcao geral do produto;
-6. PRDs prevalecem apenas dentro do escopo funcional especifico.
+6. `prd-portal-adulto.md` prevalece para UX e organizacao do painel adulto;
+7. PRDs prevalecem apenas dentro do escopo funcional especifico.
 
 ## Principio permanente
 
