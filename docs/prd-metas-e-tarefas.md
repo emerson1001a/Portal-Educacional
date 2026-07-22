@@ -274,13 +274,75 @@ created_at
 Recomendados:
 
 - `active`: em acompanhamento;
-- `paused`: pausada sem apagar historico;
 - `done`: concluida;
-- `archived`: arquivada.
+- `closed_adjustment`: encerrada para ajuste, sem apagar historico;
+- `archived`: arquivada quando nao deve aparecer no fluxo principal.
 
 Regra:
 
-Meta concluida nao some. Ela vira conquista e evidencia longitudinal.
+Meta concluida ou encerrada para ajuste nao some. Ela fica preservada para
+historico, mas a leitura detalhada de evidencias deve permanecer nos blocos de
+acompanhamento.
+
+## UX do bloco de metas pedagogicas
+
+Decisao de UX registrada a partir do mockup `metas-pedagogicas-ux-refinado`.
+
+O bloco de **Metas Pedagogicas** deve ser uma area de gestao de intencao
+pedagogica, nao um bloco de analise de evidencias.
+
+Quando o bloco **Registro de Metas e Missoes** estiver fechado, ele deve manter
+a funcao atual:
+
+- titulo;
+- texto curto de orientacao;
+- botao `Abrir`;
+- sem contadores ou informacoes extras que poluam a leitura.
+
+Quando aberto, a area de metas deve usar faixas grandes clicaveis, em vez de
+linhas pequenas com botoes soltos.
+
+Regra de interacao:
+
+- quando a faixa inteira ja abre a area, nao adicionar botao extra de `Abrir`
+  dentro da mesma faixa;
+- o texto da faixa, a data e o indicador visual devem compor uma unica acao
+  clara;
+- o botao `Recolher` aparece apenas depois que a area estiver aberta.
+
+Faixas esperadas:
+
+1. **Nova meta pedagogica**
+   - a faixa inteira e o botao;
+   - nao usar outro botao interno como "Criar nova meta", porque fica
+     redundante.
+2. **Meta em acompanhamento**
+   - faixa clicavel;
+   - mostra titulo da meta e data de formulacao;
+   - ao abrir, mostra dados administrativos da meta e acao de encerramento.
+3. **Metas concluidas**
+   - faixa clicavel;
+   - mostra metas que cumpriram seu papel principal;
+   - ao abrir, mostra titulo, data de conclusao e observacao de fechamento.
+4. **Metas encerradas para ajuste**
+   - faixa clicavel;
+   - mostra metas encerradas porque a estrategia mudou, foi pausada ou perdeu
+     sentido;
+   - evita linguagem de fracasso.
+
+Toda area expandida deve ter um botao claro de `Recolher`, no mesmo nivel
+visual da area aberta.
+
+Regras:
+
+- nao colocar `Ver evidencias` dentro do bloco de metas;
+- evidencias ficam em **Acompanhamento por area**, **Historico unificado** e
+  futuros relatorios;
+- encerramento de meta nunca deve acontecer por clique unico;
+- ao clicar em `Encerrar meta`, abrir uma etapa intermediaria;
+- a etapa de encerramento deve pedir resultado e observacao do adulto;
+- opcoes recomendadas: `Concluida` e `Encerrada para ajuste`;
+- a decisao final continua com o adulto.
 
 ## Status de tarefa
 
@@ -328,7 +390,8 @@ Estados sugeridos para leitura da meta:
 - `building`: ha sinais iniciais, mas a meta ainda esta em construcao;
 - `on_track`: a meta esta bem encaminhada;
 - `needs_adjustment`: ha pratica, mas os sinais sugerem ajustar estrategia;
-- `maintenance_ready`: a meta pode estar pronta para deixar de ser foco principal e seguir em manutencao.
+- `ready_to_close`: a meta pode estar pronta para deixar de ser foco principal
+  e ser encerrada pelo adulto como concluida.
 
 Regras:
 

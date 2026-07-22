@@ -169,7 +169,7 @@ O portal deve tratar a meta como eixo da leitura:
 - se os sinais recentes indicam aproximacao da meta;
 - se a meta ainda precisa de mais pratica;
 - se a estrategia deve ser ajustada;
-- se a meta esta bem encaminhada para fechamento e acompanhamento de manutencao.
+- se a meta esta bem encaminhada para ser concluida ou encerrada para ajuste.
 
 O produto nao deve afirmar de forma seca:
 
@@ -184,7 +184,7 @@ Meta bem encaminhada.
 ```
 
 ```text
-Ha indicios de que esta meta pode ser encerrada como foco principal e acompanhada em manutencao.
+Ha indicios de que esta meta pode ser concluida como foco principal.
 ```
 
 ```text
@@ -868,7 +868,7 @@ Estados sugeridos:
 - **em construcao:** ha pratica e alguns sinais, mas ainda e cedo para decidir;
 - **bem encaminhada:** os registros recentes apontam aproximacao da meta;
 - **precisa de ajuste:** houve pratica suficiente, mas os sinais nao caminham na direcao esperada;
-- **pronta para manutencao:** ha sinais consistentes de que a meta pode deixar de ser foco principal e seguir em observacao leve.
+- **pronta para conclusao:** ha sinais consistentes de que a meta pode ser concluida como foco principal.
 
 Exemplo:
 
@@ -1486,7 +1486,7 @@ Ver evidencias desta conclusao
 3. Adulto transforma a meta em Missoes para a crianca.
 4. Adulto abre Acompanhamento por area para ver Onde olhar primeiro e analisar leitura, escrita, matematica, ingles ou futuros modulos ao longo do tempo.
 5. Dentro de cada area, adulto observa tendencia, volume de evidencias, distribuicao no tempo, nivel de confianca e orientacao.
-6. Quando houver meta relacionada, adulto ve a leitura da meta: bem encaminhada, em construcao, precisa de ajuste, pronta para manutencao ou sem evidencias suficientes.
+6. Quando houver meta relacionada, adulto ve a leitura da meta: bem encaminhada, em construcao, precisa de ajuste, pronta para conclusao ou sem evidencias suficientes.
 7. Adulto abre atividades especificas no Historico unificado quando quiser auditar evidencias.
 8. Portal sugere um proximo passo curto sem substituir a decisao adulta.
 
@@ -1618,7 +1618,7 @@ O MVP da analise longitudinal por blocos sera considerado aceitavel quando:
 - Interpretacao mostrar texto, perguntas e respostas quando disponiveis;
 - Ingles mostrar habilidade, apoio e erros frequentes;
 - o portal diferenciar alta, estabilidade, baixa e dados insuficientes;
-- o portal diferenciar meta bem encaminhada, em construcao, precisa de ajuste, pronta para manutencao e sem evidencias suficientes;
+- o portal diferenciar meta bem encaminhada, em construcao, precisa de ajuste, pronta para conclusao e sem evidencias suficientes;
 - a linguagem adulta for pratica e cuidadosa;
 - a crianca nao tiver acesso a conclusoes adultas;
 - o sistema nao fizer diagnosticos.
@@ -1674,9 +1674,9 @@ habilidade esperada.
 
 Esperado:
 
-- leitura da meta como bem encaminhada ou pronta para manutencao;
+- leitura da meta como bem encaminhada ou pronta para conclusao;
 - sugestao de considerar fechamento da meta como foco principal;
-- orientacao para criar meta menor ou acompanhar manutencao;
+- orientacao para concluir a meta ou criar meta menor;
 - evidencias abertas sustentam a leitura.
 
 ### Caso 6: meta sem efeito claro
