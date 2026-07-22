@@ -204,6 +204,9 @@
     .sidebar {
       position: sticky;
       top: 86px;
+      max-height: calc(100svh - 104px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
       padding: 18px;
     }
 
@@ -1152,7 +1155,7 @@
       .topic > summary { align-items: flex-start; flex-direction: column; }
       .topic-toggle { min-width: 0; }
       .hero-copy { min-height: 440px; }
-      .sidebar { position: static; }
+      .sidebar { position: static; max-height: none; overflow: visible; }
       .child-hero { align-items: stretch; flex-direction: column; }
     }
 
