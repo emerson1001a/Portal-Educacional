@@ -924,6 +924,18 @@
       padding: 0 18px 18px;
       border-top: 1px solid var(--line);
     }
+    .section-note {
+      margin-top: 16px;
+      padding-top: 2px;
+    }
+    .section-note strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--ink);
+    }
+    .section-note p {
+      margin: 0;
+    }
     .metric strong { display: block; margin: 7px 0 4px; font-size: 30px; line-height: 1; }
     .goal-card strong, .evolution-card strong, .feedback-card strong { display: block; margin: 8px 0 5px; }
 
@@ -1702,8 +1714,8 @@
         <details class="card topic time-topic">
           <summary>
             <div class="topic-title">
-              <h2>Evolução no tempo</h2>
-              <p class="muted">Acompanhe continuidade, semanas com prática e equilíbrio entre áreas.</p>
+              <h2>Evolução por tempo e área</h2>
+              <p class="muted">Veja se a criança está evoluindo no período escolhido e em quais áreas há mais sinais.</p>
             </div>
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
@@ -1719,20 +1731,20 @@
                 </select>
               </label>
             </div>
-            <div class="time-grid" id="timeEvolutionGrid"></div>
-            <div class="area-bars" id="areaBalance"></div>
-          </div>
-        </details>
-
-        <details class="card topic area-topic">
-          <summary>
-            <div class="topic-title">
-              <h2>Evolução por área</h2>
-              <p class="muted">Veja as áreas de aprendizagem com evidências e sinais de progresso.</p>
+            <div class="section-note">
+              <strong>Linha do tempo</strong>
+              <p class="muted small">Mostra a continuidade da prática dentro do período escolhido.</p>
             </div>
-            <span class="topic-toggle" aria-hidden="true"></span>
-          </summary>
-          <div class="topic-body">
+            <div class="time-grid" id="timeEvolutionGrid"></div>
+            <div class="section-note">
+              <strong>Distribuição por área</strong>
+              <p class="muted small">Mostra onde há mais evidências no mesmo período.</p>
+            </div>
+            <div class="area-bars" id="areaBalance"></div>
+            <div class="section-note">
+              <strong>Análise por área</strong>
+              <p class="muted small">Relaciona quantidade, tendência e próximos passos para cada disciplina trabalhada.</p>
+            </div>
             <div class="evolution-grid" id="evolutionGrid"></div>
           </div>
         </details>
@@ -1986,7 +1998,6 @@
       const analysisLabel = document.querySelector(".analysis-label");
       const signalsTopic = document.querySelector(".signals-topic");
       const timeTopic = document.querySelector(".time-topic");
-      const areaTopic = document.querySelector(".area-topic");
       const historyTopic = document.querySelector(".history-topic");
 
       if (!workspace || document.querySelector(".registry-group") || document.querySelector(".analysis-group")) return;
@@ -2001,7 +2012,7 @@
       const analysisGroup = document.createElement("section");
       analysisGroup.className = "section-group analysis-group";
       workspace.insertBefore(analysisGroup, analysisLabel);
-      [analysisLabel, signalsTopic, timeTopic, areaTopic, historyTopic].forEach((section) => {
+      [analysisLabel, signalsTopic, timeTopic, historyTopic].forEach((section) => {
         if (section) analysisGroup.appendChild(section);
       });
     }
@@ -3508,14 +3519,17 @@
       const child = activeChild();
       els.evolutionGrid.innerHTML = "";
       if (!child) {
-        els.evolutionGrid.innerHTML = '<div class="notice">Selecione uma criança para ver evolução.</div>';
+        els.evolutionGrid.innerHTML = '<div class="notice">Selecione uma criança para ver evolução por área.</div>';
         return;
       }
       const map = { leitura: ["interpretacao"], escrita: ["redacao"], matematica: ["tabuada"] };
       if (shouldIncludeEnglishArea()) map.ingles = ["ingles"];
+      const periodDays = selectedEvolutionPeriodDays();
+      const periodEvents = eventsSince(periodDays);
       Object.entries(map).forEach(([area, services]) => {
         const goals = state.goals.filter((goal) => goal.area === area);
-        const evidences = state.events.filter((event) => services.includes(event.service));
+        const evidences = periodEvents.filter((event) => services.includes(event.service));
+        const allAreaEvidences = state.events.filter((event) => services.includes(event.service));
         const latest = evidences[0];
         const latestSummary = latest ? eventAdultSummary(latest) : "";
         const trend = areaTrend(evidences);
@@ -3524,10 +3538,10 @@
         card.className = "evolution-card";
         card.innerHTML = `
           <span class="pill">${areaLabel(area)}</span>
-          <strong>${evidences.length ? `${evidences.length} evidência${evidences.length === 1 ? "" : "s"}` : "sem evidência ainda"}</strong>
+          <strong>${evidences.length ? `${evidences.length} evidência${evidences.length === 1 ? "" : "s"} no período` : "sem prática no período"}</strong>
           <p class="muted">${goals.length ? `${goals.length} meta${goals.length === 1 ? "" : "s"} ativa${goals.length === 1 ? "" : "s"}.` : "Sem meta ativa nesta área."}</p>
           <p class="small"><strong>${escapeHtml(trend.status)}:</strong> ${escapeHtml(trend.detail)}</p>
-          <p class="small">${latest ? `Última prática: ${formatDate(latest.occurred_at || latest.created_at)}` : recipeForArea(area)}</p>
+          <p class="small">${latest ? `Última prática no período: ${formatDate(latest.occurred_at || latest.created_at)}` : allAreaEvidences.length ? `Há registros fora do período selecionado. Último registro: ${formatDate(allAreaEvidences[0].occurred_at || allAreaEvidences[0].created_at)}.` : recipeForArea(area)}</p>
           ${analysis ? `<p class="small"><strong>Análise:</strong> ${escapeHtml(analysis)}</p>` : ""}
         `;
         els.evolutionGrid.appendChild(card);
