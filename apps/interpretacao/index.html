@@ -259,6 +259,7 @@
     guideLengthSeen: false,
     portalEventSaved: false,
     lastFeedback: "",
+    lastAdultFeedback: null,
     lastMetrics: {}
   };
 
@@ -290,9 +291,10 @@
     const totalMcq = state.submittedAnswers.filter((item) => item && item.tipo === "mcq").length;
     const openTotal = state.submittedAnswers.filter((item) => item && item.tipo !== "mcq").length;
     const durationSeconds = Number.isFinite(Number(state.readTimeMs)) ? Math.max(1, Math.round(Number(state.readTimeMs) / 1000)) : null;
-    const accuracyPct = totalMcq ? Math.round((correctMcq / totalMcq) * 100) : null;
-    const comprehensionScore = totalMcq ? Math.round((correctMcq / totalMcq) * 100) / 100 : null;
+    const accuracyPct = state.lastMetrics.accuracy_pct ?? (totalMcq ? Math.round((correctMcq / totalMcq) * 100) : null);
+    const comprehensionScore = state.lastMetrics.comprehension_score ?? (totalMcq ? Math.round((correctMcq / totalMcq) * 100) / 100 : null);
     const lengthChoice = el("length").value || "auto";
+    const adultFeedback = state.lastAdultFeedback && typeof state.lastAdultFeedback === "object" ? state.lastAdultFeedback : {};
     const headers = { "Content-Type": "application/json" };
     if (portal.token) headers["X-Portal-Activity-Token"] = portal.token;
     if (portal.childToken) headers["X-Portal-Child-Token"] = portal.childToken;
@@ -311,7 +313,7 @@
         duration_ms: state.readTimeMs,
         metrics: {
           schema_version: "1.0",
-          module_version: "interpretacao-portal-1.0",
+          module_version: state.lastMetrics.module_version || "interpretacao-portal-1.0",
           duration_seconds: durationSeconds,
           completed: true,
           completion_reason: "finished",
@@ -322,10 +324,21 @@
           reading_mode: "generated_text",
           comprehension_score: comprehensionScore,
           accuracy_pct: accuracyPct,
-          objective_scoring_available: totalMcq > 0,
-          question_total: state.questions.length,
-          answer_total: state.submittedAnswers.filter(Boolean).length,
+          objective_scoring_available: Boolean(state.lastMetrics.objective_scoring_available ?? totalMcq > 0),
+          question_total: state.lastMetrics.questions_total ?? state.questions.length,
+          answer_total: state.lastMetrics.questions_answered ?? state.submittedAnswers.filter(Boolean).length,
           open_answer_total: openTotal,
+          questions_total: state.lastMetrics.questions_total ?? state.questions.length,
+          questions_answered: state.lastMetrics.questions_answered ?? state.submittedAnswers.filter(Boolean).length,
+          questions_correct: state.lastMetrics.questions_correct ?? null,
+          questions_partial: state.lastMetrics.questions_partial ?? null,
+          questions_incorrect: state.lastMetrics.questions_incorrect ?? null,
+          literal_accuracy_pct: state.lastMetrics.literal_accuracy_pct ?? null,
+          inferential_accuracy_pct: state.lastMetrics.inferential_accuracy_pct ?? null,
+          vocabulary_accuracy_pct: state.lastMetrics.vocabulary_accuracy_pct ?? null,
+          justification_accuracy_pct: state.lastMetrics.justification_accuracy_pct ?? null,
+          support_level: "independent",
+          source: "ai_generated_text",
           reading_time_ms: state.readTimeMs,
           question_times_ms: state.qTimesMs,
           total_questions: state.questions.length,
@@ -340,11 +353,12 @@
             next_step: "Retornar à missão para continuar o percurso."
           },
           adult: {
-            summary: state.lastFeedback || "",
+            summary: adultFeedback.summary || state.lastFeedback || "",
             strengths: [],
-            attention_points: [],
-            recipe: state.lastFeedback ? [state.lastFeedback] : [],
-            avoid_saying: ["Não transforme o tempo ou erro em bronca. Use como pista para o próximo treino."]
+            attention_points: Array.isArray(adultFeedback.attention_points) ? adultFeedback.attention_points : [],
+            recipe: Array.isArray(adultFeedback.recipe) ? adultFeedback.recipe : (state.lastFeedback ? [state.lastFeedback] : []),
+            avoid_saying: Array.isArray(adultFeedback.avoid_saying) ? adultFeedback.avoid_saying : ["Não transforme o tempo ou erro em bronca. Use como pista para o próximo treino."],
+            suggested_phrase: adultFeedback.suggested_phrase || ""
           }
         },
         artifacts: {
@@ -647,6 +661,8 @@
     state.answers={};
     state.submittedAnswers=[];
     state.mcqKeys={};
+    state.lastAdultFeedback=null;
+    state.lastMetrics={};
     state.leituraId=null;
     state.readingStartMs=null;
     state.readTimeMs=null;
@@ -759,6 +775,7 @@
 
     const tags = Array.isArray(q.tags) ? q.tags : [];
     const answerRecord = {
+      question_id: q.id || "q"+(state.qIndex+1),
       pergunta_index: state.qIndex+1,
       type: q.type || "open",
       tipo: q.type || "open",
@@ -766,6 +783,10 @@
       resposta: ans,
       correta,
       tempo_ms: timeMs,
+      question_type: q.question_type || (Array.isArray(q.tags) ? q.tags[0] : "") || "literal",
+      difficulty: q.difficulty || "facil",
+      expected_answer: q.expected_answer || q.answer_key || q.evidence || "",
+      evidence: q.evidence || "",
       tags
     };
     state.submittedAnswers[state.qIndex] = answerRecord;
@@ -805,6 +826,8 @@
         idade: Number(el("age").value||11)
       });
       state.lastFeedback = fin.feedback || "";
+      if (Array.isArray(fin.answers)) state.submittedAnswers = fin.answers;
+      state.lastAdultFeedback = fin.adult_feedback || null;
       state.lastMetrics = fin.metrics || {};
       el("studentFeedback").classList.add("feedback-ready");
       el("studentFeedback").textContent =
@@ -840,7 +863,7 @@ ${state.qTimesMs.map((ms,i)=>`Q${i+1}: ${formatMs(ms)}`).join("\n")}
     state.textHidden=""; state.questions=[]; state.answers={}; state.submittedAnswers=[]; state.mcqKeys={};
     state.readingStartMs=null; state.readTimeMs=null; state.qIndex=-1; state.qTimesMs=[];
     state.guideOptionalSeen=false; state.guideLengthSeen=false;
-    state.portalEventSaved=false; state.lastFeedback=""; state.lastMetrics={};
+    state.portalEventSaved=false; state.lastFeedback=""; state.lastAdultFeedback=null; state.lastMetrics={};
     stopReadTimer(); stopQuestionTimer();
 
     if(!portal.enabled){

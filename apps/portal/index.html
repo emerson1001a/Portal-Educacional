@@ -5351,6 +5351,19 @@
       `;
     }
 
+    function readingAnswerScore(answer) {
+      if (!answer || typeof answer !== "object") return null;
+      const explicitScore = metricNumber(answer.score);
+      if (explicitScore !== null) return Math.round((explicitScore <= 1 ? explicitScore * 100 : explicitScore));
+      const evaluation = normalizePortalText(answer.evaluation || "").toLowerCase();
+      if (["correct", "correta", "correto", "certo", "certa"].includes(evaluation)) return 100;
+      if (["partial", "parcial", "parcialmente correta", "parcialmente correto"].includes(evaluation)) return 50;
+      if (["incorrect", "incorreta", "incorreto", "errado", "errada", "blank", "branco", "em branco"].includes(evaluation)) return 0;
+      if (answer.correta === true || answer.correta === 1) return 100;
+      if (answer.correta === false || answer.correta === 0) return 0;
+      return null;
+    }
+
     function readingScore(event) {
       const metrics = event?.metrics && typeof event.metrics === "object" ? event.metrics : {};
       const scoreCandidates = [
@@ -5364,12 +5377,10 @@
       }
 
       const artifacts = event?.artifacts && typeof event.artifacts === "object" ? event.artifacts : {};
-      const questions = Array.isArray(artifacts.questions) ? artifacts.questions : [];
       const answers = Array.isArray(artifacts.answers) ? artifacts.answers : [];
-      const total = Math.max(questions.length, answers.length);
-      if (!total) return null;
-      const answered = answers.filter((answer) => readableAnswer(answer)).length;
-      return Math.max(20, Math.min(75, Math.round((answered / total) * 70)));
+      const answerScores = answers.map(readingAnswerScore).filter((score) => score !== null);
+      if (!answerScores.length) return null;
+      return Math.round(answerScores.reduce((sum, score) => sum + score, 0) / answerScores.length);
     }
 
     function readingTrendText(events) {
@@ -5377,6 +5388,13 @@
         .map((event) => ({ event, score: readingScore(event) }))
         .filter((item) => item.score !== null);
       if (scored.length < 3) {
+        if (events.length >= 3) {
+          return {
+            label: "evidências qualitativas",
+            summary: "Há leituras e respostas registradas no período, mas nem todas salvaram pontuação estruturada. A leitura deve se apoiar nos textos, perguntas, respostas e feedbacks disponíveis.",
+            next: "Nas próximas atividades, use o módulo atualizado para formar uma série comparável de compreensão."
+          };
+        }
         return {
           label: "sinais em formação",
           summary: "Ainda há poucas leituras comparáveis no período. O melhor caminho é manter atividades curtas para formar uma base mais segura de observação.",
@@ -5462,12 +5480,12 @@
       const recentAverage = averageScoreFor(events, readingScore, true);
       const olderAverage = averageScoreFor(older, readingScore);
       const bars = [
-        ["Início do período", olderAverage],
+        ["Início", olderAverage],
         ["Média recente", recentAverage],
         ["Última leitura", latestScore]
       ].filter(([, score]) => score !== null);
       if (!bars.length) {
-        return '<p class="muted">Ainda não há indicador numérico suficiente. Use o texto, as perguntas e os feedbacks como evidência principal.</p>';
+        return '<p class="muted">Ainda não há indicador numérico de acerto salvo de forma confiável. Use o texto, as perguntas e os feedbacks como evidência principal.</p>';
       }
       return `
         <div class="parent-report-chart" aria-label="Evolução da compreensão no período">
@@ -5548,7 +5566,7 @@
             <h3>Evolução da compreensão</h3>
             <p class="muted">O gráfico resume indicadores possíveis a partir das leituras e respostas salvas no período.</p>
             ${readingScoreBars(events)}
-            <p class="parent-report-note"><strong>Como ler a pontuação:</strong> indicador de 0 a 100, usado para acompanhar evolução no tempo. Quando o módulo salva pontuação de compreensão, ela é usada; quando não salva, o portal usa sinais simples, como perguntas respondidas. Não é nota escolar.</p>
+            <p class="parent-report-note"><strong>Como ler a pontuação:</strong> indicador de 0 a 100, usado para acompanhar evolução no tempo. Ele só aparece quando o módulo salva correção estruturada ou respostas avaliáveis. Não é nota escolar.</p>
           </section>
 
           <div class="parent-report-grid">
