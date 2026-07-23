@@ -5042,7 +5042,15 @@
       const metrics = event?.metrics && typeof event.metrics === "object" ? event.metrics : {};
       const wordCount = metricNumber(metrics.word_count);
       if (wordCount !== null) return Math.max(20, Math.min(75, Math.round(wordCount / 2)));
-      return null;
+      const text = writingEventText(event);
+      if (!text) return null;
+      const words = text.split(/\s+/).filter(Boolean).length;
+      const hasBeginning = /\b(começou|comecei|era|um dia|no começo|certo dia|quando)\b/i.test(text);
+      const hasSequence = /\b(depois|então|em seguida|de repente|mas|por isso)\b/i.test(text);
+      const hasEnding = /\b(no fim|por fim|finalmente|terminou|conseguiu|voltou|aprendeu)\b/i.test(text);
+      const lengthScore = Math.min(35, Math.round(words / 3));
+      const structureScore = [hasBeginning, hasSequence, hasEnding].filter(Boolean).length * 15;
+      return Math.max(20, Math.min(82, 20 + lengthScore + structureScore));
     }
 
     function averageScore(events) {
@@ -5176,11 +5184,8 @@
       if (!events.length) {
         return `${child.full_name} ainda não tem redações registradas no período escolhido. Antes de gerar uma leitura para reunião, vale propor algumas missões curtas de Redação para criar evidências reais.`;
       }
-      const latest = events[0];
-      const latestSummary = writingAdultFeedback(latest);
       const countText = `${events.length} redação${events.length === 1 ? "" : "ões"} registrada${events.length === 1 ? "" : "s"}`;
-      const latestText = latestSummary ? ` O sinal mais recente aponta: ${latestSummary}` : "";
-      return normalizePortalText(`${child.full_name} tem ${countText} neste ${parentReportPeriodLabel()}. ${trend.summary}${latestText} ${trend.next}`);
+      return normalizePortalText(`${child.full_name} tem ${countText} neste ${parentReportPeriodLabel()}. Esta síntese considera o conjunto das redações do período; os exemplos aparecem depois, no anexo. ${trend.summary} ${trend.next}`);
     }
 
     function buildWritingReportHtml() {
@@ -5233,9 +5238,9 @@
 
           <section class="parent-report-section">
             <h3>Evolução da escrita</h3>
-            <p class="muted">O gráfico resume sinais estruturados disponíveis nas redações do período.</p>
+            <p class="muted">O gráfico resume indicadores possíveis a partir das redações salvas no período.</p>
             ${writingScoreBars(events)}
-            <p class="parent-report-note"><strong>Como ler a pontuação:</strong> indicador de 0 a 100, usado para acompanhar evolução no tempo. Ele considera principalmente estrutura do texto, tamanho da produção e sinais salvos no feedback. Não é nota escolar.</p>
+            <p class="parent-report-note"><strong>Como ler a pontuação:</strong> indicador de 0 a 100, usado para acompanhar evolução no tempo. Quando o módulo salva pontuação estruturada, ela é usada; quando não salva, o portal estima sinais mínimos pelo texto, como tamanho e presença de começo, sequência e fechamento. Não é nota escolar.</p>
           </section>
 
           <div class="parent-report-grid">
