@@ -62,6 +62,13 @@
       gap: 10px;
       font-weight: 850;
     }
+    .topbar-help {
+      min-height: 34px;
+      padding: 7px 10px;
+      color: #22556a;
+      background: #eef6f9;
+      border-color: #d7e6ee;
+    }
 
     .mark {
       width: 36px;
@@ -215,8 +222,7 @@
     .intro-card { order: 1; }
     .registry-group { order: 2; }
     .analysis-group { order: 3; }
-    .guide-topic { order: 4; }
-    .modules-topic { order: 5; }
+    .modules-topic { order: 4; }
     .plan-topic { display: none; }
 
     .section-group {
@@ -1322,6 +1328,7 @@
         <span>Portal Educacional</span>
       </a>
       <div class="row">
+        <button class="button ghost topbar-help" id="openGuideButton" type="button">Guia do portal</button>
         <span class="muted small" id="sessionLabel">Ambiente de acompanhamento</span>
         <button class="button ghost hidden" id="logoutButton" type="button">Sair</button>
       </div>
@@ -1849,30 +1856,6 @@
           </div>
         </details>
 
-        <details class="card topic guide-topic">
-          <summary>
-            <div class="topic-title">
-              <h2>Guia para o adulto</h2>
-              <p class="muted">Princípios para orientar sem pressionar e transformar correção em conversa.</p>
-            </div>
-            <span class="topic-toggle" aria-hidden="true"></span>
-          </summary>
-          <div class="topic-body">
-            <div class="goal-list">
-              <article class="goal-card">
-                <span class="pill">criança</span>
-                <strong>Curto, positivo e acionável</strong>
-                <p class="muted">Mostre uma conquista real e proponha uma única próxima tentativa.</p>
-              </article>
-              <article class="goal-card">
-                <span class="pill">adulto</span>
-                <strong>Completo, mas com receita</strong>
-                <p class="muted">Explique o que apareceu, onde reforçar e o que fazer nos próximos dias.</p>
-              </article>
-            </div>
-          </div>
-        </details>
-
         <details class="card topic modules-topic">
           <summary>
             <div class="topic-title">
@@ -1970,6 +1953,39 @@
     </div>
   </section>
 
+  <section class="report-overlay hidden" id="guideOverlay" aria-label="Guia do portal">
+    <div class="report-sheet">
+      <div class="report-actions">
+        <button class="button ghost" id="closeGuideButton" type="button">Fechar</button>
+      </div>
+      <div class="report-content">
+        <div>
+          <span class="pill">guia discreto</span>
+          <h2>Como usar o Portal Educacional</h2>
+          <p class="muted">O portal existe para transformar percepção do adulto em prática curta para a criança e acompanhamento claro da evolução.</p>
+        </div>
+        <article class="report-block">
+          <strong>Sequência recomendada</strong>
+          <ul>
+            <li>Selecione ou cadastre a criança.</li>
+            <li>Registre uma meta pedagógica: o que a criança precisa desenvolver agora.</li>
+            <li>Libere uma missão curta, escolhendo os módulos que fazem sentido para essa meta.</li>
+            <li>A criança faz a atividade no bloco infantil, sem acessar a área adulta.</li>
+            <li>Volte ao acompanhamento para ver sinais, evolução por tempo e área, e histórico unificado.</li>
+          </ul>
+        </article>
+        <article class="report-block">
+          <strong>Estratégia pedagógica</strong>
+          <p class="muted">A evolução é comparada principalmente com o próprio percurso da criança. O adulto recebe sinais e receitas práticas para orientar com calma, elogiar conquistas reais e trabalhar um próximo passo por vez.</p>
+        </article>
+        <article class="report-block">
+          <strong>Como ler os resultados</strong>
+          <p class="muted">Use metas e missões para organizar a prática. Use evolução e histórico para verificar se a estratégia está funcionando. Quando houver pouca evidência, o melhor caminho é praticar mais algumas vezes antes de concluir.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const state = {
@@ -2037,6 +2053,7 @@
       newPasswordInput: document.querySelector("#newPasswordInput"),
       authMessage: document.querySelector("#authMessage"),
       appMessage: document.querySelector("#appMessage"),
+      openGuideButton: document.querySelector("#openGuideButton"),
       childForm: document.querySelector("#childForm"),
       childNameInput: document.querySelector("#childNameInput"),
       birthDateInput: document.querySelector("#birthDateInput"),
@@ -2137,7 +2154,9 @@
       reportOverlay: document.querySelector("#reportOverlay"),
       closeReportButton: document.querySelector("#closeReportButton"),
       printReportButton: document.querySelector("#printReportButton"),
-      reportContent: document.querySelector("#reportContent")
+      reportContent: document.querySelector("#reportContent"),
+      guideOverlay: document.querySelector("#guideOverlay"),
+      closeGuideButton: document.querySelector("#closeGuideButton")
     };
 
     const savedEvolutionPeriod = localStorage.getItem("portal.evolutionPeriodDays");
@@ -4793,6 +4812,16 @@
       document.body.style.overflow = "";
     }
 
+    function openGuide() {
+      els.guideOverlay.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeGuide() {
+      els.guideOverlay.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+
     async function consumePortalReturn() {
       const params = new URLSearchParams(window.location.search);
       const status = params.get("portal_status");
@@ -5137,6 +5166,8 @@
     });
     els.closeChildModeButton.addEventListener("click", closeChildMode);
     els.cancelAdultConfirmButton.addEventListener("click", hideAdultConfirm);
+    els.openGuideButton.addEventListener("click", openGuide);
+    els.closeGuideButton.addEventListener("click", closeGuide);
     els.openReportButton.addEventListener("click", openReport);
     els.closeReportButton.addEventListener("click", closeReport);
     els.printReportButton.addEventListener("click", () => window.print());
