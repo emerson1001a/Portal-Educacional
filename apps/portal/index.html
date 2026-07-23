@@ -666,6 +666,9 @@
       border-color: #bde7df;
       background: #f2fbf8;
     }
+    .assignment-card-archived {
+      background: #fff;
+    }
     .goal-action-list {
       display: grid;
       gap: 12px;
@@ -1548,91 +1551,146 @@
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
           <div class="topic-body">
-          <form class="stack" id="assignmentForm">
-            <div class="row">
-              <label style="flex:2 1 260px">
-                <span class="title-with-help">Meta vinculada <span class="info-tip" tabindex="0" data-tip="Opcional. Vincule a missão a uma meta adulta para comparar evolução depois. A criança não verá esta meta.">?</span></span>
-                <select id="assignmentGoalInput"></select>
-              </label>
-              <label style="flex:1 1 180px">
-                <span class="title-with-help">Prazo <span class="info-tip" tabindex="0" data-tip="Opcional. Use prazo curto para organizar a rotina, sem transformar em cobrança para a criança.">?</span></span>
-                <input id="assignmentDueInput" type="date">
-              </label>
+            <div class="goal-action-list">
+              <details class="goal-action goal-action-new" id="assignmentCreateDetails">
+                <summary>
+                  <div class="goal-action-title">
+                    <span class="pill">nova missão</span>
+                    <strong>Liberar uma missão</strong>
+                    <p class="muted small">Escolha módulos, uma orientação curta e entregue uma atividade clara para a criança.</p>
+                  </div>
+                  <span class="goal-action-toggle" aria-hidden="true"></span>
+                </summary>
+                <div class="goal-action-body">
+                  <form class="stack" id="assignmentForm">
+                    <div class="row">
+                      <label style="flex:2 1 260px">
+                        <span class="title-with-help">Meta vinculada <span class="info-tip" tabindex="0" data-tip="Opcional. Vincule a missão a uma meta adulta para comparar evolução depois. A criança não verá esta meta.">?</span></span>
+                        <select id="assignmentGoalInput"></select>
+                      </label>
+                      <label style="flex:1 1 180px">
+                        <span class="title-with-help">Prazo <span class="info-tip" tabindex="0" data-tip="Opcional. Use prazo curto para organizar a rotina, sem transformar em cobrança para a criança.">?</span></span>
+                        <input id="assignmentDueInput" type="date">
+                      </label>
+                    </div>
+                    <label>
+                      <span class="title-with-help">Nome da missão <span class="info-tip" tabindex="0" data-tip="Use um nome simples e positivo, como treino de leitura de hoje. Esse texto aparece para a criança.">?</span></span>
+                      <input id="assignmentTitleInput" placeholder="Ex.: treino de leitura de hoje" required>
+                    </label>
+                    <label>
+                      <span class="title-with-help">Orientação para a criança <span class="info-tip" tabindex="0" data-tip="Escreva uma instrução curta, concreta e tranquila. Evite cobranças ou comentários técnicos demais.">?</span></span>
+                      <textarea id="assignmentInstructionsInput" placeholder="Ex.: escolha uma atividade, faça com calma e me chame quando terminar."></textarea>
+                    </label>
+                    <label>
+                      <span class="title-with-help">Nota para o adulto <span class="info-tip" tabindex="0" data-tip="Opcional. Use para lembrar por que esta missão foi liberada. Esta nota não aparece para a criança.">?</span></span>
+                      <textarea id="assignmentAdultNotesInput" placeholder="Ex.: observar se ele volta ao texto antes de responder."></textarea>
+                    </label>
+                    <div class="perception-tools">
+                      <strong class="title-with-help">Módulos desta missão <span class="info-tip" tabindex="0" data-tip="Escolha quais atividades a criança receberá nesta missão. O resultado volta para o histórico adulto quando o módulo registra a conclusão.">?</span></strong>
+                      <div class="module-choice-list" id="assignmentModuleChoices"></div>
+                      <div class="module-settings hidden" id="tabuadaAssignmentSettings">
+                        <strong>Configuração da Tabuada</strong>
+                        <div class="row">
+                          <label style="flex:1 1 180px">
+                            Meta de respostas
+                            <input id="tabuadaTargetInput" type="number" min="6" max="60" step="1" value="20">
+                          </label>
+                          <label style="flex:1 1 180px">
+                            Modo de treino
+                            <select id="tabuadaModeInput">
+                              <option value="adaptive" selected>Adaptativo</option>
+                              <option value="random">Aleatório</option>
+                            </select>
+                          </label>
+                        </div>
+                        <div class="notice dose-suggestion">
+                          <div id="tabuadaDoseSuggestion">Selecione uma criança para ver uma sugestão curta de treino.</div>
+                          <button class="button secondary" id="applyTabuadaSuggestionButton" type="button">Aplicar sugestão</button>
+                        </div>
+                        <label>
+                          Tabuadas para praticar
+                          <div class="mini-checks" id="tabuadaTabsInput"></div>
+                        </label>
+                        <p class="muted small">Comece curto. A ideia é terminar com sensação de missão cumprida, não cansar.</p>
+                      </div>
+                      <div class="module-settings hidden" id="inglesAssignmentSettings">
+                        <strong>Configuração do Inglês</strong>
+                        <div class="row">
+                          <label style="flex:1 1 220px">
+                            Habilidade
+                            <select id="inglesSkillInput">
+                              <option value="verb_to_be" selected>Verb to be - am, is, are</option>
+                              <option value="simple_present">Simple present - verb + s</option>
+                              <option value="present_continuous">Present continuous - verb + ing</option>
+                              <option value="question_words">Question words - what, where, when</option>
+                            </select>
+                          </label>
+                          <label style="flex:1 1 220px">
+                            Nível de apoio
+                            <select id="inglesSupportInput">
+                              <option value="high" selected>Apoio alto - mais português</option>
+                              <option value="medium">Apoio médio - comandos curtos</option>
+                              <option value="low">Apoio baixo - mais inglês</option>
+                            </select>
+                          </label>
+                        </div>
+                        <label style="max-width:260px">
+                          Questões por bloco
+                          <select id="inglesItemsInput">
+                            <option value="5" selected>5 por bloco</option>
+                            <option value="10">10 por bloco</option>
+                          </select>
+                        </label>
+                        <p class="muted small">Comece com uma dose curta. O objetivo é praticar o ponto exato sem virar uma aula longa.</p>
+                      </div>
+                    </div>
+                    <button class="button blue" type="submit">Liberar missão</button>
+                  </form>
+                </div>
+              </details>
+
+              <details class="goal-action goal-action-active" id="activeAssignmentsDetails">
+                <summary>
+                  <div class="goal-action-title">
+                    <span class="pill">liberadas</span>
+                    <strong>Missões em andamento</strong>
+                    <p class="muted small" id="activeAssignmentsSummary">Missões que ainda aparecem para a criança.</p>
+                  </div>
+                  <span class="goal-action-toggle" aria-hidden="true"></span>
+                </summary>
+                <div class="goal-action-body">
+                  <div class="goal-list" id="activeAssignmentsList"></div>
+                </div>
+              </details>
+
+              <details class="goal-action goal-action-closed" id="doneAssignmentsDetails">
+                <summary>
+                  <div class="goal-action-title">
+                    <span class="pill">concluídas</span>
+                    <strong>Missões concluídas</strong>
+                    <p class="muted small" id="doneAssignmentsSummary">Missões que saíram da área infantil e viraram evidência do percurso.</p>
+                  </div>
+                  <span class="goal-action-toggle" aria-hidden="true"></span>
+                </summary>
+                <div class="goal-action-body">
+                  <div class="goal-list" id="doneAssignmentsList"></div>
+                </div>
+              </details>
+
+              <details class="goal-action goal-action-closed" id="archivedAssignmentsDetails">
+                <summary>
+                  <div class="goal-action-title">
+                    <span class="pill">arquivadas</span>
+                    <strong>Missões arquivadas</strong>
+                    <p class="muted small" id="archivedAssignmentsSummary">Missões retiradas do foco atual sem apagar os registros já salvos.</p>
+                  </div>
+                  <span class="goal-action-toggle" aria-hidden="true"></span>
+                </summary>
+                <div class="goal-action-body">
+                  <div class="goal-list" id="archivedAssignmentsList"></div>
+                </div>
+              </details>
             </div>
-            <label>
-              <span class="title-with-help">Nome da missão <span class="info-tip" tabindex="0" data-tip="Use um nome simples e positivo, como treino de leitura de hoje. Esse texto aparece para a criança.">?</span></span>
-              <input id="assignmentTitleInput" placeholder="Ex.: treino de leitura de hoje" required>
-            </label>
-            <label>
-              <span class="title-with-help">Orientação para a criança <span class="info-tip" tabindex="0" data-tip="Escreva uma instrução curta, concreta e tranquila. Evite cobranças ou comentários técnicos demais.">?</span></span>
-              <textarea id="assignmentInstructionsInput" placeholder="Ex.: escolha uma atividade, faça com calma e me chame quando terminar."></textarea>
-            </label>
-            <label>
-              <span class="title-with-help">Nota para o adulto <span class="info-tip" tabindex="0" data-tip="Opcional. Use para lembrar por que esta missão foi liberada. Esta nota não aparece para a criança.">?</span></span>
-              <textarea id="assignmentAdultNotesInput" placeholder="Ex.: observar se ele volta ao texto antes de responder."></textarea>
-            </label>
-            <div class="perception-tools">
-              <strong class="title-with-help">Módulos desta missão <span class="info-tip" tabindex="0" data-tip="Escolha quais atividades a criança receberá nesta missão. O resultado volta para o histórico adulto quando o módulo registra a conclusão.">?</span></strong>
-              <div class="module-choice-list" id="assignmentModuleChoices"></div>
-              <div class="module-settings hidden" id="tabuadaAssignmentSettings">
-                <strong>Configuração da Tabuada</strong>
-                <div class="row">
-                  <label style="flex:1 1 180px">
-                    Meta de respostas
-                    <input id="tabuadaTargetInput" type="number" min="6" max="60" step="1" value="20">
-                  </label>
-                  <label style="flex:1 1 180px">
-                    Modo de treino
-                    <select id="tabuadaModeInput">
-                      <option value="adaptive" selected>Adaptativo</option>
-                      <option value="random">Aleatório</option>
-                    </select>
-                  </label>
-                </div>
-                <div class="notice dose-suggestion">
-                  <div id="tabuadaDoseSuggestion">Selecione uma criança para ver uma sugestão curta de treino.</div>
-                  <button class="button secondary" id="applyTabuadaSuggestionButton" type="button">Aplicar sugestão</button>
-                </div>
-                <label>
-                  Tabuadas para praticar
-                  <div class="mini-checks" id="tabuadaTabsInput"></div>
-                </label>
-                <p class="muted small">Comece curto. A ideia é terminar com sensação de missão cumprida, não cansar.</p>
-              </div>
-              <div class="module-settings hidden" id="inglesAssignmentSettings">
-                <strong>Configuração do Inglês</strong>
-                <div class="row">
-                  <label style="flex:1 1 220px">
-                    Habilidade
-                    <select id="inglesSkillInput">
-                      <option value="verb_to_be" selected>Verb to be - am, is, are</option>
-                      <option value="simple_present">Simple present - verb + s</option>
-                      <option value="present_continuous">Present continuous - verb + ing</option>
-                      <option value="question_words">Question words - what, where, when</option>
-                    </select>
-                  </label>
-                  <label style="flex:1 1 220px">
-                    Nível de apoio
-                    <select id="inglesSupportInput">
-                      <option value="high" selected>Apoio alto - mais português</option>
-                      <option value="medium">Apoio médio - comandos curtos</option>
-                      <option value="low">Apoio baixo - mais inglês</option>
-                    </select>
-                  </label>
-                </div>
-                <label style="max-width:260px">
-                  Questões por bloco
-                  <select id="inglesItemsInput">
-                    <option value="5" selected>5 por bloco</option>
-                    <option value="10">10 por bloco</option>
-                  </select>
-                </label>
-                <p class="muted small">Comece com uma dose curta. O objetivo é praticar o ponto exato sem virar uma aula longa.</p>
-              </div>
-            </div>
-            <button class="button blue" type="submit">Liberar missão</button>
-          </form>
-          <div class="goal-list" id="assignmentsList"></div>
           </div>
         </details>
 
@@ -2040,7 +2098,12 @@
       inglesSkillInput: document.querySelector("#inglesSkillInput"),
       inglesSupportInput: document.querySelector("#inglesSupportInput"),
       inglesItemsInput: document.querySelector("#inglesItemsInput"),
-      assignmentsList: document.querySelector("#assignmentsList"),
+      activeAssignmentsSummary: document.querySelector("#activeAssignmentsSummary"),
+      doneAssignmentsSummary: document.querySelector("#doneAssignmentsSummary"),
+      archivedAssignmentsSummary: document.querySelector("#archivedAssignmentsSummary"),
+      activeAssignmentsList: document.querySelector("#activeAssignmentsList"),
+      doneAssignmentsList: document.querySelector("#doneAssignmentsList"),
+      archivedAssignmentsList: document.querySelector("#archivedAssignmentsList"),
       historyPeriodInput: document.querySelector("#historyPeriodInput"),
       modulesGrid: document.querySelector("#modulesGrid"),
       timeline: document.querySelector("#timeline"),
@@ -3304,38 +3367,6 @@
       `;
     }
 
-    function renderAssignmentsLegacyUnused() {
-      const child = activeChild();
-      els.assignmentsList.innerHTML = "";
-      if (!child) {
-        els.assignmentsList.innerHTML = '<div class="notice">Selecione uma criança para liberar missões.</div>';
-        return;
-      }
-      if (!state.assignments.length) {
-        els.assignmentsList.innerHTML = '<div class="notice">Ainda não há missões liberadas para esta criança.</div>';
-        return;
-      }
-      state.assignments.forEach((assignment) => {
-        const itemNames = (assignment.items || [])
-          .map((item) => serviceName(item.module_id))
-          .filter(Boolean)
-          .join(", ");
-        const card = document.createElement("article");
-        card.className = "goal-card";
-        card.innerHTML = `
-          <span class="pill">missão liberada</span>
-          <strong>${escapeHtml(assignment.child_title || assignment.title)}</strong>
-          <p class="muted">${escapeHtml(assignment.child_instructions || "Sem orientação adicional.")}</p>
-          <p class="small"><strong>Módulos:</strong> ${escapeHtml(itemNames || "nenhum módulo vinculado")}</p>
-          <div class="row between">
-            <span class="small">Criada em ${formatDate(assignment.created_at)}</span>
-            <span class="pill">${escapeHtml(assignment.status)}</span>
-          </div>
-        `;
-        els.assignmentsList.appendChild(card);
-      });
-    }
-
     function assignmentCard(assignment) {
       const progress = assignmentProgress(assignment);
       const linkedGoal = goalById(assignment.goal_id);
@@ -3343,6 +3374,9 @@
       const effectiveStatus = assignment.resolved_status || assignment.status;
       const doneNotice = effectiveStatus === "done"
         ? "Missão concluída: a criança cumpriu o combinado e esta missão agora fica como evidência do percurso."
+        : "";
+      const archivedNotice = effectiveStatus === "archived"
+        ? "Missão arquivada: ela saiu do foco atual da criança, mas os registros já salvos continuam preservados."
         : "";
       const itemRows = (assignment.items || []).map((item) => {
         const configSummary = assignmentConfigSummary(item);
@@ -3356,7 +3390,7 @@
         `;
       }).join("");
       const card = document.createElement("article");
-      card.className = `goal-card${effectiveStatus === "done" ? " assignment-card-done" : ""}`;
+      card.className = `goal-card${effectiveStatus === "done" ? " assignment-card-done" : ""}${effectiveStatus === "archived" ? " assignment-card-archived" : ""}`;
       card.innerHTML = `
         <span class="pill">missão ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
         <strong>${escapeHtml(assignment.child_title || assignment.title)}</strong>
@@ -3365,14 +3399,15 @@
         ${assignment.adult_notes ? `<p class="small"><strong>Nota adulta:</strong> ${escapeHtml(assignment.adult_notes)}</p>` : ""}
         <p class="small"><strong>Progresso:</strong> ${progress.total ? `${progress.done}/${progress.total} itens concluídos` : "sem módulos vinculados"} · ${escapeHtml(dueText)}</p>
         ${doneNotice ? `<div class="notice">${escapeHtml(doneNotice)}</div>` : ""}
+        ${archivedNotice ? `<div class="notice">${escapeHtml(archivedNotice)}</div>` : ""}
         ${itemRows ? `<div class="stack">${itemRows}</div>` : '<p class="small">Nenhum módulo vinculado.</p>'}
         <div class="row between">
           <span class="small">Criada em ${formatDate(assignment.created_at)} · Status: ${escapeHtml(assignmentStatusLabel(effectiveStatus))}</span>
         </div>
-        <div class="row">
+        ${effectiveStatus !== "archived" ? `<div class="row">
           ${effectiveStatus !== "done" ? `<button class="button ghost" type="button" data-assignment-action="done">Marcar concluída</button>` : ""}
           <button class="button ghost" type="button" data-assignment-action="archived">Arquivar</button>
-        </div>
+        </div>` : ""}
       `;
       card.querySelectorAll("[data-assignment-action]").forEach((button) => {
         button.addEventListener("click", () => updateAssignmentStatus(assignment, button.dataset.assignmentAction, button));
@@ -3380,51 +3415,49 @@
       return card;
     }
 
-    function assignmentGroup(title, description, assignments) {
-      const section = document.createElement("section");
-      section.className = "assignment-group";
-      section.innerHTML = `
-        <div class="assignment-group-title">
-          <div>
-            <strong>${escapeHtml(title)}</strong>
-            <p class="muted small">${escapeHtml(description)}</p>
-          </div>
-          <span class="pill">${assignments.length}</span>
-        </div>
-      `;
-      assignments.forEach((assignment) => section.appendChild(assignmentCard(assignment)));
-      return section;
+    function renderAssignmentList(target, assignments, emptyText) {
+      target.innerHTML = "";
+      if (!assignments.length) {
+        target.innerHTML = `<div class="goal-list-empty">${escapeHtml(emptyText)}</div>`;
+        return;
+      }
+      assignments.forEach((assignment) => target.appendChild(assignmentCard(assignment)));
     }
 
     function renderAssignments() {
       const child = activeChild();
-      els.assignmentsList.innerHTML = "";
+      els.activeAssignmentsList.innerHTML = "";
+      els.doneAssignmentsList.innerHTML = "";
+      els.archivedAssignmentsList.innerHTML = "";
       if (!child) {
-        els.assignmentsList.innerHTML = '<div class="notice">Selecione uma criança para liberar missões.</div>';
+        els.activeAssignmentsSummary.textContent = "Selecione uma criança para ver missões liberadas.";
+        els.doneAssignmentsSummary.textContent = "As missões concluídas aparecerão aqui.";
+        els.archivedAssignmentsSummary.textContent = "As missões arquivadas aparecerão aqui.";
+        els.activeAssignmentsList.innerHTML = '<div class="goal-list-empty">Selecione uma criança para liberar missões.</div>';
+        els.doneAssignmentsList.innerHTML = '<div class="goal-list-empty">Selecione uma criança para ver missões concluídas.</div>';
+        els.archivedAssignmentsList.innerHTML = '<div class="goal-list-empty">Selecione uma criança para ver missões arquivadas.</div>';
         return;
       }
-      if (!state.assignments.length) {
-        els.assignmentsList.innerHTML = '<div class="notice">Ainda não há missões liberadas para esta criança.</div>';
-        return;
-      }
-      const activeAssignments = state.assignments.filter((assignment) => (assignment.resolved_status || assignment.status) !== "done");
+      const activeAssignments = state.assignments.filter((assignment) => {
+        const status = assignment.resolved_status || assignment.status;
+        return status !== "done" && status !== "archived";
+      });
       const doneAssignments = state.assignments.filter((assignment) => (assignment.resolved_status || assignment.status) === "done");
+      const archivedAssignments = state.assignments.filter((assignment) => (assignment.resolved_status || assignment.status) === "archived");
 
-      if (activeAssignments.length) {
-        els.assignmentsList.appendChild(assignmentGroup(
-          "Missões em andamento",
-          "Aparecem para a criança até serem concluídas ou arquivadas.",
-          activeAssignments
-        ));
-      }
+      els.activeAssignmentsSummary.textContent = activeAssignments.length
+        ? `${activeAssignments.length} missão${activeAssignments.length === 1 ? "" : "ões"} aparecendo para a criança.`
+        : "Nenhuma missão liberada no momento.";
+      els.doneAssignmentsSummary.textContent = doneAssignments.length
+        ? `${doneAssignments.length} missão${doneAssignments.length === 1 ? "" : "ões"} concluída${doneAssignments.length === 1 ? "" : "s"}.`
+        : "Ainda não há missões concluídas.";
+      els.archivedAssignmentsSummary.textContent = archivedAssignments.length
+        ? `${archivedAssignments.length} missão${archivedAssignments.length === 1 ? "" : "ões"} arquivada${archivedAssignments.length === 1 ? "" : "s"}.`
+        : "Ainda não há missões arquivadas.";
 
-      if (doneAssignments.length) {
-        els.assignmentsList.appendChild(assignmentGroup(
-          "Missões concluídas",
-          "Saem da área infantil, mas continuam aqui como evidência do percurso.",
-          doneAssignments
-        ));
-      }
+      renderAssignmentList(els.activeAssignmentsList, activeAssignments, "Nenhuma missão liberada para esta criança agora.");
+      renderAssignmentList(els.doneAssignmentsList, doneAssignments, "Ainda não há missões concluídas.");
+      renderAssignmentList(els.archivedAssignmentsList, archivedAssignments, "Ainda não há missões arquivadas.");
     }
 
     function renderTimeEvolution() {
@@ -4103,7 +4136,10 @@
       }
 
       const isChildAssignmentItemDone = (item) => (item.resolved_status || item.status) === "done";
-      const activeAssignments = state.assignments.filter((assignment) => (assignment.resolved_status || assignment.status) !== "done");
+      const activeAssignments = state.assignments.filter((assignment) => {
+        const status = assignment.resolved_status || assignment.status;
+        return status !== "done" && status !== "archived";
+      });
       const pendingItemsCount = activeAssignments.reduce((total, assignment) => {
         return total + (assignment.items || []).filter((item) => !isChildAssignmentItemDone(item)).length;
       }, 0);
@@ -4941,7 +4977,7 @@
         .from("assignments")
         .select("id, title, child_title, child_instructions, adult_notes, status, due_at, goal_id, created_at, updated_at")
         .eq("child_id", child.id)
-        .in("status", ["released", "in_progress", "done"])
+        .in("status", ["released", "in_progress", "done", "archived"])
         .order("created_at", { ascending: false })
         .limit(12);
 
@@ -4987,9 +5023,14 @@
             };
           });
         const allDone = assignmentItems.length > 0 && assignmentItems.every((item) => item.resolved_status === "done");
+        const resolvedStatus = assignment.status === "archived"
+          ? "archived"
+          : allDone
+            ? "done"
+            : assignment.status;
         return {
           ...assignment,
-          resolved_status: allDone ? "done" : assignment.status,
+          resolved_status: resolvedStatus,
           items: assignmentItems
         };
       });
