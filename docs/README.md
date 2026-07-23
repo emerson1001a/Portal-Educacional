@@ -19,6 +19,7 @@ O objetivo e evitar que decisoes importantes fiquem espalhadas em conversas, arq
 - `prd-sinais-da-missao.md`: sinais transversais das missoes, incluindo tempo invisivel, autoavaliacao leve da crianca e sintese cuidadosa da IA para o adulto.
 - `prd-analise-longitudinal-por-blocos.md`: documento de trabalho para a analise longitudinal por disciplina/bloco, com tendencias, evidencias abertas, graficos e linguagem segura.
 - `prd-relatorio-reuniao-pais.md`: formato do relatorio revisavel para reunioes com pais, gerado a partir do acompanhamento por area e com linguagem adequada para familia.
+- `prd-registro-estruturado-interpretacao.md`: contrato de dados e regras pedagogicas para salvar acertos, tipos de pergunta, respostas e feedbacks estruturados no modulo de Interpretacao de Texto.
 - `prd-consolidacao-monorepo.md`: plano para trazer Redacao, Interpretacao e Tabuada para o mesmo GitHub do Portal, com migracao paralela e desativacao segura dos projetos antigos.
 - `analise-schema-etapa-2.md`: comparacao entre o schema atual e a migracao proposta.
 - `analise-schema-etapa-5.md`: comparacao entre PRD de metas/tarefas e o schema/migracoes existentes.
