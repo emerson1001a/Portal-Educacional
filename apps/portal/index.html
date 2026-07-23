@@ -1731,7 +1731,7 @@
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
           <div class="topic-body">
-            <p class="muted">Primeira versão disponível: Redação. O relatório usa as redações salvas no histórico da criança.</p>
+            <p class="muted">Escolha o período e a disciplina. O portal mostra apenas relatórios com evidências no período selecionado.</p>
             <div class="parent-report-controls">
               <label>
                 Período do relatório
@@ -1742,7 +1742,11 @@
                   <option value="all">Todo o histórico</option>
                 </select>
               </label>
-              <button class="button coral" id="openWritingReportButton" type="button">Gerar relatório de Redação</button>
+              <label>
+                Disciplina
+                <select id="parentReportServiceInput"></select>
+              </label>
+              <button class="button coral" id="openParentReportButton" type="button">Gerar relatório</button>
             </div>
           </div>
         </details>
@@ -2372,7 +2376,8 @@
       openChildLinkButton: document.querySelector("#openChildLinkButton"),
       openReportButton: document.querySelector("#openReportButton"),
       parentReportPeriodInput: document.querySelector("#parentReportPeriodInput"),
-      openWritingReportButton: document.querySelector("#openWritingReportButton"),
+      parentReportServiceInput: document.querySelector("#parentReportServiceInput"),
+      openParentReportButton: document.querySelector("#openParentReportButton"),
       metricActivities: document.querySelector("#metricActivities"),
       metricGoals: document.querySelector("#metricGoals"),
       metricLast: document.querySelector("#metricLast"),
@@ -2463,6 +2468,7 @@
     if (els.parentReportPeriodInput && ["60", "180", "365", "all"].includes(savedParentReportPeriod)) {
       els.parentReportPeriodInput.value = savedParentReportPeriod;
     }
+    const savedParentReportService = localStorage.getItem("portal.parentReportService") || "redacao";
 
     function message(text, isError = false) {
       const target = state.session?.user && !state.passwordRecovery && !state.resetRequest ? els.appMessage : els.authMessage;
@@ -5050,6 +5056,35 @@
       return events.filter((event) => localDay(eventDate(event)) >= start);
     }
 
+    function parentReportDefinitions() {
+      return [
+        { id: "redacao", label: "Redação" },
+        { id: "interpretacao", label: "Interpretação" }
+      ];
+    }
+
+    function updateParentReportServiceOptions() {
+      if (!els.parentReportServiceInput || !els.openParentReportButton) return;
+      const current = els.parentReportServiceInput.value || savedParentReportService;
+      const available = parentReportDefinitions().filter((item) => parentReportEventsForService(item.id).length);
+
+      if (!available.length) {
+        els.parentReportServiceInput.innerHTML = '<option value="">Sem evidências no período</option>';
+        els.parentReportServiceInput.disabled = true;
+        els.openParentReportButton.disabled = true;
+        els.openParentReportButton.textContent = "Gerar relatório";
+        return;
+      }
+
+      els.parentReportServiceInput.disabled = false;
+      els.openParentReportButton.disabled = false;
+      els.parentReportServiceInput.innerHTML = available.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.label)}</option>`).join("");
+      const selected = available.some((item) => item.id === current) ? current : available[0].id;
+      els.parentReportServiceInput.value = selected;
+      const selectedLabel = available.find((item) => item.id === selected)?.label || "disciplina";
+      els.openParentReportButton.textContent = `Gerar relatório de ${selectedLabel}`;
+    }
+
     function writingScore(event) {
       const score = eventPerformanceScore(event);
       if (score !== null) return Math.round(score * 100);
@@ -5316,8 +5351,268 @@
       `;
     }
 
-    function openWritingReport() {
-      els.reportContent.innerHTML = buildWritingReportHtml();
+    function readingScore(event) {
+      const metrics = event?.metrics && typeof event.metrics === "object" ? event.metrics : {};
+      const scoreCandidates = [
+        metrics.comprehension_score,
+        metrics.accuracy_pct,
+        metrics.recent_accuracy_pct
+      ].map(metricNumber).filter((score) => score !== null);
+      if (scoreCandidates.length) {
+        const score = scoreCandidates[0];
+        return Math.round(score <= 1 ? score * 100 : score);
+      }
+
+      const artifacts = event?.artifacts && typeof event.artifacts === "object" ? event.artifacts : {};
+      const questions = Array.isArray(artifacts.questions) ? artifacts.questions : [];
+      const answers = Array.isArray(artifacts.answers) ? artifacts.answers : [];
+      const total = Math.max(questions.length, answers.length);
+      if (!total) return null;
+      const answered = answers.filter((answer) => readableAnswer(answer)).length;
+      return Math.max(20, Math.min(75, Math.round((answered / total) * 70)));
+    }
+
+    function readingTrendText(events) {
+      const scored = events
+        .map((event) => ({ event, score: readingScore(event) }))
+        .filter((item) => item.score !== null);
+      if (scored.length < 3) {
+        return {
+          label: "sinais em formação",
+          summary: "Ainda há poucas leituras comparáveis no período. O melhor caminho é manter atividades curtas para formar uma base mais segura de observação.",
+          next: "Continue registrando leituras e respostas para observar se a criança localiza pistas no texto com mais autonomia."
+        };
+      }
+      const recent = scored.slice(0, Math.ceil(scored.length / 2));
+      const older = scored.slice(Math.ceil(scored.length / 2));
+      const avg = (items) => items.reduce((sum, item) => sum + item.score, 0) / Math.max(1, items.length);
+      const delta = avg(recent) - avg(older);
+      if (delta >= 8) {
+        return {
+          label: "avanço",
+          summary: "As leituras mais recentes indicam melhora na compreensão em relação às anteriores.",
+          next: "O próximo passo é preservar perguntas curtas e pedir que a criança mostre no texto a pista que ajudou a responder."
+        };
+      }
+      if (delta <= -8) {
+        return {
+          label: "atenção com leveza",
+          summary: "As leituras recentes pedem textos menores ou perguntas mais guiadas antes de aumentar a complexidade.",
+          next: "O próximo ciclo deve reduzir o tamanho do texto, fazer uma pergunta por vez e reforçar a busca de pistas explícitas."
+        };
+      }
+      return {
+        label: "estável",
+        summary: "As leituras estão relativamente estáveis. A continuidade e a qualidade das conversas sobre o texto são mais importantes do que aumentar a dificuldade agora.",
+        next: "Mantenha textos curtos ou médios e trabalhe uma habilidade por vez: localizar informação, explicar com as próprias palavras ou justificar a resposta."
+      };
+    }
+
+    function readingEventText(event) {
+      const artifacts = event?.artifacts && typeof event.artifacts === "object" ? event.artifacts : {};
+      return normalizePortalText(artifacts.text || "");
+    }
+
+    function readingQuestionCount(event) {
+      const artifacts = event?.artifacts && typeof event.artifacts === "object" ? event.artifacts : {};
+      const questions = Array.isArray(artifacts.questions) ? artifacts.questions : [];
+      const answers = Array.isArray(artifacts.answers) ? artifacts.answers : [];
+      return Math.max(questions.length, answers.length);
+    }
+
+    function readingQuestionAnswerHtml(event) {
+      const artifacts = event?.artifacts && typeof event.artifacts === "object" ? event.artifacts : {};
+      const questions = Array.isArray(artifacts.questions) ? artifacts.questions : [];
+      const answers = Array.isArray(artifacts.answers) ? artifacts.answers : [];
+      const total = Math.max(questions.length, answers.length);
+      if (!total) return '<p class="muted">Perguntas e respostas não disponíveis neste registro.</p>';
+
+      return `
+        <ol class="question-list">
+          ${Array.from({ length: total }).map((_, index) => {
+            const question = questions[index] || {};
+            const answer = answers[index];
+            const prompt = typeof question === "string" ? question : (question.prompt || question.question || question.text || "");
+            const response = readableAnswer(answer);
+            return `
+              <li>
+                <strong>${escapeHtml(prompt || "Pergunta registrada")}</strong>
+                ${response ? `<p><strong>Resposta:</strong> ${escapeHtml(response)}</p>` : '<p class="muted">Resposta não registrada.</p>'}
+              </li>
+            `;
+          }).join("")}
+        </ol>
+      `;
+    }
+
+    function readingAdultFeedback(event) {
+      const adult = adultFeedback(event);
+      return normalizePortalText(adult.summary || "");
+    }
+
+    function readingChildFeedback(event) {
+      const feedback = event?.feedback && typeof event.feedback === "object" ? event.feedback : {};
+      return normalizePortalText(feedback.child?.message || "");
+    }
+
+    function readingScoreBars(events) {
+      const recent = events.slice(0, Math.ceil(events.length / 2));
+      const older = events.slice(Math.ceil(events.length / 2));
+      const latestScore = readingScore(events[0]);
+      const recentAverage = averageScoreFor(events, readingScore, true);
+      const olderAverage = averageScoreFor(older, readingScore);
+      const bars = [
+        ["Início do período", olderAverage],
+        ["Média recente", recentAverage],
+        ["Última leitura", latestScore]
+      ].filter(([, score]) => score !== null);
+      if (!bars.length) {
+        return '<p class="muted">Ainda não há indicador numérico suficiente. Use o texto, as perguntas e os feedbacks como evidência principal.</p>';
+      }
+      return `
+        <div class="parent-report-chart" aria-label="Evolução da compreensão no período">
+          ${bars.map(([label, score]) => `
+            <div class="parent-report-bar">
+              <span>${escapeHtml(label)}</span>
+              <div class="parent-report-track"><div class="parent-report-fill" style="width:${Math.max(8, Math.min(100, score))}%"></div></div>
+              <span>${score}</span>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function averageScoreFor(events, scorer, useRecentHalf = false) {
+      const target = useRecentHalf ? events.slice(0, Math.ceil(events.length / 2)) : events;
+      const scores = target.map(scorer).filter((score) => score !== null);
+      if (!scores.length) return null;
+      return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+    }
+
+    function readingReportSummary(child, events, trend) {
+      if (!events.length) {
+        return `${child.full_name} ainda não tem atividades de Interpretação registradas no período escolhido. Antes de gerar uma leitura para reunião, vale propor algumas leituras curtas com perguntas relacionadas ao texto.`;
+      }
+      const countText = `${events.length} leitura${events.length === 1 ? "" : "s"} registrada${events.length === 1 ? "" : "s"}`;
+      return normalizePortalText(`${child.full_name} tem ${countText} neste ${parentReportPeriodLabel()}. Esta síntese considera o conjunto das leituras e respostas do período; os exemplos aparecem depois, no anexo. ${trend.summary} ${trend.next}`);
+    }
+
+    function buildReadingReportHtml() {
+      const child = activeChild();
+      if (!child) {
+        return `
+          <div class="parent-report">
+            <h2>Relatório de Interpretação</h2>
+            <p class="muted">Selecione uma criança para gerar o relatório.</p>
+          </div>
+        `;
+      }
+
+      const events = parentReportEventsForService("interpretacao");
+      const trend = readingTrendText(events);
+      const frequency = writingFrequencyLabel(events);
+      const representative = writingRepresentativeEvents(events);
+      const score = averageScoreFor(events, readingScore);
+      const periodLabel = parentReportPeriodLabel();
+      const goals = [...state.goals, ...state.completedGoals, ...state.archivedGoals].filter((goal) => goal.area === "leitura");
+
+      return `
+        <div class="parent-report" aria-label="Relatório de Interpretação">
+          <header class="parent-report-header">
+            <span class="pill">relatório ${escapeHtml(periodLabel)}</span>
+            <h2>Interpretação de Texto · ${escapeHtml(child.full_name)}</h2>
+            <p class="muted">Gerado em ${new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date())}</p>
+          </header>
+
+          <section class="parent-report-summary">
+            <h3>Síntese para a família</h3>
+            <p>${escapeHtml(readingReportSummary(child, events, trend))}</p>
+          </section>
+
+          <div class="parent-report-metrics" aria-label="Indicadores principais">
+            <div class="parent-report-metric">
+              <span>Evidências:</span>
+              <p><strong>${events.length}</strong> leitura${events.length === 1 ? "" : "s"} salvas</p>
+            </div>
+            <div class="parent-report-metric">
+              <span>Frequência:</span>
+              <p><strong>${escapeHtml(frequency)}</strong> prática no período</p>
+            </div>
+            <div class="parent-report-metric">
+              <span>Sinal principal:</span>
+              <p><strong>${escapeHtml(trend.label)}</strong>${score !== null ? ` · indicador ${score}` : ""}</p>
+            </div>
+          </div>
+
+          <section class="parent-report-section">
+            <h3>Evolução da compreensão</h3>
+            <p class="muted">O gráfico resume indicadores possíveis a partir das leituras e respostas salvas no período.</p>
+            ${readingScoreBars(events)}
+            <p class="parent-report-note"><strong>Como ler a pontuação:</strong> indicador de 0 a 100, usado para acompanhar evolução no tempo. Quando o módulo salva pontuação de compreensão, ela é usada; quando não salva, o portal usa sinais simples, como perguntas respondidas. Não é nota escolar.</p>
+          </section>
+
+          <div class="parent-report-grid">
+            <section class="parent-report-section">
+              <h3>Leitura pedagógica</h3>
+              <div class="parent-report-stage">
+                <strong>Meta de leitura</strong>
+                <p>${goals.length ? escapeHtml(goals[0].title) : "Sem meta ativa de leitura no período. O relatório usa as interpretações salvas como evidência principal."}</p>
+              </div>
+              <div class="parent-report-stage">
+                <strong>O que observar</strong>
+                <p>${escapeHtml(trend.next)}</p>
+              </div>
+              <div class="parent-report-stage">
+                <strong>Cuidados de linguagem</strong>
+                <p>Valorize quando a criança encontra uma pista no texto. Se errar, volte ao trecho com calma e faça uma pergunta menor.</p>
+              </div>
+            </section>
+
+            <section class="parent-report-section">
+              <h3>Evidências que sustentam a leitura</h3>
+              ${events.length ? `
+                <ul>
+                  <li>Há ${events.length} atividade${events.length === 1 ? "" : "s"} de Interpretação no período selecionado.</li>
+                  <li>${escapeHtml(trend.summary)}</li>
+                  <li>Os exemplos abaixo mostram textos, perguntas e respostas representativas para apoiar a conversa com a família.</li>
+                </ul>
+              ` : `
+                <p>Ainda não há interpretações no período escolhido. Gere o relatório novamente após algumas missões de Interpretação.</p>
+              `}
+            </section>
+          </div>
+
+          <section class="parent-report-section">
+            <h3>Orientação prática para casa</h3>
+            <ul>
+              <li>Peça para a criança apontar onde encontrou a resposta no texto.</li>
+              <li>Faça uma pergunta por vez e aceite respostas curtas quando elas estiverem ligadas ao texto.</li>
+              <li>Use uma frase positiva: "Você encontrou uma boa pista. Agora vamos conferir juntos se ela responde à pergunta."</li>
+            </ul>
+          </section>
+
+          <section class="parent-report-section">
+            <h3>Anexo · Exemplos de textos trabalhados</h3>
+            <p class="muted">Amostra com até três registros. Se houver menos de três interpretações, aparecem apenas as disponíveis.</p>
+            ${representative.length ? representative.map((event, index) => `
+              <article class="parent-report-example">
+                <h3>Exemplo ${index + 1} · ${escapeHtml(formatDate(event.occurred_at || event.created_at))}</h3>
+                <p><strong>Atividade:</strong> ${escapeHtml(event.title || "Interpretação registrada")}</p>
+                ${readingEventText(event) ? `<div class="parent-report-text">${escapeHtml(readingEventText(event))}</div>` : '<p class="muted">Texto não disponível neste registro.</p>'}
+                <h3>Perguntas e respostas</h3>
+                ${readingQuestionAnswerHtml(event)}
+                ${readingChildFeedback(event) ? `<p><strong>Feedback recebido pela criança:</strong> ${escapeHtml(readingChildFeedback(event))}</p>` : ""}
+                ${readingAdultFeedback(event) ? `<p><strong>Feedback para o adulto:</strong> ${escapeHtml(readingAdultFeedback(event))}</p>` : ""}
+              </article>
+            `).join("") : '<p>Sem exemplos disponíveis neste período.</p>'}
+          </section>
+        </div>
+      `;
+    }
+
+    function openParentReport() {
+      const service = els.parentReportServiceInput?.value || "redacao";
+      els.reportContent.innerHTML = service === "interpretacao" ? buildReadingReportHtml() : buildWritingReportHtml();
       els.reportOverlay.classList.remove("hidden");
       document.body.style.overflow = "hidden";
     }
@@ -5561,6 +5856,7 @@
       renderModules();
       renderChildModules();
       renderTimeline();
+      updateParentReportServiceOptions();
     }
 
     async function ensureProfile() {
@@ -5838,13 +6134,18 @@
     });
     els.parentReportPeriodInput.addEventListener("change", () => {
       localStorage.setItem("portal.parentReportPeriod", els.parentReportPeriodInput.value);
+      updateParentReportServiceOptions();
+    });
+    els.parentReportServiceInput.addEventListener("change", () => {
+      localStorage.setItem("portal.parentReportService", els.parentReportServiceInput.value);
+      updateParentReportServiceOptions();
     });
     els.closeChildModeButton.addEventListener("click", closeChildMode);
     els.cancelAdultConfirmButton.addEventListener("click", hideAdultConfirm);
     els.openGuideButton.addEventListener("click", openGuide);
     els.closeGuideButton.addEventListener("click", closeGuide);
     els.openReportButton.addEventListener("click", openReport);
-    els.openWritingReportButton.addEventListener("click", openWritingReport);
+    els.openParentReportButton.addEventListener("click", openParentReport);
     els.closeReportButton.addEventListener("click", closeReport);
     els.printReportButton.addEventListener("click", () => window.print());
     els.editChildButton.addEventListener("click", openChildEdit);
