@@ -1520,6 +1520,17 @@
         padding: 0;
         box-shadow: none;
       }
+      .parent-report,
+      .parent-report-track,
+      .parent-report-fill {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .parent-report-fill {
+        height: 0 !important;
+        border-top: 8px solid #111827 !important;
+        background: transparent !important;
+      }
       .report-block { break-inside: avoid; }
     }
   </style>
