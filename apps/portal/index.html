@@ -226,22 +226,74 @@
     .plan-topic { display: none; }
 
     .section-group {
+      --block-accent: var(--teal);
+      --block-bg-a: #f8fcfd;
+      --block-bg-b: #eef8f6;
+      position: relative;
       display: grid;
-      gap: 14px;
-      padding: 16px;
-      border: 1px solid #cfe1ea;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #f8fcfd, #eef8f6);
-      box-shadow: 0 14px 35px rgba(8, 32, 48, .06);
+      gap: 16px;
+      padding: 18px;
+      border: 1.5px solid color-mix(in srgb, var(--block-accent) 34%, #cfe1ea);
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--block-bg-a), var(--block-bg-b));
+      box-shadow: 0 18px 42px rgba(8, 32, 48, .08);
+    }
+    .section-group::before,
+    .modules-topic::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      border-radius: 18px 0 0 18px;
+      background: var(--block-accent);
+    }
+    .registry-group {
+      --block-accent: var(--blue);
+      --block-bg-a: #f7faff;
+      --block-bg-b: #edf5ff;
+    }
+    .analysis-group {
+      --block-accent: var(--teal);
+      --block-bg-a: #f8fffd;
+      --block-bg-b: #edf8f5;
     }
     .section-label {
-      padding: 2px 4px 4px;
+      display: grid;
+      gap: 5px;
+      padding: 2px 6px 0 12px;
     }
     .section-label h2 {
       margin: 0 0 4px;
       font-size: 22px;
     }
     .section-label p { margin: 0; }
+    .section-kicker {
+      width: fit-content;
+      min-height: 24px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: color-mix(in srgb, var(--block-accent) 74%, #102033);
+      background: color-mix(in srgb, var(--block-accent) 12%, white);
+      border: 1px solid color-mix(in srgb, var(--block-accent) 22%, white);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+    .modules-topic {
+      --block-accent: var(--gold);
+      position: relative;
+      border-width: 1.5px;
+      border-color: color-mix(in srgb, var(--gold) 34%, #cfe1ea);
+      background: linear-gradient(135deg, #fffdf6, #f8f3e4);
+      box-shadow: 0 18px 42px rgba(8, 32, 48, .07);
+    }
+    .modules-topic > summary {
+      padding-left: 24px;
+    }
+    .modules-topic .topic-body {
+      background: rgba(255,255,255,.38);
+    }
 
     .pill {
       display: inline-flex;
@@ -556,7 +608,7 @@
       font-size: 12px;
       font-weight: 900;
       color: var(--muted);
-      letter-spacing: .02em;
+      letter-spacing: 0;
       text-transform: uppercase;
     }
     .child-access-config select {
@@ -583,14 +635,14 @@
       font-size: 12px;
       font-weight: 900;
       color: var(--muted);
-      letter-spacing: .02em;
+      letter-spacing: 0;
       text-transform: uppercase;
     }
     .child-access-code input {
       text-align: center;
       font-size: 20px;
       font-weight: 900;
-      letter-spacing: .08em;
+      letter-spacing: 0;
       background: #fff8dc;
       border-color: #e2b547;
     }
@@ -1492,11 +1544,13 @@
         </section>
 
         <section class="section-label registry-label">
+          <span class="section-kicker">Bloco de planejamento</span>
           <h2>Registro da Meta e das Missões</h2>
           <p class="muted">Primeiro registre o que a criança precisa desenvolver. Depois libere uma missão curta e positiva.</p>
         </section>
 
         <section class="section-label analysis-label">
+          <span class="section-kicker">Bloco de acompanhamento</span>
           <h2>Acompanhamento da Criança</h2>
           <p class="muted">Depois das atividades, veja os sinais principais, a evolução no tempo, as áreas praticadas e as evidências salvas.</p>
         </section>
@@ -1859,6 +1913,7 @@
         <details class="card topic modules-topic">
           <summary>
             <div class="topic-title">
+              <span class="section-kicker">Bloco de recursos</span>
               <h2 class="title-with-help">Módulos de aprendizagem <span class="info-tip" tabindex="0" data-tip="Lista os aplicativos conectados ao portal. Abrir por aqui é útil para o adulto testar ou acompanhar os módulos disponíveis.">?</span></h2>
               <p class="muted">Abra atividades ou veja quais módulos estão conectados ao histórico central.</p>
             </div>
