@@ -666,6 +666,108 @@
       border-color: #bde7df;
       background: #f2fbf8;
     }
+    .goal-action-list {
+      display: grid;
+      gap: 12px;
+    }
+    .goal-action,
+    .goal-record {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+    .goal-action > summary,
+    .goal-record > summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    .goal-action > summary::-webkit-details-marker,
+    .goal-record > summary::-webkit-details-marker { display: none; }
+    .goal-action-new {
+      border-color: rgba(37,99,235,.32);
+      background: #f5f8ff;
+    }
+    .goal-action-active {
+      border-color: rgba(11,143,134,.30);
+      background: #f3fbf9;
+    }
+    .goal-action-closed {
+      background: #fff;
+    }
+    .goal-action-title,
+    .goal-record-title {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+    .goal-action-title strong,
+    .goal-record-title strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1.2;
+    }
+    .goal-action-title p,
+    .goal-record-title p {
+      margin: 0;
+    }
+    .goal-action-toggle,
+    .goal-record-toggle {
+      flex: 0 0 auto;
+      min-width: 94px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #e9f2f7;
+      color: #22556a;
+      font-size: 12px;
+      font-weight: 850;
+      text-align: center;
+    }
+    .goal-action[open] .goal-action-toggle,
+    .goal-record[open] .goal-record-toggle {
+      background: #e9f8f6;
+      color: #0b6f68;
+    }
+    .goal-action[open] .goal-action-toggle::before,
+    .goal-record[open] .goal-record-toggle::before { content: "Recolher"; }
+    .goal-action:not([open]) .goal-action-toggle::before,
+    .goal-record:not([open]) .goal-record-toggle::before { content: "Abrir"; }
+    .goal-action-body,
+    .goal-record-body {
+      display: grid;
+      gap: 12px;
+      padding: 0 14px 14px;
+      border-top: 1px solid var(--line);
+    }
+    .goal-action-body > :first-child,
+    .goal-record-body > :first-child {
+      margin-top: 14px;
+    }
+    .goal-record {
+      background: white;
+    }
+    .goal-close-panel {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #c9ebe5;
+      border-radius: 8px;
+      background: #f7fffd;
+    }
+    .goal-list-empty {
+      padding: 12px;
+      border: 1px solid #bde7df;
+      border-radius: 8px;
+      background: #e9f8f6;
+      color: #095b55;
+      font-weight: 750;
+    }
     .feedback-card.primary { border-color: rgba(11,143,134,.32); background: #f0fbf9; }
     .feedback-card.attention { border-color: rgba(239,123,91,.28); background: #fff7f2; }
     .feedback-card.milestone { border-color: rgba(37,99,235,.24); background: #f5f8ff; }
@@ -1581,6 +1683,17 @@
             <span class="topic-toggle" aria-hidden="true"></span>
           </summary>
           <div class="topic-body">
+            <div class="goal-action-list">
+              <details class="goal-action goal-action-new" id="goalCreateDetails">
+                <summary>
+                  <div class="goal-action-title">
+                    <span class="pill">nova meta</span>
+                    <strong>Nova meta pedagógica</strong>
+                    <p class="muted small">Registre o que a criança precisa desenvolver antes de criar uma missão.</p>
+                  </div>
+                  <span class="goal-action-toggle" aria-hidden="true"></span>
+                </summary>
+                <div class="goal-action-body">
             <form class="stack" id="goalForm">
               <div class="row">
                 <label style="flex:1 1 170px">
@@ -1613,8 +1726,51 @@
               </label>
               <button class="button blue" type="submit">Salvar meta pedagógica</button>
             </form>
-            <div class="goal-list" id="goalsList"></div>
-            <div class="goal-list" id="completedGoalsList"></div>
+                </div>
+              </details>
+
+              <details class="goal-action goal-action-active" id="activeGoalsDetails">
+                <summary>
+                  <div class="goal-action-title">
+                    <span class="pill">em acompanhamento</span>
+                    <strong>Meta em acompanhamento</strong>
+                    <p class="muted small" id="activeGoalsSummary">Veja a meta ativa e encerre quando fizer sentido.</p>
+                  </div>
+                  <span class="goal-action-toggle" aria-hidden="true"></span>
+                </summary>
+                <div class="goal-action-body">
+                  <div class="goal-list" id="goalsList"></div>
+                </div>
+              </details>
+
+              <details class="goal-action goal-action-closed" id="completedGoalsDetails">
+                <summary>
+                  <div class="goal-action-title">
+                    <span class="pill">concluídas</span>
+                    <strong>Metas concluídas</strong>
+                    <p class="muted small" id="completedGoalsSummary">Metas encerradas como foco principal cumprido.</p>
+                  </div>
+                  <span class="goal-action-toggle" aria-hidden="true"></span>
+                </summary>
+                <div class="goal-action-body">
+                  <div class="goal-list" id="completedGoalsList"></div>
+                </div>
+              </details>
+
+              <details class="goal-action goal-action-closed" id="archivedGoalsDetails">
+                <summary>
+                  <div class="goal-action-title">
+                    <span class="pill">ajuste</span>
+                    <strong>Metas encerradas para ajuste</strong>
+                    <p class="muted small" id="archivedGoalsSummary">Metas que saíram do foco atual porque a estratégia mudou.</p>
+                  </div>
+                  <span class="goal-action-toggle" aria-hidden="true"></span>
+                </summary>
+                <div class="goal-action-body">
+                  <div class="goal-list" id="archivedGoalsList"></div>
+                </div>
+              </details>
+            </div>
           </div>
         </details>
 
@@ -1750,6 +1906,7 @@
       children: [],
       goals: [],
       completedGoals: [],
+      archivedGoals: [],
       reviews: [],
       snapshots: [],
       assignments: [],
@@ -1860,8 +2017,12 @@
       perceptionInput: document.querySelector("#perceptionInput"),
       organizePerceptionButton: document.querySelector("#organizePerceptionButton"),
       perceptionSuggestions: document.querySelector("#perceptionSuggestions"),
+      activeGoalsSummary: document.querySelector("#activeGoalsSummary"),
+      completedGoalsSummary: document.querySelector("#completedGoalsSummary"),
+      archivedGoalsSummary: document.querySelector("#archivedGoalsSummary"),
       goalsList: document.querySelector("#goalsList"),
       completedGoalsList: document.querySelector("#completedGoalsList"),
+      archivedGoalsList: document.querySelector("#archivedGoalsList"),
       assignmentForm: document.querySelector("#assignmentForm"),
       assignmentGoalInput: document.querySelector("#assignmentGoalInput"),
       assignmentDueInput: document.querySelector("#assignmentDueInput"),
@@ -2017,7 +2178,7 @@
 
     function goalById(goalId) {
       if (!goalId) return null;
-      return [...state.goals, ...state.completedGoals].find((goal) => goal.id === goalId) || null;
+      return [...state.goals, ...state.completedGoals, ...state.archivedGoals].find((goal) => goal.id === goalId) || null;
     }
 
     function recipeForArea(area) {
@@ -2186,7 +2347,8 @@
       return module?.status === "available"
         || state.events.some((event) => event.service === "ingles")
         || state.goals.some((goal) => goal.area === "ingles")
-        || state.completedGoals.some((goal) => goal.area === "ingles");
+        || state.completedGoals.some((goal) => goal.area === "ingles")
+        || state.archivedGoals.some((goal) => goal.area === "ingles");
     }
 
     function eventsForArea(area) {
@@ -3334,65 +3496,126 @@
       });
     }
 
+    function goalClosureNote(goal) {
+      const text = String(goal.description || "");
+      const marker = "Encerramento:";
+      const index = text.lastIndexOf(marker);
+      return index >= 0 ? text.slice(index).trim() : "";
+    }
+
+    function visibleGoalDescription(goal) {
+      const text = String(goal.description || "").trim();
+      const index = text.lastIndexOf("\n\nEncerramento:");
+      return index >= 0 ? text.slice(0, index).trim() : text;
+    }
+
+    function goalRecord(goal, mode) {
+      const isActive = mode === "active";
+      const isArchived = mode === "archived";
+      const statusText = isActive ? "em acompanhamento" : isArchived ? "encerrada para ajuste" : "concluída";
+      const dateText = isActive
+        ? `Formulada em ${formatDate(goal.created_at)}`
+        : `${isArchived ? "Encerrada" : "Concluída"} em ${formatDate(goal.updated_at || goal.completed_at || goal.created_at)}`;
+      const description = visibleGoalDescription(goal);
+      const closureNote = goalClosureNote(goal);
+      const details = document.createElement("details");
+      details.className = `goal-record ${isActive ? "goal-action-active" : "goal-action-closed"}`;
+      details.innerHTML = `
+        <summary>
+          <div class="goal-record-title">
+            <span class="pill">${escapeHtml(areaLabel(goal.area))}</span>
+            <strong>${escapeHtml(goal.title)}</strong>
+            <p class="muted small">${escapeHtml(dateText)} · ${escapeHtml(statusText)}</p>
+          </div>
+          <span class="goal-record-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="goal-record-body">
+          <p class="muted">${escapeHtml(description || "Sem observação adicional.")}</p>
+          <p class="small"><strong>Receita inicial:</strong> ${escapeHtml(recipeForArea(goal.area))}</p>
+          ${closureNote ? `<p class="small"><strong>Registro de encerramento:</strong> ${escapeHtml(closureNote.replace("Encerramento:", "").trim())}</p>` : ""}
+          ${isActive ? `
+            <button class="button ghost" type="button" data-goal-close-open="${goal.id}">Encerrar meta</button>
+            <div class="goal-close-panel hidden" data-goal-close-panel="${goal.id}">
+              <strong>Como deseja encerrar esta meta?</strong>
+              <p class="muted small">Use quando esta meta deixar de ser o foco atual. A decisão continua sendo do adulto.</p>
+              <label>
+                Observação de encerramento
+                <textarea data-goal-close-note="${goal.id}" placeholder="Ex.: A meta cumpriu seu papel principal ou precisa virar uma meta menor."></textarea>
+              </label>
+              <div class="row">
+                <button class="button" type="button" data-goal-close-status="done" data-goal-close-id="${goal.id}">Concluir meta</button>
+                <button class="button secondary" type="button" data-goal-close-status="archived" data-goal-close-id="${goal.id}">Encerrar para ajuste</button>
+                <button class="button ghost" type="button" data-goal-close-cancel="${goal.id}">Cancelar</button>
+              </div>
+            </div>
+          ` : ""}
+        </div>
+      `;
+      if (isActive) {
+        details.querySelector("[data-goal-close-open]").addEventListener("click", () => {
+          details.querySelector(`[data-goal-close-panel="${goal.id}"]`).classList.remove("hidden");
+        });
+        details.querySelector("[data-goal-close-cancel]").addEventListener("click", () => {
+          details.querySelector(`[data-goal-close-panel="${goal.id}"]`).classList.add("hidden");
+        });
+        details.querySelectorAll("[data-goal-close-status]").forEach((button) => {
+          button.addEventListener("click", () => closeGoal(goal, button.dataset.goalCloseStatus, button));
+        });
+      }
+      return details;
+    }
+
     function renderGoals() {
       const child = activeChild();
       els.goalsList.innerHTML = "";
       els.completedGoalsList.innerHTML = "";
+      els.archivedGoalsList.innerHTML = "";
       if (!child) {
-        els.goalsList.innerHTML = '<div class="notice">Selecione uma criança para definir metas.</div>';
+        els.activeGoalsSummary.textContent = "Selecione uma criança para definir metas.";
+        els.completedGoalsSummary.textContent = "As metas concluídas aparecerão aqui.";
+        els.archivedGoalsSummary.textContent = "As metas encerradas para ajuste aparecerão aqui.";
+        els.goalsList.innerHTML = '<div class="goal-list-empty">Selecione uma criança para definir metas.</div>';
+        els.completedGoalsList.innerHTML = '<div class="goal-list-empty">Selecione uma criança para ver metas concluídas.</div>';
+        els.archivedGoalsList.innerHTML = '<div class="goal-list-empty">Selecione uma criança para ver metas encerradas.</div>';
         return;
       }
-      if (!state.goals.length && !state.completedGoals.length) {
-        els.goalsList.innerHTML = '<div class="notice">Ainda não há metas. Registre a primeira necessidade que você quer reforçar.</div>';
-        return;
-      }
+
+      els.activeGoalsSummary.textContent = state.goals.length
+        ? `${state.goals[0].title} · formulada em ${formatDate(state.goals[0].created_at)}`
+        : "Não há meta ativa agora. Use Nova meta pedagógica quando quiser definir um foco.";
+      els.completedGoalsSummary.textContent = state.completedGoals.length
+        ? `${state.completedGoals.length} meta${state.completedGoals.length === 1 ? "" : "s"} concluída${state.completedGoals.length === 1 ? "" : "s"}.`
+        : "Ainda não há metas concluídas.";
+      els.archivedGoalsSummary.textContent = state.archivedGoals.length
+        ? `${state.archivedGoals.length} meta${state.archivedGoals.length === 1 ? "" : "s"} encerrada${state.archivedGoals.length === 1 ? "" : "s"} para ajuste.`
+        : "Ainda não há metas encerradas para ajuste.";
+
       if (!state.goals.length) {
-        els.goalsList.innerHTML = '<div class="notice">Não há metas ativas agora. As concluídas aparecem abaixo como conquistas.</div>';
+        els.goalsList.innerHTML = '<div class="goal-list-empty">Não há meta em acompanhamento neste momento.</div>';
+      } else {
+        state.goals.forEach((goal) => els.goalsList.appendChild(goalRecord(goal, "active")));
       }
-      state.goals.forEach((goal) => {
-        const evidences = eventsForArea(goal.area);
-        const latestSummary = evidences[0] ? eventAdultSummary(evidences[0]) : "";
-        const card = document.createElement("article");
-        card.className = "goal-card";
-        card.innerHTML = `
-          <span class="pill">${areaLabel(goal.area)}</span>
-          <strong>${goal.title}</strong>
-          <p class="muted">${goal.description || "Sem observação adicional."}</p>
-          <p class="small"><strong>Receita inicial:</strong> ${recipeForArea(goal.area)}</p>
-          ${latestSummary ? `<p class="small"><strong>Feedback recente:</strong> ${escapeHtml(latestSummary)}</p>` : ""}
-          <div class="row between">
-            <span class="small">${evidences.length} evidência${evidences.length === 1 ? "" : "s"} relacionada${evidences.length === 1 ? "" : "s"}</span>
-            <span class="pill">${goal.status === "done" ? "concluída" : "ativa"}</span>
-          </div>
-          <button class="button ghost" type="button" data-goal-done="${goal.id}">Concluir meta</button>
-        `;
-        const doneButton = card.querySelector("[data-goal-done]");
-        doneButton.addEventListener("click", () => completeGoal(goal, doneButton));
-        els.goalsList.appendChild(card);
-      });
       renderCompletedGoals();
+      renderArchivedGoals();
     }
 
     function renderCompletedGoals() {
-      if (!state.completedGoals.length) return;
-      const title = document.createElement("article");
-      title.className = "goal-card";
-      title.innerHTML = `
-        <span class="pill">conquistas</span>
-        <strong>Metas concluídas</strong>
-        <p class="muted">Essas metas saíram da lista ativa, mas continuam como evidência de evolução.</p>
-      `;
-      els.completedGoalsList.appendChild(title);
-
+      if (!state.completedGoals.length) {
+        els.completedGoalsList.innerHTML = '<div class="goal-list-empty">Ainda não há metas concluídas.</div>';
+        return;
+      }
       state.completedGoals.slice(0, 6).forEach((goal) => {
-        const card = document.createElement("article");
-        card.className = "goal-card";
-        card.innerHTML = `
-          <span class="pill">${areaLabel(goal.area)}</span>
-          <strong>${escapeHtml(goal.title)}</strong>
-          <p class="small">Concluída em ${formatDate(goal.updated_at || goal.created_at)}.</p>
-        `;
-        els.completedGoalsList.appendChild(card);
+        els.completedGoalsList.appendChild(goalRecord(goal, "done"));
+      });
+    }
+
+    function renderArchivedGoals() {
+      if (!state.archivedGoals.length) {
+        els.archivedGoalsList.innerHTML = '<div class="goal-list-empty">Ainda não há metas encerradas para ajuste.</div>';
+        return;
+      }
+      state.archivedGoals.slice(0, 6).forEach((goal) => {
+        els.archivedGoalsList.appendChild(goalRecord(goal, "archived"));
       });
     }
 
@@ -3511,6 +3734,47 @@
         return;
       }
       message("Meta concluída. Ótimo: agora o acompanhamento fica mais limpo e focado.");
+      await loadGoals();
+      render();
+    }
+
+    async function closeGoal(goal, status, button) {
+      if (!goal?.id || !["done", "archived"].includes(status)) return;
+      const panel = button.closest(".goal-close-panel");
+      const note = panel?.querySelector(`[data-goal-close-note="${goal.id}"]`)?.value.trim() || "";
+      const now = new Date().toISOString();
+      const baseDescription = visibleGoalDescription(goal);
+      const statusLabel = status === "done" ? "concluída" : "encerrada para ajuste";
+      const nextDescription = note
+        ? [baseDescription, `Encerramento: ${statusLabel} em ${formatDate(now)}. ${note}`].filter(Boolean).join("\n\n")
+        : goal.description || null;
+      setButtonBusy(button, true, status === "done" ? "Concluindo..." : "Encerrando...");
+      const payload = {
+        status,
+        updated_at: now,
+        completed_at: now,
+        description: nextDescription
+      };
+      let { error } = await state.supabase
+        .from("learning_goals")
+        .update(payload)
+        .eq("id", goal.id);
+      if (error && /completed_at|schema cache|column/i.test(String(error.message || ""))) {
+        const { completed_at, ...fallbackPayload } = payload;
+        const retry = await state.supabase
+          .from("learning_goals")
+          .update(fallbackPayload)
+          .eq("id", goal.id);
+        error = retry.error;
+      }
+      if (error) {
+        setButtonBusy(button, false);
+        message(`Não consegui encerrar a meta: ${error.message}`, true);
+        return;
+      }
+      message(status === "done"
+        ? "Meta concluída. Ela sai do foco atual e fica preservada no histórico."
+        : "Meta encerrada para ajuste. Ela sai do foco atual sem apagar o percurso.");
       await loadGoals();
       render();
     }
@@ -4601,6 +4865,7 @@
       if (!child) {
         state.goals = [];
         state.completedGoals = [];
+        state.archivedGoals = [];
         return;
       }
       const { data, error } = await state.supabase
@@ -4622,6 +4887,16 @@
         .limit(10);
       state.completedGoals = doneError ? [] : doneData || [];
       if (doneError) message(`Metas concluídas ainda não disponíveis: ${doneError.message}`, true);
+
+      const { data: archivedData, error: archivedError } = await state.supabase
+        .from("learning_goals")
+        .select("*")
+        .eq("child_id", child.id)
+        .eq("status", "archived")
+        .order("updated_at", { ascending: false })
+        .limit(10);
+      state.archivedGoals = archivedError ? [] : archivedData || [];
+      if (archivedError) message(`Metas encerradas ainda não disponíveis: ${archivedError.message}`, true);
     }
 
     async function loadReviews() {
@@ -4767,6 +5042,7 @@
           state.children = [];
           state.goals = [];
           state.completedGoals = [];
+          state.archivedGoals = [];
           state.reviews = [];
           state.snapshots = [];
           state.assignments = [];
