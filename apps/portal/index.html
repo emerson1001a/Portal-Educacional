@@ -1310,10 +1310,9 @@
       border-bottom: 1px solid var(--line);
     }
     .parent-report-metric {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px 7px;
-      align-items: baseline;
+      display: grid;
+      gap: 4px;
+      align-items: start;
       padding: 9px 12px;
       border-right: 1px solid var(--line);
     }
@@ -1323,6 +1322,7 @@
       font-weight: 850;
     }
     .parent-report-metric strong { font-weight: 900; }
+    .parent-report-metric p { margin: 0; }
     .parent-report-section {
       display: grid;
       gap: 8px;
@@ -1335,9 +1335,12 @@
     }
     .parent-report-bar {
       display: grid;
-      grid-template-columns: 112px minmax(0, 1fr) 42px;
+      grid-template-columns: 140px minmax(0, 1fr) 42px;
       gap: 8px;
       align-items: center;
+    }
+    .parent-report-bar > span:first-child {
+      white-space: nowrap;
     }
     .parent-report-track {
       height: 8px;
