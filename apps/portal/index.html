@@ -220,6 +220,33 @@
     .workspace { display: grid; gap: 18px; }
 
     .intro-card { order: 1; }
+    .child-context {
+      display: grid;
+      align-content: start;
+      gap: 6px;
+      min-width: 0;
+    }
+    .child-heading-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .child-heading-row h2 { margin: 0; }
+    .child-edit-button {
+      min-height: 34px;
+      padding: 7px 11px;
+      border-color: rgba(11,143,134,.24);
+      background: #f1fbf9;
+      color: #075f59;
+      font-size: 12px;
+    }
+    .child-context-line {
+      margin: 0;
+      color: #37546c;
+      font-size: 13px;
+      font-weight: 750;
+    }
     .registry-group { order: 2; }
     .analysis-group { order: 3; }
     .modules-topic { order: 4; }
@@ -1202,6 +1229,9 @@
       background: white;
       box-shadow: var(--shadow);
     }
+    .child-edit-sheet {
+      width: min(560px, 100%);
+    }
     .report-actions {
       display: flex;
       flex-wrap: wrap;
@@ -1459,9 +1489,13 @@
 
         <section class="card intro-card">
           <div class="row between">
-            <div>
-              <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
+            <div class="child-context">
+              <div class="child-heading-row">
+                <h2 id="welcomeTitle">Bem-vindo ao Portal Educacional</h2>
+                <button class="button ghost child-edit-button hidden" id="editChildButton" type="button">Editar dados</button>
+              </div>
               <p class="muted" id="welcomeCopy">Cadastre ou selecione uma criança para iniciar o acompanhamento.</p>
+              <p class="child-context-line hidden" id="childContextLine"></p>
             </div>
             <div class="quick-actions child-access-shell">
               <div class="child-access-toolbar">
@@ -2008,6 +2042,39 @@
     </div>
   </section>
 
+  <section class="report-overlay hidden" id="childEditOverlay" aria-label="Editar dados da criança">
+    <div class="report-sheet child-edit-sheet">
+      <div class="report-actions">
+        <button class="button ghost" id="closeChildEditButton" type="button">Fechar</button>
+      </div>
+      <form class="stack" id="childEditForm">
+        <div>
+          <span class="pill">dados da criança</span>
+          <h2>Completar ou corrigir dados</h2>
+          <p class="muted">Use estes dados para idade, aniversário, série e personalização das missões.</p>
+        </div>
+        <label>
+          Nome da criança
+          <input id="childEditNameInput" required>
+        </label>
+        <div class="two-cols">
+          <label>
+            Data de nascimento
+            <input id="childEditBirthInput" type="date">
+          </label>
+          <label>
+            Série
+            <input id="childEditGradeInput" placeholder="5o ano">
+          </label>
+        </div>
+        <div class="row">
+          <button class="button blue" type="submit">Salvar dados</button>
+          <button class="button ghost" id="cancelChildEditButton" type="button">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
   <section class="report-overlay hidden" id="guideOverlay" aria-label="Guia do portal">
     <div class="report-sheet">
       <div class="report-actions">
@@ -2116,6 +2183,8 @@
       childrenList: document.querySelector("#childrenList"),
       welcomeTitle: document.querySelector("#welcomeTitle"),
       welcomeCopy: document.querySelector("#welcomeCopy"),
+      childContextLine: document.querySelector("#childContextLine"),
+      editChildButton: document.querySelector("#editChildButton"),
       openChildModeButton: document.querySelector("#openChildModeButton"),
       generateChildLinkButton: document.querySelector("#generateChildLinkButton"),
       sharedDeviceAccessButton: document.querySelector("#sharedDeviceAccessButton"),
@@ -2210,6 +2279,13 @@
       closeReportButton: document.querySelector("#closeReportButton"),
       printReportButton: document.querySelector("#printReportButton"),
       reportContent: document.querySelector("#reportContent"),
+      childEditOverlay: document.querySelector("#childEditOverlay"),
+      closeChildEditButton: document.querySelector("#closeChildEditButton"),
+      cancelChildEditButton: document.querySelector("#cancelChildEditButton"),
+      childEditForm: document.querySelector("#childEditForm"),
+      childEditNameInput: document.querySelector("#childEditNameInput"),
+      childEditBirthInput: document.querySelector("#childEditBirthInput"),
+      childEditGradeInput: document.querySelector("#childEditGradeInput"),
       guideOverlay: document.querySelector("#guideOverlay"),
       closeGuideButton: document.querySelector("#closeGuideButton")
     };
@@ -2272,6 +2348,16 @@
       return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(new Date(value));
     }
 
+    function formatFullDate(value) {
+      const birthDate = dateOnly(value);
+      if (!birthDate) return "";
+      return new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      }).format(new Date(`${birthDate}T12:00:00`));
+    }
+
     function dateOnly(value) {
       return String(value || "").slice(0, 10);
     }
@@ -2302,6 +2388,16 @@
       if (currentDay === day) return "aniversário hoje";
       if (Math.abs(currentDay - day) <= 7) return "semana do aniversário";
       return "mês do aniversário";
+    }
+
+    function childContextSummary(child) {
+      if (!child) return "";
+      const parts = [];
+      if (child.grade) parts.push(child.grade);
+      const age = childAge(child);
+      parts.push(age !== null ? `${age} anos` : "idade pendente");
+      parts.push(child.birth_date ? `nasc. ${formatFullDate(child.birth_date)}` : "data de nascimento pendente");
+      return parts.join(" · ");
     }
 
     function areaLabel(area) {
@@ -3099,6 +3195,9 @@
       const child = activeChild();
       els.welcomeTitle.textContent = child ? `Bloco Infantil de ${child.full_name}` : "Bem-vindo ao Portal Educacional";
       els.welcomeCopy.textContent = child ? "Após criar a Missão, seu filho já pode acessar conforme abaixo:" : "Cadastre ou selecione uma criança para iniciar.";
+      els.editChildButton.classList.toggle("hidden", !child);
+      els.childContextLine.classList.toggle("hidden", !child);
+      els.childContextLine.textContent = child ? childContextSummary(child) : "";
       els.metricActivities.textContent = state.events.length;
       els.metricGoals.textContent = state.goals.length;
       els.metricLast.textContent = state.events[0] ? formatDate(state.events[0].occurred_at || state.events[0].created_at) : "-";
@@ -4867,6 +4966,66 @@
       document.body.style.overflow = "";
     }
 
+    function openChildEdit() {
+      const child = activeChild();
+      if (!child) {
+        message("Selecione uma criança antes de editar os dados.", true);
+        return;
+      }
+      els.childEditNameInput.value = child.full_name || "";
+      els.childEditBirthInput.value = dateOnly(child.birth_date);
+      els.childEditGradeInput.value = child.grade || "";
+      els.childEditOverlay.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      els.childEditNameInput.focus();
+    }
+
+    function closeChildEdit() {
+      els.childEditOverlay.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+
+    async function saveChildEdit(event) {
+      event.preventDefault();
+      clearMessage();
+      const child = activeChild();
+      if (!child) {
+        closeChildEdit();
+        message("Selecione uma criança antes de editar os dados.", true);
+        return;
+      }
+      const name = els.childEditNameInput.value.trim();
+      if (!name) {
+        message("Informe o nome da criança para salvar.", true);
+        return;
+      }
+      const button = els.childEditForm.querySelector('button[type="submit"]');
+      setButtonBusy(button, true, "Salvando...");
+      const payload = {
+        full_name: name,
+        birth_date: dateOnly(els.childEditBirthInput.value) || null,
+        grade: els.childEditGradeInput.value.trim() || null
+      };
+      try {
+        const { error } = await state.supabase
+          .from("children")
+          .update(payload)
+          .eq("id", child.id);
+        if (error) {
+          message(error.message, true);
+          return;
+        }
+        state.children = state.children.map((item) => (
+          item.id === child.id ? { ...item, ...payload } : item
+        ));
+        closeChildEdit();
+        message("Dados da criança atualizados.");
+        render();
+      } finally {
+        setButtonBusy(button, false);
+      }
+    }
+
     function openGuide() {
       els.guideOverlay.classList.remove("hidden");
       document.body.style.overflow = "hidden";
@@ -5226,6 +5385,10 @@
     els.openReportButton.addEventListener("click", openReport);
     els.closeReportButton.addEventListener("click", closeReport);
     els.printReportButton.addEventListener("click", () => window.print());
+    els.editChildButton.addEventListener("click", openChildEdit);
+    els.closeChildEditButton.addEventListener("click", closeChildEdit);
+    els.cancelChildEditButton.addEventListener("click", closeChildEdit);
+    els.childEditForm.addEventListener("submit", saveChildEdit);
     els.logoutButton.addEventListener("click", async () => state.supabase.auth.signOut());
 
     els.saveReviewButton.addEventListener("click", async () => {
